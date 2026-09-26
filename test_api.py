@@ -69,5 +69,24 @@ def test_full_pipeline():
 
     print("\nALL 5 API ENDPOINTS TESTED AND PASSED SUCCESSFULLY!")
 
+def test_recommendation_incomplete_profile_returns_409():
+    # Starting a session and immediately calling recommendation without voice intake
+    res = client.post("/session/start", json={"entry_mode": "app", "language": "en"})
+    assert res.status_code == 200
+    session_id = res.json()["session_id"]
+
+    res_rec = client.get(f"/session/{session_id}/recommendation")
+    assert res_rec.status_code == 409
+    assert "Profile incomplete" in res_rec.json()["detail"]
+
+def test_followup_nonexistent_beneficiary_returns_404():
+    # Updating follow-up for a beneficiary that does not exist in the database
+    res = client.post("/followup/does-not-exist-12345", json={"status": "placed"})
+    assert res.status_code == 404
+    assert res.json()["detail"] == "Beneficiary not found"
+
 if __name__ == "__main__":
     test_full_pipeline()
+    test_recommendation_incomplete_profile_returns_409()
+    test_followup_nonexistent_beneficiary_returns_404()
+    print("All tests passed!")

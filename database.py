@@ -174,6 +174,11 @@ def save_recommendation(
 def update_followup(beneficiary_id: str, status: str) -> str:
     conn = get_connection()
     cursor = conn.cursor()
+    cursor.execute("SELECT id FROM beneficiaries WHERE id = ?", (beneficiary_id,))
+    if not cursor.fetchone():
+        conn.close()
+        raise ValueError("Beneficiary not found")
+
     cursor.execute("SELECT id FROM follow_ups WHERE beneficiary_id = ?", (beneficiary_id,))
     row = cursor.fetchone()
     today = datetime.utcnow().strftime("%Y-%m-%d")

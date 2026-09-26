@@ -206,8 +206,13 @@ def get_recommendation(session_id: str):
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
+    if not session.get("profile_complete"):
+        raise HTTPException(
+            status_code=409,
+            detail="Profile incomplete — continue the voice intake before requesting a recommendation"
+        )
+
     profile = session.get("profile_data", {})
-    # If not complete yet, we can still generate best effort or advise
     skill_res = nsqf_rules.analyze_skill_gap(profile)
 
     return {
@@ -308,7 +313,11 @@ def update_followup(beneficiary_id: str, req: FollowUpRequest):
     if req.status not in ["enrolled", "dropped", "placed", "no_contact"]:
         raise HTTPException(status_code=400, detail="Invalid follow-up status")
 
-    fu_id = database.update_followup(beneficiary_id, req.status)
+    try:
+        fu_id = database.update_followup(beneficiary_id, req.status)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Beneficiary not found")
+
     return {
         "success": True,
         "beneficiary_id": beneficiary_id,

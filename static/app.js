@@ -462,6 +462,10 @@ function updateSignalsView(fields = {}) {
 async function loadRoadmapRecommendation() {
   try {
     const res = await fetch(`/session/${state.sessionId}/recommendation`);
+    if (!res.ok) {
+      showToast("Please finish answering first");
+      return;
+    }
     const data = await res.json();
     state.currentRecommendation = data;
 
