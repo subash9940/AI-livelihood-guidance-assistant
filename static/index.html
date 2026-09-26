@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PM-AJAY AI Livelihood Guidance Assistant | Govt. of India</title>
+  <meta name="description" content="AI-powered multilingual voice-first livelihood guidance assistant for PM-AJAY beneficiaries. Aligned with NSQF and local livelihood pathways.">
+  
+  <!-- Modern Typography: Outfit & Inter & Hind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="emblem-wrapper">
+          <span class="emblem-symbol">🇮🇳</span>
+        </div>
+        <div class="brand-text">
+          <span class="govt-tag">Ministry of Social Justice & Empowerment</span>
+          <h1 class="portal-title">PM-AJAY Livelihood Assistant</h1>
+          <span class="portal-sub">प्रधानमंत्री अनुसूचित जाति अभ्युदय योजना</span>
+        </div>
+      </div>
+
+      <!-- Top Utility Controls -->
+      <div class="header-controls">
+        <!-- Language Selector -->
+        <div class="lang-selector-group" id="langGroup">
+          <label for="langSelect" class="sr-only">Choose Language</label>
+          <span class="lang-icon">🌐</span>
+          <select id="langSelect" class="lang-dropdown">
+            <option value="en">English</option>
+            <option value="hi" selected>हिंदी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+          </select>
+        </div>
+
+        <!-- Navigation Tabs: Beneficiary Voice App, Call/IVR, Admin Dashboard -->
+        <nav class="nav-tabs" role="tablist">
+          <button class="nav-tab active" id="tabApp" data-view="voice-app">
+            <span class="tab-icon">🎙️</span> Voice Assistant
+          </button>
+          <button class="nav-tab" id="tabIvr" data-view="ivr-view">
+            <span class="tab-icon">📞</span> IVR Call Line
+          </button>
+          <button class="nav-tab" id="tabAdmin" data-view="admin-view">
+            <span class="tab-icon">📊</span> District Dashboard
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- VIEW 1: VOICE ASSISTANT (App & Facilitator Modes) -->
+    <section id="viewVoiceApp" class="view-panel active">
+      <!-- Mode Banner: Shows if running in Facilitator Mode -->
+      <div id="facilitatorBanner" class="facilitator-banner hidden">
+        <div class="banner-content">
+          <span class="banner-badge">🤝 FACILITATOR MODE ACTIVE</span>
+          <span class="banner-text">Assisting rural beneficiary with zero-friction voice intake</span>
+        </div>
+        <button id="btnExitFacilitator" class="btn-banner-action">Exit to Self Mode</button>
+      </div>
+
+      <!-- Landing & Dominant Mic Container -->
+      <div class="voice-hero-card">
+        
+        <!-- Spoken Assistant Prompt / Header -->
+        <div class="prompt-display-area" id="promptDisplayArea">
+          <div class="audio-status-pill" id="audioStatusPill">
+            <span class="status-dot"></span>
+            <span id="statusText">Voice Ready • Speak Naturally</span>
+          </div>
+          <h2 class="assistant-speech-text" id="assistantSpeechText">
+            "नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?"
+          </h2>
+          <div class="speech-controls">
+            <button id="btnReplayAudio" class="btn-audio-replay" title="Listen again">
+              <span>🔊</span> Play Spoken Prompt
+            </button>
+          </div>
+        </div>
+
+        <!-- Large Dominant Mic Button with Pulsing Waveform -->
+        <div class="mic-stage">
+          <div class="mic-wave-ring" id="waveRing1"></div>
+          <div class="mic-wave-ring" id="waveRing2"></div>
+          <button class="dominant-mic-btn" id="dominantMicBtn" aria-label="Tap to speak" title="Tap to start recording">
+            <span class="mic-icon" id="micIcon">🎙️</span>
+            <span class="mic-label" id="micLabel">Tap & Speak</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Live Waveform Bars -->
+        <div class="waveform-visualizer" id="waveformVisualizer">
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+        </div>
+
+        <!-- Realtime Live Transcript Box -->
+        <div class="transcript-box" id="transcriptBox">
+          <span class="transcript-label">Beneficiary Spoken Input:</span>
+          <p id="liveTranscriptText" class="transcript-content">
+            Press the mic button or choose a sample prompt below to start...
+          </p>
+        </div>
+
+        <!-- Quick Demo Utterances / Test Chips (Includes exact Demo Script from PS) -->
+        <div class="demo-chips-container">
+          <span class="chips-title">💡 One-Tap Real Scenario Tests:</span>
+          <div class="chips-list">
+            <button class="demo-chip" data-text="I finished 10th, my family does farming, I want something food-related, I can't travel far">
+              🌾 10th Pass + Farming Family + Food Processing + Low Mobility (Demo Script)
+            </button>
+            <button class="demo-chip" data-text="मुझे सिलाई का काम सीखना है, खुद की दुकान खोलनी है, 8वीं पास हूँ">
+              🧵 8th Pass + Tailoring & Self Employment (Hindi)
+            </button>
+            <button class="demo-chip" data-text="मी १२वी पास आहे, मला सोलर पॅनेल आणि वायरिंगचे काम शिकायचे आहे, तालुक्यात जाऊ शकतो">
+              ☀️ 12th Pass + Solar & Green Jobs + Commute OK (Marathi)
+            </button>
+            <button class="demo-chip" data-text="ਮੈਂ ਦਸਵੀਂ ਪਾਸ ਹਾਂ, ਮੈਨੂੰ ਕੰਪਿਊਟਰ ਅਤੇ ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਹੈ">
+              💻 10th Pass + Digital Services / CSC Operator (Punjabi)
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Profile Signals Tracker (Fills in realtime as user speaks) -->
+        <div class="profile-signals-card" id="profileSignalsCard">
+          <div class="signals-header">
+            <h3>📋 Extracted Beneficiary Signals</h3>
+            <span class="signals-badge" id="signalsBadge">Intake In Progress</span>
+          </div>
+          <div class="signals-grid">
+            <div class="signal-item">
+              <span class="signal-label">Education Level</span>
+              <span class="signal-value" id="sigEducation">—</span>
+            </div>
+            <div class="signal-item">
+              <span class="signal-label">Family Occupation</span>
+              <span class="signal-value" id="sigFamilyOcc">—</span>
+            </div>
+            <div class="signal-item">
+              <span class="signal-label">Identified Skills/Interests</span>
+              <span class="signal-value" id="sigSkills">—</span>
+            </div>
+            <div class="signal-item">
+              <span class="signal-label">Mobility Constraint</span>
+              <span class="signal-value" id="sigMobility">—</span>
+            </div>
+            <div class="signal-item">
+              <span class="signal-label">Livelihood Preference</span>
+              <span class="signal-value" id="sigPref">—</span>
+            </div>
+            <div class="signal-item">
+              <span class="signal-label">Access Mode</span>
+              <span class="signal-value" id="sigEntryMode">Smartphone (App)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Handoff Action Footer -->
+        <div class="handoff-footer">
+          <button id="btnStartFacilitator" class="btn-handoff">
+            <span class="btn-icon">👥</span> Start for Someone Else (Facilitator Mode)
+          </button>
+          <button id="btnResetSession" class="btn-secondary-link">
+            🔄 Reset Conversation
+          </button>
+        </div>
+
+      </div>
+
+      <!-- VIEW 1.2: LIVELIHOOD ROADMAP RESULT (Renders when profile_complete is True) -->
+      <div id="roadmapContainer" class="roadmap-container hidden">
+        <div class="roadmap-card">
+          <div class="roadmap-header">
+            <div class="roadmap-badge-row">
+              <span class="scheme-tag">PM-AJAY SKILL & LIVELIHOOD PATHWAY</span>
+              <span class="nsqf-badge" id="recNsqfBadge">NSQF Level 3</span>
+            </div>
+            <h2 class="roadmap-title" id="recTradeTitle">Food Processing & Agri-Value Addition Technician</h2>
+            <p class="roadmap-gap-summary" id="recGapSummary">
+              Possesses agricultural intuition and raw ingredient familiarity, but lacks hygienic value-addition and certified packaging standards.
+            </p>
+          </div>
+
+          <!-- Spoken Audio Player for Roadmap -->
+          <div class="spoken-summary-banner">
+            <button id="btnPlayRoadmapAudio" class="btn-play-roadmap">
+              <span class="play-icon">🔊</span>
+              <span class="play-text">Listen to Spoken Livelihood Roadmap (Audio)</span>
+            </button>
+            <p id="recSpokenSummaryText" class="spoken-text-preview"></p>
+          </div>
+
+          <!-- 4-Step Interactive Roadmap Timeline -->
+          <div class="roadmap-steps-timeline">
+            <!-- Step 1 -->
+            <div class="timeline-step">
+              <div class="step-marker">
+                <span class="step-num">1</span>
+                <span class="step-icon">🎓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-stage-tag">STAGE 1: SKILL FOUNDATION</span>
+                <h4 id="step1Title">Enroll in PM-AJAY Free Skill Training</h4>
+                <p id="step1Desc">100% sponsored by Govt. of India with ₹1,500/month stipend and free safety kit.</p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="timeline-step">
+              <div class="step-marker">
+                <span class="step-num">2</span>
+                <span class="step-icon">🏫</span>
+              </div>
+              <div class="step-content">
+                <span class="step-stage-tag">STAGE 2: ACCREDITED CENTER</span>
+                <h4 id="step2Title">Practical Training at District Center</h4>
+                <p id="step2Desc">Jan Shikshan Sansthan (JSS) & District PMKK Center with hands-on food preservation equipment.</p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="timeline-step">
+              <div class="step-marker">
+                <span class="step-num">3</span>
+                <span class="step-icon">📜</span>
+              </div>
+              <div class="step-content">
+                <span class="step-stage-tag">STAGE 3: NATIONAL CERTIFICATION</span>
+                <h4 id="step3Title">NSQF Government Certification</h4>
+                <p id="step3Desc">Sector Skill Council assessment and official QR-verified Skill India Digital credential.</p>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="timeline-step">
+              <div class="step-marker">
+                <span class="step-num">4</span>
+                <span class="step-icon">🚀</span>
+              </div>
+              <div class="step-content">
+                <span class="step-stage-tag">STAGE 4: LOCAL LIVELIHOOD & CREDIT</span>
+                <h4 id="step4Title">Enterprise or Placement Linkage</h4>
+                <p id="step4Desc">Mudra Shishu Loan up to ₹50,000 subsidy grant or local agri-cluster direct linkage.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Roadmap Action Buttons -->
+          <div class="roadmap-actions">
+            <button id="btnPrintRoadmap" class="btn-action-primary">
+              🖨️ Print Roadmap Summary
+            </button>
+            <button id="btnSmsRoadmap" class="btn-action-secondary">
+              📱 Send SMS to Phone
+            </button>
+            <button id="btnNewRoadmapAssessment" class="btn-action-outline">
+              ➕ Start Next Assessment
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- VIEW 2: CALL / IVR INFO SCREEN & INTERACTIVE FEATURE-PHONE SIMULATOR -->
+    <section id="viewIvr" class="view-panel">
+      <div class="ivr-container">
+        
+        <!-- Low Connectivity Explainer Card -->
+        <div class="ivr-info-card">
+          <div class="ivr-badge">📡 LOW-CONNECTIVITY & FEATURE PHONE FALLBACK</div>
+          <h2>Toll-Free PM-AJAY Voice Hotline</h2>
+          <p class="ivr-lead">
+            For beneficiaries with basic keypad button-phones or zero internet connectivity. Reachable directly through standard telecom carrier lines with zero data balance.
+          </p>
+
+          <div class="helpline-highlight">
+            <span class="phone-big-icon">📞</span>
+            <div class="helpline-numbers">
+              <span class="helpline-label">Toll-Free National Helpline</span>
+              <span class="helpline-digits">1800-11-PMAJAY</span>
+              <span class="helpline-alt">(1800-11-762529) • 24x7 Multi-lingual</span>
+            </div>
+          </div>
+
+          <div class="ivr-features-list">
+            <div class="ivr-feature">
+              <span class="feat-icon">🎙️</span>
+              <div>
+                <strong>Spoken Interactive Tree (IVR)</strong>
+                <p>Press 1 for Hindi, 2 for Marathi, 3 for Punjabi. Speak your trade preference directly into the phone.</p>
+              </div>
+            </div>
+            <div class="ivr-feature">
+              <span class="feat-icon">💬</span>
+              <div>
+                <strong>SMS Roadmap Confirmation</strong>
+                <p>Sends SMS summary with nearest training center address and District Welfare Officer contact.</p>
+              </div>
+            </div>
+            <div class="ivr-feature">
+              <span class="feat-icon">👥</span>
+              <div>
+                <strong>Village Facilitator Callback</strong>
+                <p>Automated dispatch notification sent to local ASHA / JSS coordinator for doorstep guidance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Feature Phone Keypad Simulator -->
+        <div class="phone-simulator-card">
+          <div class="phone-chassis">
+            <div class="phone-speaker-slot"></div>
+            
+            <!-- Phone LCD Screen -->
+            <div class="phone-lcd">
+              <div class="lcd-header">
+                <span>PM-AJAY IVR</span>
+                <span id="lcdTime">12:00</span>
+                <span>📶 100%</span>
+              </div>
+              <div class="lcd-body" id="lcdBody">
+                <p class="lcd-prompt" id="lcdPrompt">
+                  Dial 1800-11-7625 or tap green Call button to connect...
+                </p>
+                <div class="lcd-dialed" id="lcdDialed"></div>
+              </div>
+              <div class="lcd-footer">
+                <span id="lcdAudioStatus">READY</span>
+              </div>
+            </div>
+
+            <!-- Keypad Buttons -->
+            <div class="keypad-grid">
+              <button class="keypad-btn key-action-call" id="keyCall" title="Call">📞 Call</button>
+              <button class="keypad-btn key-nav">▲</button>
+              <button class="keypad-btn key-action-end" id="keyEnd" title="End">🔴 End</button>
+
+              <button class="keypad-btn" data-key="1">1 <span>हिंदी</span></button>
+              <button class="keypad-btn" data-key="2">2 <span>मराठी</span></button>
+              <button class="keypad-btn" data-key="3">3 <span>ਪੰਜਾਬੀ</span></button>
+
+              <button class="keypad-btn" data-key="4">4 <span>GHI</span></button>
+              <button class="keypad-btn" data-key="5">5 <span>JKL</span></button>
+              <button class="keypad-btn" data-key="6">6 <span>MNO</span></button>
+
+              <button class="keypad-btn" data-key="7">7 <span>PQRS</span></button>
+              <button class="keypad-btn" data-key="8">8 <span>TUV</span></button>
+              <button class="keypad-btn" data-key="9">9 <span>WXYZ</span></button>
+
+              <button class="keypad-btn" data-key="*">*</button>
+              <button class="keypad-btn" data-key="0">0 <span>+</span></button>
+              <button class="keypad-btn" data-key="#">#</button>
+            </div>
+            
+            <p class="simulator-hint">
+              Interactive Prototype: Click 'Call' to listen to simulated carrier IVR flow.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 3: ADMIN DASHBOARD (District Officer View) -->
+    <section id="viewAdmin" class="view-panel">
+      <div class="admin-dashboard-container">
+        
+        <!-- Dashboard Top Toolbar -->
+        <div class="dashboard-toolbar">
+          <div class="toolbar-title-block">
+            <h2>District Officer Administration & Placements</h2>
+            <p>PM-AJAY Skill Development & Livelihood Monitoring System</p>
+          </div>
+          
+          <div class="district-filter-group">
+            <label for="districtSelect">Select District:</label>
+            <select id="districtSelect" class="district-dropdown">
+              <option value="all">All Districts (Consolidated)</option>
+              <option value="Pune" selected>Pune (Maharashtra)</option>
+              <option value="Solapur">Solapur (Maharashtra)</option>
+              <option value="Nagpur">Nagpur (Maharashtra)</option>
+              <option value="Amritsar">Amritsar (Punjab)</option>
+              <option value="Varanasi">Varanasi (Uttar Pradesh)</option>
+            </select>
+            <button id="btnRefreshDashboard" class="btn-refresh" title="Refresh metrics">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <!-- 4 Key Stat Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card metric-enrolled">
+            <div class="metric-icon">📝</div>
+            <div class="metric-content">
+              <span class="metric-label">Active Enrolments</span>
+              <h3 class="metric-value" id="valEnrolments">5</h3>
+              <span class="metric-sub">Undergoing NSQF training</span>
+            </div>
+          </div>
+
+          <div class="metric-card metric-placed">
+            <div class="metric-icon">💼</div>
+            <div class="metric-content">
+              <span class="metric-label">Successful Placements</span>
+              <h3 class="metric-value" id="valPlacements">3</h3>
+              <span class="metric-sub">Wage or enterprise credit</span>
+            </div>
+          </div>
+
+          <div class="metric-card metric-dropout">
+            <div class="metric-icon">⚠️</div>
+            <div class="metric-content">
+              <span class="metric-label">Reported Dropouts</span>
+              <h3 class="metric-value" id="valDropouts">1</h3>
+              <span class="metric-sub">Flagged for counsellor intervention</span>
+            </div>
+          </div>
+
+          <div class="metric-card metric-total">
+            <div class="metric-icon">👥</div>
+            <div class="metric-content">
+              <span class="metric-label">Total Beneficiaries</span>
+              <h3 class="metric-value" id="valTotalBeneficiaries">10</h3>
+              <span class="metric-sub">Covered under PM-AJAY</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill Demand Chart & Follow-up Queue Grid -->
+        <div class="dashboard-main-grid">
+          
+          <!-- Skill Demand by Trade Breakdown -->
+          <div class="card-demand-breakdown">
+            <div class="card-header">
+              <h3>📈 Skill Demand by NSQF Trade</h3>
+              <span class="card-tag">Real-Time Intake</span>
+            </div>
+            <div id="demandBarsContainer" class="demand-bars-list">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+
+          <!-- Beneficiary Follow-Up Tracker Table -->
+          <div class="card-beneficiary-table">
+            <div class="card-header">
+              <h3>📋 Beneficiary Follow-Up & Retention Queue</h3>
+              <span class="card-tag" id="beneficiaryCountTag">10 Records</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Beneficiary</th>
+                    <th>Location</th>
+                    <th>Recommended Trade</th>
+                    <th>Entry Mode</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="beneficiaryTableBody">
+                  <!-- Dynamically rendered -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toastNotification" class="toast-notification hidden">
+    <span id="toastIcon">✅</span>
+    <span id="toastMessage">Success</span>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
