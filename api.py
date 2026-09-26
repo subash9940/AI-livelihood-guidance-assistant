@@ -145,7 +145,7 @@ async def voice_input(session_id: str, request: Request):
             # Save Beneficiary
             beneficiary_id = database.save_beneficiary({
                 "language": lang,
-                "location": updated_profile.get("location", "District Center"),
+                "location": updated_profile.get("location", "Your Local District"),
                 "mobility_constraint": updated_profile.get("mobility_constraint"),
                 "education_level": updated_profile.get("education_level", "10th Standard"),
                 "family_occupation": updated_profile.get("family_occupation", "Agriculture"),
@@ -220,6 +220,7 @@ def get_recommendation(session_id: str):
         "trade_key": skill_res.get("trade_key"),
         "nsqf_alignment": skill_res["nsqf_alignment"],
         "gap_summary": skill_res["gap_summary"],
+        "skill_gap_breakdown": skill_res.get("skill_gap_breakdown", []),
         "training_programme": skill_res["training_programme"],
         "training_centre": skill_res["training_centre"],
         "local_opportunity": skill_res["local_opportunity"],

@@ -3,9 +3,10 @@ NSQF Rules and Recommendation Engine for PM-AJAY Livelihood Guidance Assistant.
 Matches beneficiary background, education, mobility constraints, and interests
 against NSQF-aligned job roles and PM-AJAY skill training schemes.
 """
+import re
 from typing import Dict, Any, List, Tuple
 
-# NSQF Eligible Trades Catalog with PM-AJAY Alignment
+# NSQF Eligible Trades Catalog with PM-AJAY Alignment & Concrete Skill Gaps
 TRADES_CATALOG = {
     "food_processing": {
         "trade_name": "Food Processing & Agri-Value Addition Technician",
@@ -20,6 +21,24 @@ TRADES_CATALOG = {
         "training_programme": "PM-AJAY Free Skill Training & Certification (Stipend Provided)",
         "training_centre": "Jan Shikshan Sansthan (JSS) & District PMKK Center",
         "local_opportunity": "Micro-Enterprise in local spice/pickle/bakery processing with PMEGP/Mudra Shishu Loan up to ₹50,000",
+        "skill_gaps": [
+            {
+                "skill": "FSSAI Food Safety, Hygiene & Sanitation Standards",
+                "where": "Jan Shikshan Sansthan (JSS) in-person practical lab"
+            },
+            {
+                "skill": "Fruit & Vegetable Post-Harvest Preservation Techniques",
+                "where": "PMKK District Training Center hands-on workshop"
+            },
+            {
+                "skill": "Vacuum Packaging, Sealing & FSSAI Product Labeling",
+                "where": "Skill India Digital (SID) self-paced certification course"
+            },
+            {
+                "skill": "Micro-Enterprise Costing & PMEGP/Mudra Loan Application",
+                "where": "Rural Self Employment Training Institute (RSETI) EDP module"
+            }
+        ],
         "steps_en": [
             "Enroll in PM-AJAY certified Food Processing Course (Free + ₹1,500 monthly stipend)",
             "Hands-on training at District Jan Shikshan Sansthan with practical food safety standards",
@@ -58,6 +77,24 @@ TRADES_CATALOG = {
         "training_programme": "PM-AJAY Special Beneficiary Tailoring & Garment Skill Initiative",
         "training_centre": "Rural Self Employment Training Institute (RSETI) & JSS Center",
         "local_opportunity": "Home-based boutique or contract manufacturing for local school uniforms and textile markets",
+        "skill_gaps": [
+            {
+                "skill": "Commercial Garment Pattern Drafting & Cutting",
+                "where": "District Jan Shikshan Sansthan (JSS) apparel lab"
+            },
+            {
+                "skill": "High-Speed Industrial Sewing Machine Operation & Maintenance",
+                "where": "PMKVY Accredited Apparel Training Hub"
+            },
+            {
+                "skill": "Garment Quality Inspection, Finishing & Export Stitch Standards",
+                "where": "Apparel, Made-Ups & Home Furnishing SSC certified workshop"
+            },
+            {
+                "skill": "Direct Market Linkage & Tailoring Boutique Financial Management",
+                "where": "SWAYAM portal / RSETI micro-enterprise development module"
+            }
+        ],
         "steps_en": [
             "Enroll in NSQF Level 3 Self-Employed Tailor training with free tool kit voucher",
             "Learn garment pattern drafting, computerized sewing, and finished cloth quality control",
@@ -96,6 +133,24 @@ TRADES_CATALOG = {
         "training_programme": "PM-AJAY Suryamitra Green Energy Skill Initiative",
         "training_centre": "Government Industrial Training Institute (ITI) / NISE Partner Center",
         "local_opportunity": "Rooftop solar installation under PM Surya Ghar Yojana and agricultural solar pump maintenance",
+        "skill_gaps": [
+            {
+                "skill": "Photovoltaic (PV) Module Mounting & Rooftop Structural Alignment",
+                "where": "Government Industrial Training Institute (ITI) Solar Lab"
+            },
+            {
+                "skill": "High-Voltage Electrical Safety, DC Wiring & Earthing Protocols",
+                "where": "National Institute of Solar Energy (NISE) certified center"
+            },
+            {
+                "skill": "Grid-Tied Inverter Synchronization & Storage Battery Diagnostics",
+                "where": "Skill Council for Green Jobs (SCGJ) training partner"
+            },
+            {
+                "skill": "PM Surya Ghar Consumer Net-Metering & DISCOM Portal Onboarding",
+                "where": "Skill India Digital (SID) e-learning module"
+            }
+        ],
         "steps_en": [
             "Join PM-AJAY sponsored Suryamitra Solar PV installation program (100% sponsored)",
             "Undergo rigorous electrical safety, solar panel wiring, and inverter installation training",
@@ -134,6 +189,24 @@ TRADES_CATALOG = {
         "training_programme": "PM-AJAY Automotive & Electric Mobility Livelihood Track",
         "training_centre": "District Skill Center & Automotive Partner Workshop",
         "local_opportunity": "Employed at dealership service centers or opening a village two-wheeler EV battery swapping and repair point",
+        "skill_gaps": [
+            {
+                "skill": "Two-Wheeler Multi-Brand Engine Diagnostics & Brake Calibration",
+                "where": "District ITI / Automotive Skills Development Council (ASDC) Workshop"
+            },
+            {
+                "skill": "Electric Vehicle (EV) Powertrain, BLDC Motor & Controller Servicing",
+                "where": "PMKK Advanced Automotive Lab"
+            },
+            {
+                "skill": "Lithium-Ion Battery Swapping, BMS Diagnostics & Thermal Safety",
+                "where": "Tata STRIVE / ASDC specialized EV training module"
+            },
+            {
+                "skill": "Independent Garage Management & Digital Job-Card Billing",
+                "where": "RSETI Rural Entrepreneurship Center"
+            }
+        ],
         "steps_en": [
             "Enroll in Automotive & EV Maintenance course with hands-on toolkits",
             "Learn engine diagnostics, brake calibration, and electric vehicle battery systems",
@@ -172,6 +245,24 @@ TRADES_CATALOG = {
         "training_programme": "PM-AJAY Rural Digital Livelihood & e-Governance Track",
         "training_centre": "District NIELIT / Common Service Center Training Hub",
         "local_opportunity": "Village Common Service Centre (CSC) entrepreneur helping locals with DBTs, ration cards, Aadhaar, and e-Mitra",
+        "skill_gaps": [
+            {
+                "skill": "Government Scheme e-Portals (DBT, Ration, Aadhaar, Agristack)",
+                "where": "District NIELIT / CSC Academy training hub"
+            },
+            {
+                "skill": "Advanced Data Entry Accuracy & Document Digitization Standards",
+                "where": "Skill India Digital (SID) verified online practice track"
+            },
+            {
+                "skill": "Digital Payments, Micro-ATM (AePS) Security & Cyber-Safety",
+                "where": "NASSCOM Foundation / IT-ITeS SSC authorized module"
+            },
+            {
+                "skill": "Village Level Entrepreneur (VLE) Kiosk Setup & Accounting",
+                "where": "CSC e-Governance Services India training seminar"
+            }
+        ],
         "steps_en": [
             "Enroll in NSQF Level 4 Domestic Data Entry & Digital e-Services Course",
             "Master government portals (DBT, Ration, Aadhaar, Agristack), computer applications, and digital payments",
@@ -210,6 +301,24 @@ TRADES_CATALOG = {
         "training_programme": "PM-AJAY Healthcare Livelihood Track",
         "training_centre": "District Hospital & PMKK Healthcare Skill Lab",
         "local_opportunity": "Guaranteed wage employment at District Primary Health Centers, private nursing homes, or elder care services",
+        "skill_gaps": [
+            {
+                "skill": "Clinical Patient Handling, Bed Mobility & Personal Hygiene Care",
+                "where": "District Civil Hospital & PMKK Healthcare Simulation Lab"
+            },
+            {
+                "skill": "Vital Signs Monitoring (BP, Pulse, SpO2, Temperature) & Recording",
+                "where": "Healthcare Sector Skill Council (HSSC) accredited hospital"
+            },
+            {
+                "skill": "Infection Control, Biomedical Waste Disposal & Sterile Procedures",
+                "where": "District Primary Health Center internship module"
+            },
+            {
+                "skill": "Basic Life Support (BLS) & Emergency First-Aid Triage",
+                "where": "Red Cross / St. John Ambulance certified practical training"
+            }
+        ],
         "steps_en": [
             "Register for PM-AJAY sponsored General Duty Assistant (GDA) curriculum",
             "Complete clinical simulation, patient care, vital checks, and first aid modules",
@@ -237,10 +346,70 @@ TRADES_CATALOG = {
     }
 }
 
+# Trade Specific Keyword Dictionaries
+TRADE_KEYWORDS = {
+    "food_processing": [
+        "farm", "farming", "agri", "agriculture", "food", "cook", "cooking", "kheti",
+        "crop", "crops", "grain", "grains", "fruit", "fruits", "pickle", "pickles",
+        "processing", "dairy", "खेती", "किसान", "कृषक", "अन्न", "खाद्य", "लोणचे", "मसाले", "ਫੂਡ", "ਖੇਤੀ"
+    ],
+    "apparel_tailoring": [
+        "tailor", "tailoring", "sew", "sewing", "stitch", "stitching", "cloth", "clothes",
+        "clothing", "garment", "garments", "silai", "embroidery", "dress", "apparel",
+        "सिलाई", "कपड़े", "शिलाई", "कपडे", "ਸਿਲਾਈ", "ਕੱਪੜੇ", "ਦਰਜ਼ੀ"
+    ],
+    "solar_technician": [
+        "solar", "electric", "electrical", "wire", "wiring", "bijli", "energy", "panel",
+        "panels", "surya", "suryamitra", "pv", "सोलर", "सौर", "बिजली", "वायरिंग", "ਸੋਲਰ", "ਬਿਜਲੀ"
+    ],
+    "automotive_ev": [
+        "two-wheeler", "wheeler", "bike", "bikes", "motorcycle", "motorcycles", "vehicle", "vehicles", "car", "cars",
+        "mechanic", "garage", "gaadi", "repair", "fix", "automotive", "ev", "maintenance", "scooter", "scooters",
+        "गाड़ी", "मोटर", "दुरुस्ती", "ਮਕੈਨਿਕ", "ਗੱਡੀ"
+    ],
+    "healthcare_assistant": [
+        "healthcare", "health", "nurse", "nursing", "hospital", "hospitals", "patient",
+        "patients", "medical", "clinic", "clinics", "care", "caregiver", "medicine", "dawa",
+        "ilaj", "दवा", "इलाज", "रुग्ण", "आरोग्य", "ਸਿਹਤ", "ਹਸਪਤਾਲ"
+    ],
+    "digital_csc": [
+        "computer", "computers", "digital", "digitally", "internet", "online", "data", "csc",
+        "phone", "cyber", "software", "कंप्यूटर", "इंटरनेट", "संगणक", "ਕੰਪਿਊਟਰ"
+    ]
+}
+
+TRADE_GAP_SUMMARIES = {
+    "food_processing": "Possesses agricultural intuition and raw ingredient familiarity, but lacks hygienic value-addition, preservation, and certified packaging standards required for higher market margins.",
+    "apparel_tailoring": "Has basic manual garment handling exposure, but requires structured pattern making, machine maintenance, and commercial quality stitching skills for sustainable self-employment.",
+    "solar_technician": "Good technical inclination; requires certified high-voltage safety protocols, inverter grid synchronization, and NSQF Level 4 PV installation credentials.",
+    "automotive_ev": "Familiar with conventional mechanical tools, but lacks computerized electronic diagnostics and Electric Vehicle (EV) powertrain maintenance certification.",
+    "healthcare_assistant": "High empathy and caregiving orientation; requires clinical hygiene standards, patient handling protocols, and HSSC authorized healthcare credentials.",
+    "digital_csc": "Active smartphone user with digital literacy; needs formal data entry accuracy, e-governance service knowledge, and VLE certification for official government scheme facilitation."
+}
+
+ORDERED_TRADE_KEYS = [
+    "food_processing",
+    "apparel_tailoring",
+    "solar_technician",
+    "automotive_ev",
+    "healthcare_assistant",
+    "digital_csc"
+]
+
+def _keyword_hit(text: str, keyword: str) -> bool:
+    """Helper to match keyword with word boundary for Latin and substring for Indic scripts."""
+    if keyword.isascii():
+        return bool(re.search(rf"\b{re.escape(keyword)}\b", text, re.IGNORECASE))
+    return keyword.lower() in text.lower()
+
+def _matches(text: str, keywords: List[str]) -> bool:
+    """Returns True if any keyword in keywords hits text with word boundaries."""
+    return any(_keyword_hit(text, k) for k in keywords)
+
 def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Evaluates beneficiary profile against trade criteria.
-    Determines recommended trade, skill gap summary, and NSQF alignment.
+    Evaluates beneficiary profile against trade criteria using a scoring engine.
+    Determines recommended trade, skill gap summary, concrete gap breakdown, and NSQF alignment.
     """
     edu = (profile.get("education_level") or "").lower()
     interests = [str(i).lower() for i in profile.get("interests", [])]
@@ -248,57 +417,49 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
     family_occ = (profile.get("family_occupation") or "").lower()
     mobility = (profile.get("mobility_constraint") or "").lower()
     emp_pref = (profile.get("employment_preference") or "undecided").lower()
-    location = profile.get("location") or "District Center"
+    location = profile.get("location") or "Your Local District"
 
     combined_text = " ".join(interests + skills + [family_occ, edu, mobility, emp_pref])
 
-    # Rule 1: Food processing / Agri alignment
-    # Matches: farming, food, crops, agriculture, cooking, preservation, low mobility
-    if any(k in combined_text for k in ["farm", "agri", "food", "cook", "kheti", "crop", "grain", "fruit", "pickle"]):
-        trade_key = "food_processing"
-        gap = "Possesses agricultural intuition and raw ingredient familiarity, but lacks hygienic value-addition, preservation, and certified packaging standards required for higher market margins."
-    
-    # Rule 2: Tailoring / Apparel
-    # Matches: stitch, tailor, sew, cloth, dress, embroidery, silai, kapda
-    elif any(k in combined_text for k in ["tailor", "sew", "stitch", "cloth", "garment", "silai", "embroidery"]):
-        trade_key = "apparel_tailoring"
-        gap = "Has basic manual garment handling exposure, but requires structured pattern making, machine maintenance, and commercial quality stitching skills for sustainable self-employment."
+    # Compute match count for each trade_key using distinct keyword hits
+    scores = {}
+    for t_key in ORDERED_TRADE_KEYS:
+        distinct_hits = sum(1 for kw in set(TRADE_KEYWORDS[t_key]) if _keyword_hit(combined_text, kw))
+        scores[t_key] = distinct_hits
 
-    # Rule 3: Solar / Electrical
-    # Matches: solar, electric, wire, bijli, energy, panel, surya
-    elif any(k in combined_text for k in ["solar", "electric", "wire", "bijli", "energy", "panel", "motor"]):
-        trade_key = "solar_technician"
-        gap = "Good technical inclination; requires certified high-voltage safety protocols, inverter grid synchronization, and NSQF Level 4 PV installation credentials."
+    max_score = max(scores.values())
 
-    # Rule 4: Automotive / EV
-    # Matches: vehicle, bike, car, motor, garage, mechanic, auto, repair
-    elif any(k in combined_text for k in ["bike", "motorcycle", "vehicle", "car", "mechanic", "garage", "gaadi", "repair"]):
-        trade_key = "automotive_ev"
-        gap = "Familiar with conventional mechanical tools, but lacks computerized electronic diagnostics and Electric Vehicle (EV) powertrain maintenance certification."
+    # Check mobility restriction with word boundary helper
+    RESTRICTED_KEYWORDS = [
+        "cannot", "restricted", "home", "near", "village", "village only",
+        "local only", "low", "गाँव में", "गावातच", "दूर नहीं", "जा नहीं सकते",
+        "लांब जाऊ शकत नाही", "ਨੇੜੇ", "ਪਿੰਡ ਵਿੱਚ"
+    ]
+    is_restricted = _matches(mobility, RESTRICTED_KEYWORDS)
 
-    # Rule 5: Healthcare
-    # Matches: health, doctor, nurse, patient, hospital, medicine, dawa, ilaj
-    elif any(k in combined_text for k in ["health", "nurse", "hospital", "patient", "medical", "clinic", "care"]):
-        trade_key = "healthcare_assistant"
-        gap = "High empathy and caregiving orientation; requires clinical hygiene standards, patient handling protocols, and HSSC authorized healthcare credentials."
-
-    # Rule 6: Digital / Computer
-    # Matches: computer, phone, digital, internet, online, data, csc
-    elif any(k in combined_text for k in ["computer", "digital", "internet", "online", "data", "csc", "phone", "cyber"]):
-        trade_key = "digital_csc"
-        gap = "Active smartphone user with digital literacy; needs formal data entry accuracy, e-governance service knowledge, and VLE certification for official government scheme facilitation."
-
-    # Default fallback based on mobility and education
+    if max_score > 0:
+        top_candidates = [t_key for t_key in ORDERED_TRADE_KEYS if scores[t_key] == max_score]
+        if len(top_candidates) == 1:
+            trade_key = top_candidates[0]
+        else:
+            # Tiebreak: prefer trade whose mobility_requirement matches profile restriction
+            if is_restricted:
+                low_mob_candidates = [t for t in top_candidates if TRADES_CATALOG[t]["mobility_requirement"] == "low"]
+                trade_key = low_mob_candidates[0] if low_mob_candidates else top_candidates[0]
+            else:
+                trade_key = top_candidates[0]
+        gap = TRADE_GAP_SUMMARIES[trade_key]
     else:
-        if "cannot" in mobility or "low" in mobility or "near" in mobility or "village" in mobility:
+        # Default fallback based on mobility and education
+        if is_restricted:
             trade_key = "food_processing"
             gap = "Beneficiary needs low-mobility, local village cluster livelihood. Skill gap exists in value-added processing and certified hygiene packaging under PM-AJAY."
         else:
-            trade_key = "digital_csc" if "10th" in edu or "12th" in edu else "food_processing"
+            trade_key = "digital_csc" if ("10th" in edu or "12th" in edu or "graduate" in edu) else "food_processing"
             gap = "Requires formal vocational certification to bridge gap from informal labor to structured PM-AJAY livelihood pathway."
 
     # If mobility is strictly low and selected trade has medium mobility, fall back to low mobility trade
-    if ("cannot" in mobility or "restricted" in mobility or "home" in mobility or "village only" in mobility) and TRADES_CATALOG[trade_key]["mobility_requirement"] == "medium":
+    if is_restricted and TRADES_CATALOG[trade_key]["mobility_requirement"] == "medium":
         trade_key = "food_processing"
         gap = f"Adapted for restricted mobility: Selected home/cluster-based Food Processing over travel-intensive trades. {gap}"
 
@@ -342,6 +503,7 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
         "trade_key": trade_key,
         "nsqf_alignment": trade["nsqf_level"],
         "gap_summary": gap,
+        "skill_gap_breakdown": trade.get("skill_gaps", []),
         "training_programme": trade["training_programme"],
         "training_centre": f"{trade['training_centre']} ({location})",
         "local_opportunity": trade["local_opportunity"],

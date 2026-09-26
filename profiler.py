@@ -7,51 +7,58 @@ from typing import Dict, Any, Tuple, List
 
 # Common multilingual vocabulary patterns
 EDU_PATTERNS = [
-    (r"(10th|tenth|10\s*वीं|१०वी|दहावी|ਦਸਵੀਂ|10\s*pass)", "10th Standard"),
-    (r"(12th|twelfth|12\s*वीं|१२वी|बारावी|ਬਾਰ੍ਹਵੀਂ|inter|intermediate)", "12th Standard"),
-    (r"(8th|eighth|8\s*वीं|८वी|आठवी|ਅੱਠਵੀਂ)", "8th Standard"),
-    (r"(5th|fifth|5\s*वीं|५वी|पाचवी)", "Primary (5th Standard)"),
-    (r"(graduate|degree|ba|b\.a|bcom|bsc|पदवी|ਗ੍ਰੈਜੂਏਟ)", "Graduate"),
-    (r"(uneducated|illiterate|no\s*school|अनपढ़|अशिक्षित|निरक्षर|ਨਿਰੱਖਰ)", "Informal / No formal schooling")
+    (r"\b(10th|tenth|10\s*pass)\b|(10\s*वीं|१०वी|दहावी|ਦਸਵੀਂ)", "10th Standard"),
+    (r"\b(12th|twelfth|inter|intermediate)\b|(12\s*वीं|१२वी|बारावी|ਬਾਰ੍ਹਵੀਂ)", "12th Standard"),
+    (r"\b(8th|eighth)\b|(8\s*वीं|८वी|आठवी|ਅੱਠਵੀਂ)", "8th Standard"),
+    (r"\b(5th|fifth)\b|(5\s*वीं|५वी|पाचवी)", "Primary (5th Standard)"),
+    (r"\b(graduate|degree|ba|b\.a|bcom|bsc)\b|(पदवी|ਗ੍ਰੈਜੂਏਟ)", "Graduate"),
+    (r"\b(uneducated|illiterate|no\s*school)\b|(अनपढ़|अशिक्षित|निरक्षर|ਨਿਰੱਖਰ)", "Informal / No formal schooling")
 ]
 
 FAMILY_OCC_PATTERNS = [
-    (r"(farm|kheti|agri|crop|field|खेती|किसान|कृषक|शेती|शेतकरी|ਖੇਤੀ|ਕਿਸਾਨ)", "Agriculture & Farming"),
-    (r"(labour|daily\s*wage|mazdoor|मजदूरी|मजदूर|हमाली|मजुरी|ਮਜ਼ਦੂਰੀ)", "Daily Wage Labor"),
-    (r"(tailor|darji|silai|दर्जी|सिलाई|शिंपी|ਦਰਜ਼ੀ)", "Tailoring / Weaving"),
-    (r"(artisan|potter|blacksmith|lohar|kumhar|हस्तशिल्प|कारीगर|लोहार)", "Artisan / Handicrafts"),
-    (r"(shop|retail|dukan|किराना|दुकान|व्यापार|ਦੁਕਾਨ)", "Small Retail / Kirana"),
-    (r"(animal|dairy|cow|buffalo|pashu|गाय|भैंस|पशुपालन|ਦੁੱਧ|ਡੇਅਰੀ)", "Dairy & Animal Husbandry")
+    (r"\b(farm|farming|agri|agriculture|crop|crops|field|fields)\b|(खेती|किसान|कृषक|शेती|शेतकरी|ਖੇਤੀ|ਕਿਸਾਨ)", "Agriculture & Farming"),
+    (r"\b(labour|labor|daily\s*wage|mazdoor)\b|(मजदूरी|मजदूर|हमाली|मजुरी|ਮਜ਼ਦੂਰੀ)", "Daily Wage Labor"),
+    (r"\b(tailor|tailoring|darji|silai|weaver|weaving)\b|(दर्जी|सिलाई|शिंपी|ਦਰਜ਼ੀ)", "Tailoring / Weaving"),
+    (r"\b(artisan|potter|blacksmith|lohar|kumhar)\b|(हस्तशिल्प|कारीगर|लोहार)", "Artisan / Handicrafts"),
+    (r"\b(shop|retail|dukan)\b|(किराना|दुकान|व्यापार|ਦੁਕਾਨ)", "Small Retail / Kirana"),
+    (r"\b(animal|dairy|cow|buffalo|pashu)\b|(गाय|भैंस|पशुपालन|ਦੁੱਧ|ਡੇਅਰੀ)", "Dairy & Animal Husbandry")
 ]
 
 INTEREST_SKILL_PATTERNS = [
-    (r"(food|cook|processing|pickle|masala|खाद्य|खाना|अन्न|लोणचे|मसाले|ਫੂਡ|ਖਾਣਾ|ਅਚਾਰ)", "Food Processing & Preservation"),
-    (r"(sew|tailor|cloth|stitch|dress|apparel|सिलाई|कपड़े|शिलाई|कपडे|ਸਿਲਾਈ|ਕੱਪੜੇ)", "Tailoring & Garment Making"),
-    (r"(solar|sun|electric|wire|bijli|panel|सोलर|सौर|बिजली|वायरिंग|ਸੋਲਰ|ਬਿਜਲੀ)", "Solar PV & Electrical Installations"),
-    (r"(mechanic|bike|car|motor|garage|repair|गाड़ी|मोटर|दुरुस्ती|ਮਕੈਨਿਕ|ਗੱਡੀ)", "Two-Wheeler & EV Maintenance"),
-    (r"(health|hospital|nurse|care|patient|दवा|इलाज|रुग्ण|आरोग्य|ਸਿਹਤ|ਹਸਪਤਾਲ)", "Healthcare & Patient Support"),
-    (r"(computer|digital|data|phone|internet|online|कंप्यूटर|इंटरनेट|संगणक|ਕੰਪਿਊਟਰ)", "Digital Services & CSC Operation")
+    (r"\b(food|cook|cooking|processing|pickle|masala)\b|(खाद्य|खाना|अन्न|लोणचे|मसाले|ਫੂਡ|ਖਾਣਾ|ਅਚਾਰ)", "Food Processing & Preservation"),
+    (r"\b(sew|sewing|tailor|tailoring|cloth|clothes|clothing|stitch|stitching|dress|apparel)\b|(सिलाई|कपड़े|शिलाई|कपडे|ਸਿਲਾਈ|ਕੱਪੜੇ)", "Tailoring & Garment Making"),
+    (r"\b(solar|sun|electric|electrical|wire|wiring|bijli|panel|panels)\b|(सोलर|सौर|बिजली|वायरिंग|ਸੋਲਰ|ਬਿਜਲੀ)", "Solar PV & Electrical Installations"),
+    (r"\b(mechanic|bike|bikes|motorcycle|motorcycles|car|cars|garage|repair|automotive|vehicle|vehicles|scooter|scooters|ev)\b|(गाड़ी|मोटर|दुरुस्ती|ਮਕੈਨਿਕ|ਗੱਡੀ)", "Two-Wheeler & EV Maintenance"),
+    (r"\b(healthcare|health|hospital|nurse|nursing|patient|patients|medical|clinic|care|caregiver|medicine)\b|(दवा|इलाज|रुग्ण|आरोग्य|ਸਿਹਤ|ਹਸਪਤਾਲ)", "Healthcare & Patient Support"),
+    (r"\b(computer|computers|digital|digitally|data|phone|internet|online|csc)\b|(कंप्यूटर|इंटरनेट|संगणक|ਕੰਪਿਊਟਰ)", "Digital Services & CSC Operation")
 ]
 
 MOBILITY_PATTERNS = [
-    (r"(can\s*not\s*travel|cannot\s*travel|can\'t\s*travel|don\'t\s*want\s*to\s*go\s*far|stay\s*near|home\s*based|within\s*village|गाँव\s*में|गावातच|दूर\s*नहीं|जा\s*नहीं\s*सकते|लांब\s*जाऊ\s*शकत\s*नाही|ਨੇੜੇ|ਪਿੰਡ\s*ਵਿੱਚ)", "Cannot travel far (Restricted to village/cluster)"),
-    (r"(can\s*travel|anywhere|district\s*center|town|commute|शहर\s*जा\s*सकते|शहर|तालुक्यात|तालुका|ਜਾ\s*ਸਕਦਾ)", "Willing to commute to District/Taluka center")
+    (r"\b(can\s*not\s*travel|cannot\s*travel|can\'t\s*travel|don\'t\s*want\s*to\s*go\s*far|stay\s*near|home\s*based|within\s*village|village\s*only|local\s*only)\b|(गाँव\s*में|गावातच|दूर\s*नहीं|जा\s*नहीं\s*सकते|लांब\s*जाऊ\s*शकत\s*नाही|ਨੇੜੇ|ਪਿੰਡ\s*ਵਿੱਚ)", "Cannot travel far (Restricted to village/cluster)"),
+    (r"\b(can\s*travel|willing\s*to\s*travel|anywhere|district\s*center|town|commute)\b|(शहर\s*जा\s*सकते|शहर|तालुक्यात|तालुका|ਜਾ\s*ਸਕਦਾ)", "Willing to commute to District/Taluka center")
 ]
 
 EMP_PREF_PATTERNS = [
-    (r"(own\s*business|self\s*employ|dukan|shop|khud\s*ka|business|स्वयंरोजगार|खुद\s*का\s*काम|स्वतःचा\s*व्यवसाय|दुकान|दुकानदार|ਆਪਣਾ\s*ਕੰਮ)", "self_employment"),
-    (r"(job|naukri|salary|wage|company|नौकरी|नोकरी|पगार|ਕੰਪਨੀ|ਨੌਕਰੀ)", "wage_employment")
+    (r"\b(own\s*business|self\s*employ|self\s*employment|dukan|shop|khud\s*ka|business)\b|(स्वयंरोजगार|खुद\s*का\s*काम|स्वतःचा\s*व्यवसाय|दुकान|दुकानदार|ਆਪਣਾ\s*ਕੰਮ)", "self_employment"),
+    (r"\b(job|naukri|salary|wage|company)\b|(नौकरी|नोकरी|पगार|ਕੰਪਨੀ|ਨੌਕਰੀ)", "wage_employment")
 ]
 
 LOCATION_PATTERNS = [
-    (r"(pune|पुणे|ਪੂਨੇ)", "Pune"),
-    (r"(solapur|सोलापूर|सोलापुर)", "Solapur"),
-    (r"(nagpur|नागपूर|नागपुर)", "Nagpur"),
-    (r"(amritsar|ਅੰਮ੍ਰਿਤਸਰ|अमृतसर)", "Amritsar"),
-    (r"(ludhiana|ਲੁਧਿਆਣਾ|लुधियाना)", "Ludhiana"),
-    (r"(varanasi|kashi|वाराणसी|बनारस)", "Varanasi"),
-    (r"(patna|पटना)", "Patna"),
-    (r"(kolhapur|कोल्हापूर)", "Kolhapur")
+    (r"\b(pune)\b|(पुणे|ਪੂਨੇ)", "Pune"),
+    (r"\b(solapur)\b|(सोलापूर|सोलापुर)", "Solapur"),
+    (r"\b(nagpur)\b|(नागपूर|नागपुर)", "Nagpur"),
+    (r"\b(amritsar)\b|(ਅੰਮ੍ਰਿਤਸਰ|अमृतसर)", "Amritsar"),
+    (r"\b(ludhiana)\b|(ਲੁਧਿਆਣਾ|लुधियाना)", "Ludhiana"),
+    (r"\b(varanasi|kashi)\b|(वाराणसी|बनारस)", "Varanasi"),
+    (r"\b(patna)\b|(पटना)", "Patna"),
+    (r"\b(kolhapur)\b|(कोल्हापूर)", "Kolhapur"),
+    (r"\b(madurai)\b|(மதுரை|मदुरै)", "Madurai"),
+    (r"\b(mysuru|mysore)\b|(ಮೈಸೂರು|मैसूर)", "Mysuru"),
+    (r"\b(ranchi)\b|(राँची|रांची)", "Ranchi"),
+    (r"\b(medinipur|midnapore)\b|(মেদিনীপুর|मेदनीपुर)", "Medinipur"),
+    (r"\b(kamrup|guwahati)\b|(কামৰূপ|कामरूप)", "Kamrup"),
+    (r"\b(bhopal)\b|(भोपाल)", "Bhopal"),
+    (r"\b(raipur)\b|(रायपुर)", "Raipur")
 ]
 
 def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None) -> Tuple[Dict[str, Any], bool]:
@@ -113,7 +120,7 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
 
     # Default location if missing
     if not profile.get("location"):
-        profile["location"] = "Pune District"
+        profile["location"] = "Your Local District"
 
     # Profile Completeness Logic:
     # A profile is complete when we have enough signals to recommend:
@@ -123,7 +130,7 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
     has_interest = len(profile.get("interests", [])) > 0
     has_mobility = bool(profile.get("mobility_constraint"))
 
-    is_complete = (has_interest and (has_edu or has_fam or has_mobility)) or (has_edu and has_fam)
+    is_complete = (has_interest and (has_edu or has_fam or has_mobility)) or ((has_edu or has_fam) and has_mobility) or (has_edu and has_fam)
 
     return profile, is_complete
 

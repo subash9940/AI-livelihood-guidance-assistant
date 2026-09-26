@@ -8,7 +8,14 @@ from datetime import datetime, timedelta
 import random
 from database import get_connection, init_db
 
-DISTRICTS = ["Pune", "Solapur", "Nagpur", "Amritsar", "Varanasi"]
+DISTRICTS = [
+    "Pune", "Solapur", "Nagpur",      # West
+    "Amritsar", "Varanasi",           # North
+    "Madurai", "Mysuru",              # South
+    "Ranchi", "Medinipur",            # East
+    "Kamrup",                         # North-East
+    "Bhopal", "Raipur"                # Central
+]
 
 SEED_PROFILES = [
     {
@@ -86,6 +93,101 @@ SEED_PROFILES = [
         "programme": "PM-AJAY Healthcare Livelihood Track",
         "centre": "District Hospital Skill Lab Pune",
         "opportunity": "Community Health Center General Duty Assistant"
+    },
+    {
+        "name": "Priya Murugan",
+        "language": "ta",
+        "location": "Madurai",
+        "mobility_constraint": "Cannot travel far",
+        "education_level": "8th Standard",
+        "family_occupation": "Weaving & Handloom",
+        "current_livelihood": "Handloom assistant",
+        "skills": ["Tailoring & Garment Making"],
+        "interests": ["Tailoring & Garment Making"],
+        "employment_preference": "self_employment",
+        "entry_mode": "app",
+        "trade": "Self-Employed Tailor & Apparel Specialist",
+        "status": "placed",
+        "nsqf": "NSQF Level 3 (AMH/Q1947)",
+        "programme": "PM-AJAY Special Tailoring Initiative",
+        "centre": "Jan Shikshan Sansthan Madurai",
+        "opportunity": "Boutique self-employment unit with Mudra loan"
+    },
+    {
+        "name": "Siddharth Soren",
+        "language": "hi",
+        "location": "Ranchi",
+        "mobility_constraint": "Willing to commute to District center",
+        "education_level": "12th Standard",
+        "family_occupation": "Daily Wage Labor",
+        "current_livelihood": "Electrical apprentice",
+        "skills": ["Solar PV & Electrical Installations"],
+        "interests": ["Solar PV & Electrical Installations"],
+        "employment_preference": "wage_employment",
+        "entry_mode": "app",
+        "trade": "Solar PV Installer (Suryamitra)",
+        "status": "enrolled",
+        "nsqf": "NSQF Level 4 (SGJ/Q0101)",
+        "programme": "PM-AJAY Suryamitra Green Energy Skill Initiative",
+        "centre": "Govt ITI Ranchi",
+        "opportunity": "Solar rooftop installation vendor with DISCOM"
+    },
+    {
+        "name": "Monali Das",
+        "language": "en",
+        "location": "Kamrup",
+        "mobility_constraint": "Local village cluster only",
+        "education_level": "10th Standard",
+        "family_occupation": "Small Retail / Kirana",
+        "current_livelihood": "Store assistant",
+        "skills": ["Digital Services & CSC Operation"],
+        "interests": ["Digital Services & CSC Operation"],
+        "employment_preference": "self_employment",
+        "entry_mode": "facilitator",
+        "trade": "Digital Services Operator & CSC Citizen Facilitator",
+        "status": "placed",
+        "nsqf": "NSQF Level 4 (SSC/Q2212)",
+        "programme": "PM-AJAY Rural Digital Track",
+        "centre": "District NIELIT Kamrup",
+        "opportunity": "Common Service Center (CSC) VLE Kendra"
+    },
+    {
+        "name": "Deepak Verma",
+        "language": "hi",
+        "location": "Bhopal",
+        "mobility_constraint": "Willing to commute",
+        "education_level": "10th Standard",
+        "family_occupation": "Mechanic Helper",
+        "current_livelihood": "Garage assistant",
+        "skills": ["Two-Wheeler & EV Maintenance"],
+        "interests": ["Two-Wheeler & EV Maintenance"],
+        "employment_preference": "self_employment",
+        "entry_mode": "app",
+        "trade": "Two-Wheeler & EV Service Technician",
+        "status": "enrolled",
+        "nsqf": "NSQF Level 3 (ASC/Q1411)",
+        "programme": "PM-AJAY Electric Mobility Track",
+        "centre": "District Skill Center Bhopal",
+        "opportunity": "Two-wheeler EV battery swapping and repair kiosk"
+    },
+    {
+        "name": "Ananya Roy",
+        "language": "en",
+        "location": "Medinipur",
+        "mobility_constraint": "Cannot travel far",
+        "education_level": "10th Standard",
+        "family_occupation": "Agriculture & Farming",
+        "current_livelihood": "Farm household assistant",
+        "skills": ["Food Processing & Preservation"],
+        "interests": ["Food Processing & Preservation"],
+        "employment_preference": "self_employment",
+        "entry_mode": "facilitator",
+        "trade": "Food Processing & Agri-Value Addition Technician",
+        "status": "enrolled",
+        "nsqf": "NSQF Level 3 (FICSI/Q0102)",
+        "programme": "PM-AJAY Free Skill Training",
+        "centre": "JSS Medinipur",
+        "opportunity": "Local fruit and grain packaging SHG cluster"
     },
     {
         "name": "Vikas Gaikwad",
