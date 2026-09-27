@@ -1,5 +1,5 @@
 """
-FastAPI Backend for PM-AJAY AI Livelihood Guidance Assistant (SIH PS 26097).
+FastAPI Backend for Nivara — AI Livelihood Guidance Assistant (SIH PS 26097).
 Exposes the exact Section 5 API surface and serves the responsive frontend.
 """
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
@@ -19,6 +19,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import database
 import profiler
 import nsqf_rules
+import region_schemes
+import training_capacity
 
 from contextlib import asynccontextmanager
 
@@ -33,7 +35,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(
-    title="AI Livelihood Guidance Assistant — PM-AJAY",
+    title="Nivara — AI Livelihood Guidance Assistant",
     description="Multilingual Voice-First Assistant for PM-AJAY Beneficiaries",
     version="1.0.0",
     lifespan=lifespan
@@ -89,11 +91,13 @@ async def voice_input(session_id: str, request: Request):
     input_text = ""
     lang = session.get("language", "en")
 
+    profile_override = None
     if "application/json" in content_type:
         body = await request.json()
         input_text = body.get("transcript") or body.get("text") or ""
         if body.get("language"):
             lang = body.get("language")
+        profile_override = body.get("profile_data") or body.get("profile")
     elif "multipart/form-data" in content_type or "application/x-www-form-urlencoded" in content_type:
         form = await request.form()
         input_text = form.get("text") or form.get("transcript") or ""
@@ -106,11 +110,18 @@ async def voice_input(session_id: str, request: Request):
             input_text = body.get("transcript") or body.get("text") or ""
             if body.get("language"):
                 lang = body.get("language")
+            profile_override = body.get("profile_data") or body.get("profile")
         except Exception:
             pass
 
     if not input_text.strip():
-        raise HTTPException(status_code=400, detail="No voice transcript or text provided")
+        if profile_override and isinstance(profile_override, dict):
+            name = profile_override.get("name", "Beneficiary")
+            trade_interest = ", ".join(profile_override.get("interests", [])) or "PM-AJAY Trade"
+            loc = profile_override.get("location") or profile_override.get("state") or "Local District"
+            input_text = f"Profile submission for {name} from {loc} interested in {trade_interest}."
+        else:
+            raise HTTPException(status_code=400, detail="No voice transcript or text provided")
 
     # 1. Update Conversation History
     history = session.get("conversation_history", [])
@@ -122,6 +133,18 @@ async def voice_input(session_id: str, request: Request):
     current_profile["entry_mode"] = session.get("entry_mode", "app")
 
     updated_profile, is_complete = profiler.extract_profile_from_text(input_text, current_profile)
+
+    # Merge explicit profile override if passed (for direct profile or demo selector input)
+    if profile_override and isinstance(profile_override, dict):
+        for k, v in profile_override.items():
+            if v is not None:
+                updated_profile[k] = v
+        if "education" in updated_profile and "education_level" not in updated_profile:
+            updated_profile["education_level"] = updated_profile["education"]
+        if "mobility" in updated_profile and "mobility_constraint" not in updated_profile:
+            updated_profile["mobility_constraint"] = updated_profile["mobility"]
+        if updated_profile.get("education_level") or updated_profile.get("education"):
+            is_complete = True
 
     # 3. Next prompt generation
     if is_complete:
@@ -142,12 +165,16 @@ async def voice_input(session_id: str, request: Request):
     beneficiary_id = session.get("beneficiary_id")
     if is_complete:
         if not beneficiary_id:
-            # Save Beneficiary
+            raw_loc = updated_profile.get("state") or updated_profile.get("location") or "Delhi"
+            c_state = region_schemes.get_canonical_state(raw_loc) or "Delhi"
+            # Save Beneficiary with name
             beneficiary_id = database.save_beneficiary({
+                "name": updated_profile.get("name"),
                 "language": lang,
                 "location": updated_profile.get("location", "Your Local District"),
-                "mobility_constraint": updated_profile.get("mobility_constraint"),
-                "education_level": updated_profile.get("education_level", "10th Standard"),
+                "state": c_state,
+                "mobility_constraint": updated_profile.get("mobility_constraint") or updated_profile.get("mobility"),
+                "education_level": updated_profile.get("education_level") or updated_profile.get("education", "10th Standard"),
                 "family_occupation": updated_profile.get("family_occupation", "Agriculture"),
                 "current_livelihood": updated_profile.get("current_livelihood", "Daily wage / Informal"),
                 "skills": updated_profile.get("skills", []),
@@ -180,6 +207,15 @@ async def voice_input(session_id: str, request: Request):
 
             # Save initial FollowUp
             database.update_followup(beneficiary_id, "enrolled")
+
+            # Record demand signal event
+            database.record_recommendation_demand(
+                state=c_state,
+                trade_key=skill_res.get("trade_key", "food_processing"),
+                trade_name=skill_res["recommended_trade"],
+                beneficiary_id=beneficiary_id,
+                session_id=session_id
+            )
 
     # Update session in db
     database.update_session(
@@ -214,23 +250,97 @@ def get_recommendation(session_id: str):
 
     profile = session.get("profile_data", {})
     skill_res = nsqf_rules.analyze_skill_gap(profile)
+    reg_schemes = region_schemes.get_schemes_for_profile(profile)
 
     return {
         "recommended_trade": skill_res["recommended_trade"],
         "trade_key": skill_res.get("trade_key"),
+        "qp_name": skill_res.get("qp_name"),
+        "qp_code": skill_res.get("qp_code"),
+        "nsqf_level": skill_res.get("nsqf_level"),
+        "ssc_name": skill_res.get("ssc_name"),
         "nsqf_alignment": skill_res["nsqf_alignment"],
         "gap_summary": skill_res["gap_summary"],
+        "readiness_score": skill_res.get("readiness_score", 0),
+        "readiness_relevant_count": skill_res.get("readiness_relevant_count", 0),
+        "readiness_total_required": skill_res.get("readiness_total_required", 5),
         "skill_gap_breakdown": skill_res.get("skill_gap_breakdown", []),
+        "regional_schemes": reg_schemes,
         "training_programme": skill_res["training_programme"],
         "training_centre": skill_res["training_centre"],
         "local_opportunity": skill_res["local_opportunity"],
         "roadmap_steps": skill_res["roadmap_steps"],
         "spoken_summary": skill_res["spoken_summary"],
         "duration_hours": skill_res.get("duration_hours"),
-        "sector": skill_res.get("sector"),
+        "sector": skill_res.get("ssc_name") or skill_res.get("sector"),
         "beneficiary_id": session.get("beneficiary_id"),
         "profile": profile
     }
+
+# --- GET & POST /recommendation ---
+@app.api_route("/recommendation", methods=["GET", "POST"])
+async def get_recommendation_direct(
+    request: Request,
+    session_id: Optional[str] = None,
+    state: Optional[str] = None,
+    location: Optional[str] = None
+):
+    if session_id:
+        return get_recommendation(session_id)
+
+    profile_data: Dict[str, Any] = {}
+    if request.method == "POST":
+        try:
+            body = await request.json()
+            if isinstance(body, dict):
+                if "session_id" in body and body["session_id"]:
+                    return get_recommendation(body["session_id"])
+                profile_data = body.get("profile") or body.get("profile_data") or body
+        except Exception:
+            pass
+
+    # Extract target state for schemes
+    target_state = state or location or profile_data.get("state") or profile_data.get("location")
+
+    # If full profile with trade/interests/skills was provided, compute full NSQF recommendation
+    if profile_data and (profile_data.get("interests") or profile_data.get("skills") or profile_data.get("education") or profile_data.get("education_level")):
+        skill_res = nsqf_rules.analyze_skill_gap(profile_data)
+        reg_schemes = region_schemes.get_schemes_for_profile(profile_data)
+        state_val = region_schemes.get_canonical_state(target_state) or "Delhi"
+        database.record_recommendation_demand(
+            state=state_val,
+            trade_key=skill_res.get("trade_key", "food_processing"),
+            trade_name=skill_res["recommended_trade"]
+        )
+        return {
+            "recommended_trade": skill_res["recommended_trade"],
+            "trade_key": skill_res.get("trade_key"),
+            "qp_name": skill_res.get("qp_name"),
+            "qp_code": skill_res.get("qp_code"),
+            "nsqf_level": skill_res.get("nsqf_level"),
+            "ssc_name": skill_res.get("ssc_name"),
+            "nsqf_alignment": skill_res["nsqf_alignment"],
+            "gap_summary": skill_res["gap_summary"],
+            "readiness_score": skill_res.get("readiness_score", 0),
+            "skill_gap_breakdown": skill_res.get("skill_gap_breakdown", []),
+            "regional_schemes": reg_schemes,
+            "training_programme": skill_res["training_programme"],
+            "training_centre": skill_res["training_centre"],
+            "local_opportunity": skill_res["local_opportunity"],
+            "roadmap_steps": skill_res["roadmap_steps"],
+            "spoken_summary": skill_res["spoken_summary"],
+            "duration_hours": skill_res.get("duration_hours"),
+            "sector": skill_res.get("ssc_name") or skill_res.get("sector"),
+            "profile": profile_data
+        }
+
+    reg_schemes = region_schemes.get_regional_schemes(target_state) if target_state else []
+    return {
+        "readiness_score": 0,
+        "regional_schemes": reg_schemes
+    }
+
+
 
 # --- 4. GET /dashboard/summary?district= ---
 @app.get("/dashboard/summary")
@@ -297,6 +407,11 @@ def get_dashboard_summary(district: Optional[str] = None):
     # Sort descending
     skill_demand_by_trade.sort(key=lambda x: x["count"], reverse=True)
 
+    # Compute Regional Training Capacity vs Demand Report
+    default_state = "all" if not district or district.lower() == "all" else (region_schemes.get_canonical_state(district) or "Delhi")
+    demand_by_trade = database.get_demand_counts_by_state(default_state)
+    capacity_report = training_capacity.build_capacity_gap_report(default_state, demand_by_trade)
+
     return {
         "district": district or "All Districts",
         "enrolments": enrolments,
@@ -305,8 +420,25 @@ def get_dashboard_summary(district: Optional[str] = None):
         "no_contacts": no_contacts,
         "total_beneficiaries": len(beneficiary_list),
         "skill_demand_by_trade": skill_demand_by_trade,
-        "beneficiaries": beneficiary_list
+        "beneficiaries": beneficiary_list,
+        "capacity_gap": capacity_report
     }
+
+# --- GET /dashboard/capacity-gap ---
+@app.get("/dashboard/capacity-gap")
+def get_dashboard_capacity_gap(state: Optional[str] = "Delhi"):
+    """
+    Returns aggregate demand vs. illustrative training capacity per region with gap analysis.
+    """
+    req_state = state or "Delhi"
+    if req_state.lower() == "all":
+        target_state = "all"
+    else:
+        target_state = region_schemes.get_canonical_state(req_state) or req_state
+
+    demand_by_trade = database.get_demand_counts_by_state(target_state)
+    report = training_capacity.build_capacity_gap_report(target_state, demand_by_trade)
+    return report
 
 # --- 5. POST /followup/{beneficiary_id} ---
 @app.post("/followup/{beneficiary_id}")
@@ -336,10 +468,10 @@ def serve_index():
     index_path = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    return {"message": "AI Livelihood Guidance Assistant API is running"}
+    return {"message": "Nivara API is running"}
 
 if __name__ == "__main__":
     import uvicorn
-    print("\nStarting PM-AJAY AI Livelihood Assistant on http://127.0.0.1:8000 ...")
+    print("\nStarting Nivara AI Livelihood Assistant on http://127.0.0.1:8000 ...")
     uvicorn.run(app, host="127.0.0.1", port=8000)
 

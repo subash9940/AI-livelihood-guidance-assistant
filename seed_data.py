@@ -1,5 +1,5 @@
 """
-Seed data generator for PM-AJAY Livelihood Guidance Assistant.
+Seed data generator for Nivara — AI Livelihood Guidance Assistant.
 Populates realistic initial beneficiaries, follow-up records, and district stats.
 """
 import uuid

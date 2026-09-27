@@ -1,4 +1,4 @@
-# PM-AJAY AI Livelihood Guidance Assistant (SIH PS 26097)
+# Nivara — AI Livelihood Guidance Assistant (SIH PS 26097)
 **Government of India · Ministry of Social Justice & Empowerment (MoSJE)**
 
 An AI-powered, multilingual, **voice-first** assistant for Scheduled Caste (SC) beneficiaries under the **PM-AJAY (Pradhan Mantri Anusuchit Jaati Abhyuday Yojana)** scheme. Replaces friction-heavy text intake forms with a spoken conversation that gathers candidate background, conducts NSQF-aligned skill-gap analysis, and generates tailored 4-step livelihood roadmaps.

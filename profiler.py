@@ -1,5 +1,5 @@
 """
-Beneficiary Profiling Engine for PM-AJAY AI Livelihood Guidance Assistant.
+Beneficiary Profiling Engine for Nivara — AI Livelihood Guidance Assistant.
 Extracts structured schema fields from conversational natural language input (spoken or transcribed).
 """
 import re
@@ -43,7 +43,20 @@ EMP_PREF_PATTERNS = [
     (r"\b(job|naukri|salary|wage|company)\b|(नौकरी|नोकरी|पगार|ਕੰਪਨੀ|ਨੌਕਰੀ)", "wage_employment")
 ]
 
+STATE_PATTERNS = [
+    (r"\b(delhi|new\s*delhi)\b|(दिल्ली|ਦਿੱਲੀ)", "Delhi"),
+    (r"\b(maharashtra)\b|(महाराष्ट्र|ਮਹਾਰਾਸ਼ਟਰ)", "Maharashtra"),
+    (r"\b(tamil\s*nadu)\b|(तमिलनाडु|தமிழ்நாடு)", "Tamil Nadu"),
+    (r"\b(karnataka)\b|(कर्नाटक|ਕਰਨਾਟਕ|ಕರ್ನಾಟಕ)", "Karnataka"),
+    (r"\b(uttar\s*pradesh|u\.?p\.?)\b|(उत्तर\s*प्रदेश|ਉੱਤਰ\s*ਪ੍ਰਦੇਸ਼)", "Uttar Pradesh"),
+]
+
 LOCATION_PATTERNS = [
+    (r"\b(delhi|new\s*delhi)\b|(दिल्ली|ਦਿੱਲੀ)", "Delhi"),
+    (r"\b(maharashtra)\b|(महाराष्ट्र|ਮਹਾਰਾਸ਼ਟਰ)", "Maharashtra"),
+    (r"\b(tamil\s*nadu)\b|(तमिलनाडु|தமிழ்நாடு)", "Tamil Nadu"),
+    (r"\b(karnataka)\b|(कर्नाटक|ਕਰਨਾਟਕ|ಕರ್ನಾಟಕ)", "Karnataka"),
+    (r"\b(uttar\s*pradesh|u\.?p\.?)\b|(उत्तर\s*प्रदेश|ਉੱਤਰ\s*ਪ੍ਰਦੇਸ਼)", "Uttar Pradesh"),
     (r"\b(pune)\b|(पुणे|ਪੂਨੇ)", "Pune"),
     (r"\b(solapur)\b|(सोलापूर|सोलापुर)", "Solapur"),
     (r"\b(nagpur)\b|(नागपूर|नागपुर)", "Nagpur"),
@@ -105,10 +118,15 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
             profile["employment_preference"] = val
             break
 
-    # 6. Location
+    # 6. Location & State
     for pattern, val in LOCATION_PATTERNS:
         if re.search(pattern, lowered, re.IGNORECASE):
             profile["location"] = val
+            break
+
+    for pattern, val in STATE_PATTERNS:
+        if re.search(pattern, lowered, re.IGNORECASE):
+            profile["state"] = val
             break
 
     # Current Livelihood default or inferred

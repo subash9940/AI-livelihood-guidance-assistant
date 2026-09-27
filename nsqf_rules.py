@@ -1,5 +1,5 @@
 """
-NSQF Rules and Recommendation Engine for PM-AJAY Livelihood Guidance Assistant.
+NSQF Rules and Recommendation Engine for Nivara — AI Livelihood Guidance Assistant.
 Matches beneficiary background, education, mobility constraints, and interests
 against NSQF-aligned job roles and PM-AJAY skill training schemes.
 """
@@ -10,10 +10,13 @@ from typing import Dict, Any, List, Tuple
 TRADES_CATALOG = {
     "food_processing": {
         "trade_name": "Food Processing & Agri-Value Addition Technician",
+        "qp_name": "Pickle Making Technician",
+        "qp_code": "FIC/Q0102",
+        "nsqf_level": "NSQF Level 4",
+        "ssc_name": "Food Industry Capacity & Skill Initiative (FICSI)",
         "trade_name_hi": "खाद्य प्रसंस्करण एवं कृषि मूल्य संवर्धन तकनीशियन",
         "trade_name_mr": "अन्न प्रक्रिया व कृषी मूल्यवर्धन तंत्रज्ञ",
         "trade_name_pa": "ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ ਅਤੇ ਖੇਤੀ ਮੁੱਲ ਵਾਧਾ ਤਕਨੀਸ਼ੀਅਨ",
-        "nsqf_level": "NSQF Level 3 (FICSI/Q0102)",
         "min_education": ["none", "5th", "8th", "10th", "12th", "graduate"],
         "mobility_requirement": "low",  # Can be conducted in village/cluster
         "sector": "Food Industry Capacity & Skill Initiative (FICSI)",
@@ -66,13 +69,16 @@ TRADES_CATALOG = {
     },
     "apparel_tailoring": {
         "trade_name": "Self-Employed Tailor & Apparel Specialist",
+        "qp_name": "Self Employed Tailor",
+        "qp_code": "AMH/Q1947",
+        "nsqf_level": "NSQF Level 4",
+        "ssc_name": "Apparel, Made-Ups & Home Furnishing Sector Skill Council (AMHSSC)",
         "trade_name_hi": "स्व-रोजगार दर्जी एवं परिधान विशेषज्ञ",
         "trade_name_mr": "स्वयंरोजगार टेलर व वस्त्र निर्मिती तज्ज्ञ",
         "trade_name_pa": "ਸਵੈ-ਰੋਜ਼ਗਾਰ ਟੇਲਰ ਅਤੇ ਕੱਪੜਾ ਮਾਹਰ",
-        "nsqf_level": "NSQF Level 3 (AMH/Q1947)",
         "min_education": ["none", "5th", "8th", "10th", "12th", "graduate"],
         "mobility_requirement": "low",
-        "sector": "Apparel, Made-Ups & Home Furnishing SSC",
+        "sector": "Apparel, Made-Ups & Home Furnishing Sector Skill Council (AMHSSC)",
         "duration_hours": "340 Hours (Approx. 3 Months)",
         "training_programme": "PM-AJAY Special Beneficiary Tailoring & Garment Skill Initiative",
         "training_centre": "Rural Self Employment Training Institute (RSETI) & JSS Center",
@@ -122,10 +128,13 @@ TRADES_CATALOG = {
     },
     "solar_technician": {
         "trade_name": "Solar PV Installer (Suryamitra)",
+        "qp_name": "Solar PV Installer (Suryamitra)",
+        "qp_code": "SGJ/Q0101",
+        "nsqf_level": "NSQF Level 4",
+        "ssc_name": "Skill Council for Green Jobs (SCGJ)",
         "trade_name_hi": "सोलर पीवी इंस्टॉलर (सूर्यमित्र)",
         "trade_name_mr": "सोलर पीव्ही इंस्टॉलर (सूर्यमित्र)",
         "trade_name_pa": "ਸੋਲਰ ਪੀਵੀ ਇੰਸਟਾਲਰ (ਸੂਰਿਆਮਿੱਤਰ)",
-        "nsqf_level": "NSQF Level 4 (SGJ/Q0101)",
         "min_education": ["10th", "12th", "graduate", "iti"],
         "mobility_requirement": "medium",
         "sector": "Skill Council for Green Jobs (SCGJ)",
@@ -178,10 +187,13 @@ TRADES_CATALOG = {
     },
     "automotive_ev": {
         "trade_name": "Two-Wheeler & EV Service Technician",
+        "qp_name": "Two Wheeler Service Technician",
+        "qp_code": "ASC/Q1411",
+        "nsqf_level": "NSQF Level 4",
+        "ssc_name": "Automotive Skills Development Council (ASDC)",
         "trade_name_hi": "टू-व्हीलर एवं ईवी सर्विस तकनीशियन",
         "trade_name_mr": "दुचाकी व ईव्ही सर्व्हिस तंत्रज्ञ",
         "trade_name_pa": "ਟੂ-ਵ੍ਹੀਲਰ ਅਤੇ ਈਵੀ ਸਰਵਿਸ ਤਕਨੀਸ਼ੀਅਨ",
-        "nsqf_level": "NSQF Level 3 (ASC/Q1411)",
         "min_education": ["8th", "10th", "12th", "graduate"],
         "mobility_requirement": "medium",
         "sector": "Automotive Skills Development Council (ASDC)",
@@ -234,13 +246,16 @@ TRADES_CATALOG = {
     },
     "digital_csc": {
         "trade_name": "Digital Services Operator & CSC Citizen Facilitator",
+        "qp_name": "Domestic Data Entry Operator",
+        "qp_code": "SSC/Q2212",
+        "nsqf_level": "NSQF Level 4",
+        "ssc_name": "IT-ITeS Sector Skill Council (NASSCOM)",
         "trade_name_hi": "डिजिटल सेवा ऑपरेटर एवं सीएससी नागरिक सहायक",
         "trade_name_mr": "डिजिटल सेवा ऑपरेटर व सीएससी नागरिक सहाय्यक",
         "trade_name_pa": "ਡਿਜੀਟਲ ਸੇਵਾ ਆਪਰੇਟਰ ਅਤੇ ਸੀਐਸਸੀ ਸਹਾਇਕ",
-        "nsqf_level": "NSQF Level 4 (SSC/Q2212)",
         "min_education": ["10th", "12th", "graduate"],
         "mobility_requirement": "low",
-        "sector": "IT-ITeS Sector Skill Council",
+        "sector": "IT-ITeS Sector Skill Council (NASSCOM)",
         "duration_hours": "300 Hours",
         "training_programme": "PM-AJAY Rural Digital Livelihood & e-Governance Track",
         "training_centre": "District NIELIT / Common Service Center Training Hub",
@@ -290,10 +305,13 @@ TRADES_CATALOG = {
     },
     "healthcare_assistant": {
         "trade_name": "General Duty Assistant (Healthcare Support)",
+        "qp_name": "General Duty Assistant",
+        "qp_code": "HSS/Q5101",
+        "nsqf_level": "NSQF Level 4",
+        "ssc_name": "Healthcare Sector Skill Council (HSSC)",
         "trade_name_hi": "जनरल ड्यूटी असिस्टेंट (स्वास्थ्य सहायता)",
         "trade_name_mr": "जनरल ड्युटी असिस्टंट (आरोग्य साहाय्यक)",
         "trade_name_pa": "ਜਨਰਲ ਡਿਊਟੀ ਅਸਿਸਟੈਂਟ (ਸਿਹਤ ਸੰਭਾਲ)",
-        "nsqf_level": "NSQF Level 4 (HSS/Q5101)",
         "min_education": ["8th", "10th", "12th", "graduate"],
         "mobility_requirement": "medium",
         "sector": "Healthcare Sector Skill Council (HSSC)",
@@ -402,6 +420,96 @@ def _keyword_hit(text: str, keyword: str) -> bool:
         return bool(re.search(rf"\b{re.escape(keyword)}\b", text, re.IGNORECASE))
     return keyword.lower() in text.lower()
 
+# Canonical 5 Required Skills per Trade for Readiness Assessment
+TRADE_REQUIRED_SKILLS = {
+    "food_processing": [
+        "Food Handling & Raw Ingredient Quality",
+        "Preservation & Processing Techniques",
+        "FSSAI Hygiene & Sanitation Standards",
+        "Packaging & Product Labeling",
+        "Micro-Enterprise Costing & Market Linkage"
+    ],
+    "apparel_tailoring": [
+        "Basic Stitching & Fabric Cutting",
+        "Commercial Pattern Drafting & Measuring",
+        "Industrial Sewing Machine Operation",
+        "Garment Quality Inspection & Finishing",
+        "Boutique Management & Pricing"
+    ],
+    "solar_technician": [
+        "Basic Electrical Wiring & Circuit Safety",
+        "Photovoltaic Module Mounting & Alignment",
+        "Electrical Safety & Earthing Protocols",
+        "Inverter Diagnostics & Battery Maintenance",
+        "Consumer Net-Metering & DISCOM Guidelines"
+    ],
+    "automotive_ev": [
+        "Hand Tools & Mechanical Maintenance",
+        "Two-Wheeler Engine & Brake Servicing",
+        "EV Powertrain & Motor Servicing",
+        "Lithium-Ion Battery & Electrical Systems",
+        "Workshop Management & Billing"
+    ],
+    "healthcare_assistant": [
+        "Patient Care & Bedside Assistance",
+        "Vital Signs Monitoring (BP, Pulse, Temperature)",
+        "Clinical Hygiene & Infection Control",
+        "First Aid & Emergency Response",
+        "Medical Records & Patient Communication"
+    ],
+    "digital_csc": [
+        "Basic Computer Operations & Typing",
+        "Government Portal Navigation (DBT, Aadhaar)",
+        "Document Scanning & Digital Data Entry",
+        "Online Payments & Cyber-Safety",
+        "Citizen Advisory & CSC Accounting"
+    ]
+}
+
+def compute_readiness_score(trade_key: str, profile_skills: List[str]) -> Tuple[int, int, int]:
+    """
+    Computes transparent, explainable numeric readiness score:
+    (number of skills the profile already has that are relevant to the trade) / (total skills required for that trade) * 100,
+    rounded to nearest integer.
+    Returns (readiness_score, relevant_count, total_required).
+    """
+    required_skills = TRADE_REQUIRED_SKILLS.get(trade_key, [])
+    total_required = len(required_skills)
+    if total_required == 0:
+        return 0, 0, 0
+
+    trade_keywords = set(TRADE_KEYWORDS.get(trade_key, []))
+
+    matched_req_indices = set()
+    keyword_extra_matches = 0
+
+    for s in profile_skills:
+        s_clean = str(s).strip()
+        if not s_clean:
+            continue
+        s_lower = s_clean.lower()
+
+        # Check match against required skills list
+        matched = False
+        for idx, req in enumerate(required_skills):
+            req_lower = req.lower()
+            if s_lower in req_lower or req_lower in s_lower:
+                matched_req_indices.add(idx)
+                matched = True
+                break
+
+        if matched:
+            continue
+
+        # Check if the skill mentions any trade keywords
+        if any(_keyword_hit(s_clean, kw) for kw in trade_keywords):
+            keyword_extra_matches += 1
+
+    total_relevant = len(matched_req_indices) + keyword_extra_matches
+    capped_relevant = min(total_relevant, total_required)
+    score = round((capped_relevant / total_required) * 100)
+    return score, capped_relevant, total_required
+
 def _matches(text: str, keywords: List[str]) -> bool:
     """Returns True if any keyword in keywords hits text with word boundaries."""
     return any(_keyword_hit(text, k) for k in keywords)
@@ -498,11 +606,21 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
             f"Following certification, you will be linked directly to {trade['local_opportunity']}."
         )
 
+    # Transparent Numeric Skill Readiness Score: (relevant skills / total required) * 100
+    readiness_score, relevant_count, total_required = compute_readiness_score(trade_key, profile.get("skills", []))
+
     return {
         "recommended_trade": trade_display_name,
         "trade_key": trade_key,
+        "qp_name": trade.get("qp_name"),
+        "qp_code": trade.get("qp_code"),
+        "nsqf_level": trade.get("nsqf_level"),
+        "ssc_name": trade.get("ssc_name"),
         "nsqf_alignment": trade["nsqf_level"],
         "gap_summary": gap,
+        "readiness_score": readiness_score,
+        "readiness_relevant_count": relevant_count,
+        "readiness_total_required": total_required,
         "skill_gap_breakdown": trade.get("skill_gaps", []),
         "training_programme": trade["training_programme"],
         "training_centre": f"{trade['training_centre']} ({location})",
@@ -510,5 +628,5 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
         "roadmap_steps": steps,
         "spoken_summary": spoken_summary,
         "duration_hours": trade["duration_hours"],
-        "sector": trade["sector"]
+        "sector": trade.get("ssc_name") or trade.get("sector")
     }

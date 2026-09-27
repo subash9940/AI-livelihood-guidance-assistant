@@ -1,508 +1,1203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PM-AJAY AI Livelihood Guidance Assistant | Govt. of India</title>
-  <meta name="description" content="AI-powered multilingual voice-first livelihood guidance assistant for PM-AJAY beneficiaries. Aligned with NSQF and local livelihood pathways.">
-  
-  <!-- Modern Typography: Outfit & Inter & Hind -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>Nivara | Govt. of India</title>
+  <meta name="description" content="Nivara — AI-powered multilingual voice-first livelihood guidance assistant for PM-AJAY beneficiaries. Aligned with NSQF and regional livelihood pathways."/>
+
+  <!-- Fonts: Material Symbols Outlined, Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#000000",
+            "primary-container": "#131b2e",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#7c839b",
+            "primary-fixed-dim": "#bec6e0",
+            "secondary": "#0051d5",
+            "secondary-container": "#316bf3",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#fefcff",
+            "secondary-fixed": "#dbe1ff",
+            "on-secondary-fixed": "#00174b",
+            "tertiary-fixed-dim": "#ffb95f",
+            "tertiary-fixed": "#ffddb8",
+            "on-tertiary-fixed": "#2a1700",
+            "background": "#f8f9ff",
+            "surface": "#f8f9ff",
+            "on-surface": "#0b1c30",
+            "on-surface-variant": "#45464d",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d3e4fe",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            display: ["Plus Jakarta Sans", "sans-serif"],
+            indic: ["Hind", "sans-serif"]
+          },
+          spacing: {
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2.5rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "0.75rem"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @layer base {
+      html, body { width: 100vw; margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; }
+    .nav-tab.active {
+      color: #0051d5;
+      font-weight: 600;
+      background-color: #eff4ff;
+      border-radius: 0.75rem;
+    }
+  </style>
 </head>
-<body>
-  <!-- Header / Navigation Bar -->
-  <header class="app-header">
-    <div class="header-container">
-      <div class="brand">
-        <div class="emblem-wrapper">
-          <span class="emblem-symbol">🇮🇳</span>
+<body class="bg-surface font-sans text-on-surface antialiased flex flex-col min-h-screen">
+
+  <!-- TOP HEADER (Persistent Across All Tabs) -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <!-- Indian Tricolor Gradient Accent Strip -->
+    <div class="h-1 bg-gradient-to-r from-[#f59e0b] via-[#ffffff] to-[#10b981] w-full"></div>
+    <div class="h-20 px-margin-mobile flex items-center justify-between gap-space-sm">
+      <div class="flex items-center gap-space-sm min-w-0">
+        <!-- National Emblem Icon / Seal -->
+        <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-xl shadow-sm border border-secondary/10">
+          🇮🇳
         </div>
-        <div class="brand-text">
-          <span class="govt-tag">Ministry of Social Justice & Empowerment</span>
-          <h1 class="portal-title">PM-AJAY Livelihood Assistant</h1>
-          <span class="portal-sub">प्रधानमंत्री अनुसूचित जाति अभ्युदय योजना</span>
+        <div class="flex flex-col min-w-0">
+          <span class="text-[11px] uppercase tracking-wider text-on-surface-variant truncate font-semibold">Ministry of Social Justice &amp; Empowerment</span>
+          <div class="flex items-baseline gap-space-xs">
+            <span class="font-display font-bold text-lg text-on-surface truncate">Nivara</span>
+            <span class="text-[11px] text-on-surface-variant hidden sm:inline">PM-AJAY Livelihood Guide • निवारा</span>
+          </div>
+          <span class="text-xs text-secondary font-semibold" id="headerActiveViewTitle">Voice Assistant</span>
         </div>
       </div>
 
-      <!-- Top Utility Controls -->
-      <div class="header-controls">
-        <!-- Language Selector -->
-        <div class="lang-selector-group" id="langGroup">
-          <label for="langSelect" class="sr-only">Choose Language</label>
-          <span class="lang-icon">🌐</span>
-          <select id="langSelect" class="lang-dropdown">
+      <!-- Header Controls: Language Selector & Mode Avatar -->
+      <div class="flex items-center gap-space-sm flex-shrink-0">
+        <div class="relative flex items-center bg-surface-container rounded-full px-2 py-1 shadow-sm border border-secondary/15">
+          <span class="material-symbols-outlined text-[18px] text-secondary ml-1">translate</span>
+          <select id="langSelect" aria-label="Select Regional Language" class="appearance-none bg-transparent text-xs font-semibold text-on-surface pl-1.5 pr-6 py-0.5 focus:outline-none cursor-pointer">
             <option value="en">English</option>
-            <option value="hi" selected>हिंदी (Hindi)</option>
-            <option value="mr">मराठी (Marathi)</option>
-            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
-            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="hi" selected>हिन्दी</option>
+            <option value="mr">मराठी</option>
+            <option value="pa">ਪੰਜਾਬੀ</option>
+            <option value="ta">தமிழ்</option>
           </select>
+          <span class="material-symbols-outlined text-[14px] text-on-surface-variant absolute right-1.5 pointer-events-none">arrow_drop_down</span>
         </div>
-
-        <!-- Navigation Tabs: Beneficiary Voice App, Call/IVR, Admin Dashboard -->
-        <nav class="nav-tabs" role="tablist">
-          <button class="nav-tab active" id="tabApp" data-view="voice-app">
-            <span class="tab-icon">🎙️</span> Voice Assistant
-          </button>
-          <button class="nav-tab" id="tabIvr" data-view="ivr-view">
-            <span class="tab-icon">📞</span> IVR Call Line
-          </button>
-          <button class="nav-tab" id="tabAdmin" data-view="admin-view">
-            <span class="tab-icon">📊</span> District Dashboard
-          </button>
-        </nav>
+        <button id="headerAvatarBtn" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-sm" title="Beneficiary Session">
+          <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="main-content">
+  <!-- MAIN APPLICATION CONTENT CONTAINER -->
+  <main class="flex-1 flex flex-col relative w-full pt-20 pb-24 bg-surface">
 
-    <!-- VIEW 1: VOICE ASSISTANT (App & Facilitator Modes) -->
-    <section id="viewVoiceApp" class="view-panel active">
-      <!-- Mode Banner: Shows if running in Facilitator Mode -->
-      <div id="facilitatorBanner" class="facilitator-banner hidden">
-        <div class="banner-content">
-          <span class="banner-badge">🤝 FACILITATOR MODE ACTIVE</span>
-          <span class="banner-text">Assisting rural beneficiary with zero-friction voice intake</span>
+    <!-- ================================================================= -->
+    <!-- VIEW 1: VOICE ASSISTANT & INTAKE (Primary Mobile View)           -->
+    <!-- ================================================================= -->
+    <section id="viewVoiceApp" class="view-panel active flex-col w-full px-margin-mobile pb-space-xl space-y-space-md">
+      
+      <!-- Facilitator Banner (Toggled when in Facilitator Mode) -->
+      <div id="facilitatorBanner" class="hidden w-full bg-secondary-container text-on-secondary-container px-space-md py-space-xs rounded-xl shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">handshake</span>
+          <span class="text-xs font-bold uppercase tracking-wide">Facilitator Mode Active • Assisting Citizen</span>
         </div>
-        <button id="btnExitFacilitator" class="btn-banner-action">Exit to Self Mode</button>
+        <button id="btnExitFacilitator" class="text-xs bg-white text-secondary font-bold px-2 py-1 rounded-md shadow-sm">Exit</button>
       </div>
 
-      <!-- Landing & Dominant Mic Container -->
-      <div class="voice-hero-card">
-        
-        <!-- Spoken Assistant Prompt / Header -->
-        <div class="prompt-display-area" id="promptDisplayArea">
-          <div class="audio-status-pill" id="audioStatusPill">
-            <span class="status-dot"></span>
-            <span id="statusText">Voice Ready • Speak Naturally</span>
-          </div>
-          <h2 class="assistant-speech-text" id="assistantSpeechText">
-            "नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?"
-          </h2>
-          <div class="speech-controls">
-            <button id="btnReplayAudio" class="btn-audio-replay" title="Listen again">
-              <span>🔊</span> Play Spoken Prompt
-            </button>
-          </div>
+      <!-- Micro-Banner / Verified Status Bar -->
+      <div class="w-full flex items-center justify-between bg-surface-container-low px-space-md py-space-xs rounded-full shadow-sm">
+        <div class="flex items-center gap-space-xs min-w-0">
+          <span class="relative flex h-2.5 w-2.5 flex-shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
+          </span>
+          <span id="statusText" class="text-xs text-secondary font-semibold truncate tracking-wide">
+            VOICE ENGINE ACTIVE • 14 DIALECTS READY
+          </span>
         </div>
-
-        <!-- Large Dominant Mic Button with Pulsing Waveform -->
-        <div class="mic-stage">
-          <div class="mic-wave-ring" id="waveRing1"></div>
-          <div class="mic-wave-ring" id="waveRing2"></div>
-          <button class="dominant-mic-btn" id="dominantMicBtn" aria-label="Tap to speak" title="Tap to start recording">
-            <span class="mic-icon" id="micIcon">🎙️</span>
-            <span class="mic-label" id="micLabel">Tap & Speak</span>
-          </button>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <span class="material-symbols-outlined text-[15px] text-on-surface-variant">verified_user</span>
+          <span class="text-xs text-on-surface-variant font-medium">GovSecure</span>
         </div>
-
-        <!-- Dynamic Live Waveform Bars -->
-        <div class="waveform-visualizer" id="waveformVisualizer">
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-        </div>
-
-        <!-- Realtime Live Transcript Box -->
-        <div class="transcript-box" id="transcriptBox">
-          <span class="transcript-label">Beneficiary Spoken Input:</span>
-          <p id="liveTranscriptText" class="transcript-content">
-            Press the mic button or choose a sample prompt below to start...
-          </p>
-        </div>
-
-        <!-- Quick Demo Utterances / Test Chips (Includes exact Demo Script from PS) -->
-        <div class="demo-chips-container">
-          <span class="chips-title">💡 One-Tap Real Scenario Tests:</span>
-          <div class="chips-list">
-            <button class="demo-chip" data-text="I finished 10th, my family does farming, I want something food-related, I can't travel far">
-              🌾 10th Pass + Farming Family + Food Processing + Low Mobility (Demo Script)
-            </button>
-            <button class="demo-chip" data-text="मुझे सिलाई का काम सीखना है, खुद की दुकान खोलनी है, 8वीं पास हूँ">
-              🧵 8th Pass + Tailoring & Self Employment (Hindi)
-            </button>
-            <button class="demo-chip" data-text="मी १२वी पास आहे, मला सोलर पॅनेल आणि वायरिंगचे काम शिकायचे आहे, तालुक्यात जाऊ शकतो">
-              ☀️ 12th Pass + Solar & Green Jobs + Commute OK (Marathi)
-            </button>
-            <button class="demo-chip" data-text="ਮੈਂ ਦਸਵੀਂ ਪਾਸ ਹਾਂ, ਮੈਨੂੰ ਕੰਪਿਊਟਰ ਅਤੇ ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਹੈ">
-              💻 10th Pass + Digital Services / CSC Operator (Punjabi)
-            </button>
-          </div>
-        </div>
-
-        <!-- Live Profile Signals Tracker (Fills in realtime as user speaks) -->
-        <div class="profile-signals-card" id="profileSignalsCard">
-          <div class="signals-header">
-            <h3>📋 Extracted Beneficiary Signals</h3>
-            <span class="signals-badge" id="signalsBadge">Intake In Progress</span>
-          </div>
-          <div class="signals-grid">
-            <div class="signal-item">
-              <span class="signal-label">Education Level</span>
-              <span class="signal-value" id="sigEducation">—</span>
-            </div>
-            <div class="signal-item">
-              <span class="signal-label">Family Occupation</span>
-              <span class="signal-value" id="sigFamilyOcc">—</span>
-            </div>
-            <div class="signal-item">
-              <span class="signal-label">Identified Skills/Interests</span>
-              <span class="signal-value" id="sigSkills">—</span>
-            </div>
-            <div class="signal-item">
-              <span class="signal-label">Mobility Constraint</span>
-              <span class="signal-value" id="sigMobility">—</span>
-            </div>
-            <div class="signal-item">
-              <span class="signal-label">Livelihood Preference</span>
-              <span class="signal-value" id="sigPref">—</span>
-            </div>
-            <div class="signal-item">
-              <span class="signal-label">Access Mode</span>
-              <span class="signal-value" id="sigEntryMode">Smartphone (App)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mode Handoff Action Footer -->
-        <div class="handoff-footer">
-          <button id="btnStartFacilitator" class="btn-handoff">
-            <span class="btn-icon">👥</span> Start for Someone Else (Facilitator Mode)
-          </button>
-          <button id="btnResetSession" class="btn-secondary-link">
-            🔄 Reset Conversation
-          </button>
-        </div>
-
       </div>
 
-      <!-- VIEW 1.2: LIVELIHOOD ROADMAP RESULT (Renders when profile_complete is True) -->
-      <div id="roadmapContainer" class="roadmap-container hidden">
-        <div class="roadmap-card">
-          <div class="roadmap-header">
-            <div class="roadmap-badge-row">
-              <span class="scheme-tag">PM-AJAY SKILL & LIVELIHOOD PATHWAY</span>
-              <span class="nsqf-badge" id="recNsqfBadge">NSQF Level 3</span>
+      <!-- Spoken Prompt Civic Card -->
+      <div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 bottom-0 w-1.5 bg-secondary rounded-l-xl"></div>
+        <div class="flex items-start justify-between gap-space-sm pl-1">
+          <div class="flex-1 space-y-space-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-secondary text-[18px]">smart_toy</span>
+              <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Nivara AI • Livelihood Guide</span>
             </div>
-            <h2 class="roadmap-title" id="recTradeTitle">Food Processing & Agri-Value Addition Technician</h2>
-            <p class="roadmap-gap-summary" id="recGapSummary">
-              Possesses agricultural intuition and raw ingredient familiarity, but lacks hygienic value-addition and certified packaging standards.
+            <p id="assistantSpeechText" class="font-display font-semibold text-lg text-on-surface leading-snug">
+              "नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?"
+            </p>
+            <p id="assistantSpeechSub" class="text-xs text-on-surface-variant pt-0.5">
+              Hello! Please share about yourself — your education, skills, and what kind of livelihood or trade you wish to pursue.
             </p>
           </div>
+          <button id="btnReplayAudio" aria-label="Play Spoken Audio" class="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-surface-container hover:bg-secondary-container hover:text-on-secondary-container text-secondary transition-all active:scale-95 shadow-sm" title="Listen to prompt">
+            <span class="material-symbols-outlined text-[24px]" id="ttsIcon">volume_up</span>
+          </button>
+        </div>
+      </div>
 
-          <!-- Spoken Audio Player for Roadmap -->
-          <div class="spoken-summary-banner">
-            <button id="btnPlayRoadmapAudio" class="btn-play-roadmap">
-              <span class="play-icon">🔊</span>
-              <span class="play-text">Listen to Spoken Livelihood Roadmap (Audio)</span>
-            </button>
-            <p id="recSpokenSummaryText" class="spoken-text-preview"></p>
+      <!-- Demo Beneficiary Selector (Try a sample beneficiary) -->
+      <div class="w-full space-y-space-xs" id="demoBeneficiarySection">
+        <div class="flex items-center justify-between px-0.5">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-secondary">badge</span>
+            <span class="text-xs text-on-surface uppercase tracking-wider font-bold">Try a sample beneficiary</span>
+          </div>
+          <span class="text-[11px] text-secondary font-medium">1-Click Pipeline Simulation</span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-space-xs" id="demoBeneficiaryRow">
+          <!-- Beneficiary 1: Textiles / Delhi -->
+          <button type="button" class="demo-beneficiary-btn text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] border border-secondary/20 hover:border-secondary transition-all p-space-sm rounded-xl shadow-sm flex flex-col gap-1 cursor-pointer focus:outline-none" data-demo-id="textiles_delhi" id="btnDemoTextiles">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">🧵</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-secondary/10 text-secondary">Delhi</span>
+            </div>
+            <div class="min-w-0 mt-0.5">
+              <p class="text-xs text-on-surface font-bold truncate">Sunita Verma</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Textiles • 8th Pass</p>
+            </div>
+          </button>
+
+          <!-- Beneficiary 2: Agriculture / UP -->
+          <button type="button" class="demo-beneficiary-btn text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] border border-secondary/20 hover:border-secondary transition-all p-space-sm rounded-xl shadow-sm flex flex-col gap-1 cursor-pointer focus:outline-none" data-demo-id="agri_up" id="btnDemoAgri">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">🌾</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-secondary/10 text-secondary">UP</span>
+            </div>
+            <div class="min-w-0 mt-0.5">
+              <p class="text-xs text-on-surface font-bold truncate">Ramkishan Yadav</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Agri-Processing • 10th</p>
+            </div>
+          </button>
+
+          <!-- Beneficiary 3: Automotive / Tamil Nadu -->
+          <button type="button" class="demo-beneficiary-btn text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] border border-secondary/20 hover:border-secondary transition-all p-space-sm rounded-xl shadow-sm flex flex-col gap-1 cursor-pointer focus:outline-none" data-demo-id="auto_tn" id="btnDemoAuto">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">🛵</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-secondary/10 text-secondary">Tamil Nadu</span>
+            </div>
+            <div class="min-w-0 mt-0.5">
+              <p class="text-xs text-on-surface font-bold truncate">Karthik Raja</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Auto EV • 12th Pass</p>
+            </div>
+          </button>
+
+          <!-- Beneficiary 4: Clean Energy / Maharashtra -->
+          <button type="button" class="demo-beneficiary-btn text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] border border-secondary/20 hover:border-secondary transition-all p-space-sm rounded-xl shadow-sm flex flex-col gap-1 cursor-pointer focus:outline-none" data-demo-id="solar_maha" id="btnDemoSolar">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">☀️</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-secondary/10 text-secondary">Maharashtra</span>
+            </div>
+            <div class="min-w-0 mt-0.5">
+              <p class="text-xs text-on-surface font-bold truncate">Amit Shinde</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Solar PV • 12th Pass</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dominant Tactile Voice Centerpiece -->
+      <div class="w-full bg-gradient-to-b from-surface-container-low to-surface-container rounded-xl p-space-lg flex flex-col items-center justify-center relative shadow-sm overflow-hidden">
+        <!-- Ambient Pulse Glow -->
+        <div class="absolute -top-12 -left-12 w-48 h-48 bg-secondary/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-tertiary-fixed-dim/20 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- 3D Tactile Mic Button & Concentric Ripples -->
+        <div class="relative my-space-xs flex items-center justify-center mic-stage">
+          <div class="absolute w-36 h-36 rounded-full bg-secondary-container/20 animate-ping opacity-60 pointer-events-none hidden" id="micRipple1"></div>
+          <div class="absolute w-28 h-28 rounded-full bg-secondary/15 animate-pulse pointer-events-none hidden" id="micRipple2"></div>
+          <button id="dominantMicBtn" aria-label="Tap and speak to Nivara AI Assistant" class="relative z-10 w-24 h-24 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary flex flex-col items-center justify-center shadow-xl active:scale-95 transition-transform duration-150 focus:outline-none">
+            <div class="absolute inset-1 rounded-full bg-gradient-to-br from-secondary to-primary-container opacity-90 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[38px] text-on-secondary drop-shadow" id="micIcon">mic</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Status Text Under Mic -->
+        <div class="text-center mt-space-sm z-10">
+          <div class="flex items-center justify-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            <span class="font-display font-bold text-base text-on-surface" id="micLabel">Tap &amp; Speak / बोलिए</span>
+          </div>
+          <p class="text-xs text-on-surface-variant mt-0.5 font-medium">Bilingual Automatic Speech Recognition (Hindi / English / Regional)</p>
+        </div>
+
+        <!-- Dynamic 7-Bar Audio Waveform -->
+        <div class="flex items-end justify-center gap-1.5 h-8 mt-space-md z-10 waveform-visualizer" id="waveformVisualizer">
+          <div class="w-1.5 bg-secondary rounded-full transition-all duration-150 h-3 animate-pulse" style="animation-delay: 0.1s"></div>
+          <div class="w-1.5 bg-secondary-container rounded-full transition-all duration-150 h-6 animate-pulse" style="animation-delay: 0.25s"></div>
+          <div class="w-1.5 bg-secondary rounded-full transition-all duration-150 h-4 animate-pulse" style="animation-delay: 0.15s"></div>
+          <div class="w-1.5 bg-primary rounded-full transition-all duration-150 h-8 animate-pulse" style="animation-delay: 0.3s"></div>
+          <div class="w-1.5 bg-secondary rounded-full transition-all duration-150 h-5 animate-pulse" style="animation-delay: 0.2s"></div>
+          <div class="w-1.5 bg-secondary-container rounded-full transition-all duration-150 h-7 animate-pulse" style="animation-delay: 0.35s"></div>
+          <div class="w-1.5 bg-secondary rounded-full transition-all duration-150 h-3 animate-pulse" style="animation-delay: 0.05s"></div>
+        </div>
+      </div>
+
+      <!-- Real-Time Beneficiary Live Transcript Box -->
+      <div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-xs">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-secondary">record_voice_over</span>
+            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Beneficiary Spoken Intake (सजीव संवाद)</span>
+          </div>
+          <span id="confidenceTag" class="text-xs text-secondary bg-surface-container px-2 py-0.5 rounded-full font-semibold">Live Stream</span>
+        </div>
+        <div class="bg-surface-container-low rounded-lg p-space-sm">
+          <p id="liveTranscriptText" class="text-sm text-on-surface font-medium leading-relaxed italic">
+            "Press the mic button or choose a sample prompt below to start..."
+          </p>
+        </div>
+      </div>
+
+      <!-- 4 One-Tap Scenario Selector Chips -->
+      <div class="w-full space-y-space-xs">
+        <div class="flex items-center justify-between px-0.5">
+          <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Quick Test Scenarios / पूर्व-निर्धारित प्रोफाइल</span>
+          <span class="text-xs text-secondary font-medium">Tap to simulate</span>
+        </div>
+        <div class="grid grid-cols-2 gap-space-xs" id="demoChipsContainer">
+          <!-- Dynamically populated or static chips -->
+          <button class="scenario-chip text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] transition-all p-space-sm rounded-lg shadow-sm flex items-center gap-space-xs" data-text="I am from Maharashtra, finished 10th, my family does farming, I want something food-related, I can't travel far">
+            <span class="text-xl">🌾</span>
+            <div class="min-w-0">
+              <p class="text-xs text-on-surface font-bold truncate">Agri-Value (Maha)</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Maharashtra • CMEGP</p>
+            </div>
+          </button>
+          <button class="scenario-chip text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] transition-all p-space-sm rounded-lg shadow-sm flex items-center gap-space-xs" data-text="नमस्ते, मैं दिल्ली से हूँ, मुझे सिलाई का काम सीखना है, खुद की दुकान खोलनी है, 8वीं पास हूँ">
+            <span class="text-xl">🧵</span>
+            <div class="min-w-0">
+              <p class="text-xs text-on-surface font-bold truncate">Tailoring (Delhi)</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Delhi • DSFDC Loan</p>
+            </div>
+          </button>
+          <button class="scenario-chip text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] transition-all p-space-sm rounded-lg shadow-sm flex items-center gap-space-xs" data-text="I am from Tamil Nadu, 12th pass, want to learn solar panel and electrical installation work, can commute to district">
+            <span class="text-xl">☀️</span>
+            <div class="min-w-0">
+              <p class="text-xs text-on-surface font-bold truncate">Solar Tech (TN)</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Tamil Nadu • TAHDCO</p>
+            </div>
+          </button>
+          <button class="scenario-chip text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] transition-all p-space-sm rounded-lg shadow-sm flex items-center gap-space-xs" data-text="I live in Karnataka, 10th standard, interested in computer services and petty shop self employment">
+            <span class="text-xl">💻</span>
+            <div class="min-w-0">
+              <p class="text-xs text-on-surface font-bold truncate">Self-Emp (Karnataka)</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Karnataka • Ambedkar Corp</p>
+            </div>
+          </button>
+          <button class="scenario-chip text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] transition-all p-space-sm rounded-lg shadow-sm flex items-center gap-space-xs" data-text="मैं उत्तर प्रदेश से हूँ, 8वीं पास, मुझे पारंपरिक कारीगरी और हस्तशिल्प का काम सीखना है, खुद का काम करना है">
+            <span class="text-xl">🔨</span>
+            <div class="min-w-0">
+              <p class="text-xs text-on-surface font-bold truncate">Artisan (UP)</p>
+              <p class="text-[11px] text-on-surface-variant truncate">UP • Vishwakarma</p>
+            </div>
+          </button>
+          <button class="scenario-chip text-left bg-surface-container-lowest hover:bg-surface-container active:scale-[0.98] transition-all p-space-sm rounded-lg shadow-sm flex items-center gap-space-xs" data-text="ਮੈਂ ਅੰਮ੍ਰਿਤਸਰ ਪੰਜਾਬ ਤੋਂ ਹਾਂ, ਦਸਵੀਂ ਪਾਸ, ਕੰਪਿਊਟਰ ਅਤੇ ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਹੈ">
+            <span class="text-xl">🏛️</span>
+            <div class="min-w-0">
+              <p class="text-xs text-on-surface font-bold truncate">Other State (Punjab)</p>
+              <p class="text-[11px] text-on-surface-variant truncate">Punjab • Zero Schemes</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Real-Time Extracted Profile Signals (6-Grid Card) -->
+      <div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm" id="profileSignalsCard">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[20px] text-secondary">psychology</span>
+            <span class="font-display font-semibold text-base text-on-surface">Extracted Profile Signals</span>
+          </div>
+          <span id="signalsBadge" class="text-xs bg-surface-container px-2 py-0.5 rounded-full text-on-surface-variant font-semibold">Intake In Progress</span>
+        </div>
+        <div class="grid grid-cols-2 gap-space-xs">
+          <!-- Signal 1 -->
+          <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
+            <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+              <span class="material-symbols-outlined text-[16px] text-secondary">school</span>
+              <span class="text-[11px] font-semibold">Education Level</span>
+            </div>
+            <p class="text-xs text-on-surface font-bold truncate" id="sigEducation">—</p>
+          </div>
+          <!-- Signal 2 -->
+          <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
+            <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+              <span class="material-symbols-outlined text-[16px] text-secondary">groups</span>
+              <span class="text-[11px] font-semibold">Family Occupation</span>
+            </div>
+            <p class="text-xs text-on-surface font-bold truncate" id="sigFamilyOcc">—</p>
+          </div>
+          <!-- Signal 3 -->
+          <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
+            <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+              <span class="material-symbols-outlined text-[16px] text-secondary">inventory_2</span>
+              <span class="text-[11px] font-semibold">Skills / Interests</span>
+            </div>
+            <p class="text-xs text-on-surface font-bold truncate" id="sigSkills">—</p>
+          </div>
+          <!-- Signal 4 -->
+          <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
+            <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+              <span class="material-symbols-outlined text-[16px] text-secondary">explore</span>
+              <span class="text-[11px] font-semibold">Mobility Constraint</span>
+            </div>
+            <p class="text-xs text-on-surface font-bold truncate" id="sigMobility">—</p>
+          </div>
+          <!-- Signal 5 -->
+          <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
+            <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+              <span class="material-symbols-outlined text-[16px] text-secondary">storefront</span>
+              <span class="text-[11px] font-semibold">Livelihood Type</span>
+            </div>
+            <p class="text-xs text-on-surface font-bold truncate" id="sigPref">—</p>
+          </div>
+          <!-- Signal 6 -->
+          <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
+            <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+              <span class="material-symbols-outlined text-[16px] text-secondary">devices</span>
+              <span class="text-[11px] font-semibold">Access Channel</span>
+            </div>
+            <p class="text-xs text-on-surface font-bold truncate" id="sigEntryMode">Smartphone (App)</p>
+          </div>
+        </div>
+        <!-- Mapping Verification Strip -->
+        <div class="flex items-center justify-between pt-1">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-secondary">task_alt</span>
+            <span class="text-xs text-on-surface-variant font-medium">Mapped against PM-AJAY Skill Qualification Register</span>
+          </div>
+          <span id="matchConfidenceBadge" class="text-xs text-secondary font-bold">NSQF Aligned</span>
+        </div>
+      </div>
+
+      <!-- Facilitator & Session Control Actions -->
+      <div class="w-full flex items-center gap-space-xs pt-1">
+        <button id="btnStartFacilitator" class="flex-1 bg-surface-container hover:bg-surface-container-high text-on-surface py-space-sm px-space-md rounded-lg flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[20px] text-secondary">handshake</span>
+          <span class="text-xs font-bold truncate">Facilitator Mode</span>
+        </button>
+        <button id="btnResetSession" class="flex-1 bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant hover:text-on-surface py-space-sm px-space-md rounded-lg flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[20px]">restart_alt</span>
+          <span class="text-xs font-bold truncate">Reset Voice</span>
+        </button>
+      </div>
+
+      <!-- Micro-Assurance GovTech Footer Badge -->
+      <div class="w-full flex items-center justify-center gap-2 pt-space-xs">
+        <span class="material-symbols-outlined text-[14px] text-on-surface-variant">lock</span>
+        <span class="text-[11px] text-on-surface-variant">Direct Beneficiary Interface • No Biometrics Stored Externally</span>
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 2: NSQF LIVELIHOOD ROADMAP & SKILL GAP BREAKDOWN             -->
+    <!-- ================================================================= -->
+    <section id="viewRoadmap" class="view-panel flex-col w-full px-margin-mobile pb-space-xl gap-space-md">
+      
+      <!-- Scheme Authority & State Verification Pill Header -->
+      <div class="flex flex-col gap-space-xs mt-2">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-space-xs bg-surface-container-high rounded-full px-3 py-1">
+            <span class="material-symbols-outlined text-secondary text-[16px]">verified_user</span>
+            <span class="text-[11px] text-secondary uppercase font-bold tracking-wider">Nivara • PM-AJAY Endorsed</span>
+          </div>
+          <div class="flex items-center gap-1.5 bg-[#ecfdf5] rounded-full px-3 py-1 text-[#065f46]">
+            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+            <span id="recNsqfBadge" class="text-xs font-bold tracking-tight">NSQF Level 3 Certified</span>
+          </div>
+        </div>
+
+        <!-- Trade Headline Block -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs">
+          <div class="flex items-start justify-between gap-space-sm">
+            <div class="flex flex-col min-w-0">
+              <span class="text-xs uppercase tracking-wide text-on-surface-variant font-semibold">Recommended Career Trajectory</span>
+              <h1 id="recTradeTitle" class="font-display font-bold text-xl text-on-surface tracking-tight leading-snug">
+                Food Processing &amp; Agri-Value Addition Technician
+              </h1>
+              <span id="recTradeSubTitle" class="text-xs text-on-surface-variant mt-0.5">खाद्य प्रसंस्करण एवं कृषि मूल्य संवर्धन तकनीशियन</span>
+              
+              <!-- Real NSQF Qualification Pack Specification Details -->
+              <div id="recQpSpecLine" class="text-xs text-secondary font-medium mt-2 leading-relaxed bg-surface-container-low px-2.5 py-1.5 rounded-lg border border-secondary/15 flex flex-wrap items-center gap-1.5">
+                <span class="font-bold text-on-surface" id="recQpName">Pickle Making Technician</span>
+                <span class="text-on-surface-variant">—</span>
+                <span class="bg-secondary/10 text-secondary font-bold px-2 py-0.5 rounded text-[11px]" id="recQpNsqfLevel">NSQF Level 4</span>
+                <span class="text-on-surface-variant">•</span>
+                <span class="bg-surface-container text-on-surface font-mono font-semibold px-2 py-0.5 rounded text-[11px]" id="recQpCode">QP Code: FIC/Q0102</span>
+                <span class="text-on-surface-variant">•</span>
+                <span class="text-on-surface-variant font-medium text-[11px]" id="recSscName">Food Industry Capacity &amp; Skill Initiative (FICSI)</span>
+              </div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 text-secondary">
+              <span class="material-symbols-outlined text-[28px]" id="recTradeIcon">agriculture</span>
+            </div>
           </div>
 
-          <!-- 4-Step Interactive Roadmap Timeline -->
-          <div class="roadmap-steps-timeline">
-            <!-- Step 1 -->
-            <div class="timeline-step">
-              <div class="step-marker">
-                <span class="step-num">1</span>
-                <span class="step-icon">🎓</span>
-              </div>
-              <div class="step-content">
-                <span class="step-stage-tag">STAGE 1: SKILL FOUNDATION</span>
-                <h4 id="step1Title">Enroll in PM-AJAY Free Skill Training</h4>
-                <p id="step1Desc">100% sponsored by Govt. of India with ₹1,500/month stipend and free safety kit.</p>
-              </div>
+          <!-- Verified Diagnostic Insight Callout -->
+          <div class="mt-space-xs bg-surface-container-low rounded-lg p-space-sm flex items-start gap-space-sm">
+            <div class="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="material-symbols-outlined text-[16px] text-secondary">psychology</span>
             </div>
+            <p id="recGapSummary" class="text-xs text-on-surface leading-relaxed">
+              <span class="font-semibold text-secondary">AI Diagnostic Summary:</span> Candidate demonstrates high agricultural crop lifecycle familiarity, but requires standardized food safety compliance and hermetic packaging techniques for direct wholesale linkages.
+            </p>
+          </div>
+        </div>
+      </div>
 
-            <!-- Step 2 -->
-            <div class="timeline-step">
-              <div class="step-marker">
-                <span class="step-num">2</span>
-                <span class="step-icon">🏫</span>
-              </div>
-              <div class="step-content">
-                <span class="step-stage-tag">STAGE 2: ACCREDITED CENTER</span>
-                <h4 id="step2Title">Practical Training at District Center</h4>
-                <p id="step2Desc">Jan Shikshan Sansthan (JSS) & District PMKK Center with hands-on food preservation equipment.</p>
-              </div>
+      <!-- Regional Audio Player Banner (Tactile Micro-Interaction) -->
+      <div id="audioPlayerContainer" class="bg-primary-container text-on-primary rounded-xl p-space-md shadow-md flex flex-col gap-space-sm relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-space-sm min-w-0">
+            <div class="w-9 h-9 rounded-full bg-on-primary-container/20 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-[20px] text-on-primary">volume_up</span>
             </div>
-
-            <!-- Step 3 -->
-            <div class="timeline-step">
-              <div class="step-marker">
-                <span class="step-num">3</span>
-                <span class="step-icon">📜</span>
-              </div>
-              <div class="step-content">
-                <span class="step-stage-tag">STAGE 3: NATIONAL CERTIFICATION</span>
-                <h4 id="step3Title">NSQF Government Certification</h4>
-                <p id="step3Desc">Sector Skill Council assessment and official QR-verified Skill India Digital credential.</p>
-              </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-[11px] uppercase tracking-wider text-on-primary-container font-semibold">Voice Guidance Brief</span>
+              <span class="text-sm font-semibold truncate text-on-primary" id="audioPlayerTitle">ऑडियो सारांश सुनें (हिन्दी)</span>
             </div>
+          </div>
+          <button id="btnPlayRoadmapAudio" aria-label="Play or Pause Audio Roadmap" class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shadow-md active:scale-95 transition-transform flex-shrink-0">
+            <span class="material-symbols-outlined text-[24px]" id="playPauseIcon" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+          </button>
+        </div>
+        <!-- Audio Progress & Waveform -->
+        <div class="flex flex-col gap-1 mt-1">
+          <div class="w-full bg-on-primary-container/30 h-1.5 rounded-full overflow-hidden cursor-pointer" id="scrubberTrack">
+            <div class="bg-tertiary-fixed h-full rounded-full transition-all duration-300" id="audioProgressBar" style="width: 35%;"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-on-primary-container font-mono">
+            <span id="currentTimeLabel">0:24</span>
+            <span class="text-tertiary-fixed font-sans font-semibold tracking-wide">AI Localized Speech Synthesis</span>
+            <span>1:18</span>
+          </div>
+        </div>
+        <p id="recSpokenSummaryText" class="text-xs text-on-primary/90 italic leading-relaxed pt-1"></p>
+      </div>
 
-            <!-- Step 4 -->
-            <div class="timeline-step">
-              <div class="step-marker">
-                <span class="step-num">4</span>
-                <span class="step-icon">🚀</span>
+      <!-- Visual Context Images -->
+      <div class="grid grid-cols-2 gap-space-sm">
+        <div class="relative rounded-xl overflow-hidden shadow-sm h-28 bg-surface-container">
+          <img class="w-full h-full object-cover" alt="District Training Lab" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnGJ5nCLXT4Bfq518LTREIZ-AZZoRV-nEmfMyMq2cdx9EYjZ5QrdEdv_4KJ9H50rrjUWD0ubrjtgdJYcs_CyUlVO4ZIAwexeWx4O9R4NG8pnFZY3mlC5xSAoq0Ve9L4uCm_bBuwVytwXATdLIvc_qENwj8ZrZaR_C4S2adm4wezzk9RuHhFdOHWxICtCPMvLKBzlvmOFZIk2YSaRR3230gbZwR2bbioCxle0V3Rll4ZUAIjmY56Cqg"/>
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent flex items-end p-2">
+            <span class="text-[11px] text-on-primary font-medium">JSS District Lab</span>
+          </div>
+        </div>
+        <div class="relative rounded-xl overflow-hidden shadow-sm h-28 bg-surface-container">
+          <img class="w-full h-full object-cover" alt="Packaged Market Linkage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRYcECAIyFBwHjdBqcWPiyGeVZvtXBF9VnuC_HMLs1fez4g_eEMfk82HD5qhlUuFBMu97NAZ3MflOjctsu-z0BmhXQuhCIJMO0vtP2uTS-9p0E3tzCZn9wZl5hA2QTMJ8UgpP3GWtLtZ213H4bhInzdPnptkKp7RK48a06OjO10MGHh5e1cz6LbRx5beE2r5m5U7sUDExbzfMBMRgq08fG852cQUuiw83VFDe7LPmSZjNHbTjyjQ8Q"/>
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent flex items-end p-2">
+            <span class="text-[11px] text-on-primary font-medium">Market Linkage</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 1: Skill Gap Diagnostic & Free Learning Sources (Structured Breakdown) -->
+      <div class="flex flex-col gap-space-sm">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-space-xs">
+            <span class="material-symbols-outlined text-secondary text-[22px]">checklist</span>
+            <h2 class="font-display font-bold text-base text-on-surface">Skill Gaps &amp; Where to Learn</h2>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Prominent Numeric Skill Readiness Score Badge -->
+            <div id="readinessScoreContainer" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm border transition-colors bg-[#fef3c7] text-[#92400e] border-[#fde68a]" title="Explainable Skill Readiness: Relevant skills held divided by trade required skills">
+              <span class="material-symbols-outlined text-[16px]" id="readinessIcon">speed</span>
+              <span id="readinessScoreBadge">Readiness: 60/100</span>
+            </div>
+            <span id="gapModulesCount" class="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full font-semibold">Targeted Modules</span>
+          </div>
+        </div>
+        
+        <!-- Skill Gaps Container (Dynamically rendered with fallback) -->
+        <div id="skillGapsContainer" class="flex flex-col gap-space-xs">
+          <!-- Dynamically populated from rec.skill_gap_breakdown -->
+        </div>
+      </div>
+
+      <!-- Section: Schemes available in your state (Regional Schemes Breakdown) -->
+      <div class="flex flex-col gap-space-sm mt-space-xs" id="regionalSchemesSection">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-space-xs">
+            <span class="material-symbols-outlined text-secondary text-[22px]">account_balance</span>
+            <h2 class="font-display font-bold text-base text-on-surface">Schemes available in your state</h2>
+          </div>
+          <span id="regionalSchemesBadge" class="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full font-semibold">State Initiatives</span>
+        </div>
+        
+        <!-- Regional Schemes Container (Dynamically rendered with same visual pattern as skill_gap_breakdown) -->
+        <div id="regionalSchemesContainer" class="flex flex-col gap-space-xs">
+          <!-- Dynamically populated from rec.regional_schemes -->
+        </div>
+
+        <!-- Disclaimer line -->
+        <p class="text-[11px] text-on-surface-variant italic px-1 pt-0.5">
+          Scheme details may change — please verify with your local office before applying.
+        </p>
+      </div>
+
+      <!-- Section 2: 4-Stage Progressive Pathway Timeline -->
+      <div class="flex flex-col gap-space-sm mt-space-xs">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-space-xs">
+            <span class="material-symbols-outlined text-secondary text-[22px]">alt_route</span>
+            <h2 class="font-display font-bold text-base text-on-surface">4-Stage Action Roadmap</h2>
+          </div>
+          <span class="text-xs text-[#065f46] font-semibold bg-[#ecfdf5] px-2 py-0.5 rounded-full">100% Govt Sponsored</span>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col">
+          <!-- Step 1 -->
+          <div class="flex items-start gap-space-md relative pb-6">
+            <div class="absolute left-4 top-8 bottom-0 w-0.5 bg-secondary/30"></div>
+            <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 z-10">1</div>
+            <div class="flex flex-col flex-1 min-w-0 pt-0.5">
+              <div class="flex items-center justify-between gap-1">
+                <span id="step1Title" class="font-display font-bold text-sm text-on-surface">Enroll in PM-AJAY Free Skill Training</span>
+                <span class="text-[10px] text-[#065f46] bg-[#ecfdf5] px-1.5 py-0.5 rounded font-bold">Approved</span>
               </div>
-              <div class="step-content">
-                <span class="step-stage-tag">STAGE 4: LOCAL LIVELIHOOD & CREDIT</span>
-                <h4 id="step4Title">Enterprise or Placement Linkage</h4>
-                <p id="step4Desc">Mudra Shishu Loan up to ₹50,000 subsidy grant or local agri-cluster direct linkage.</p>
+              <p id="step1Desc" class="text-xs text-on-surface-variant mt-1">Zero-fee admission with biometric enrollment and ₹1,500/month DBT attendance stipend.</p>
+              <div class="flex items-center gap-1.5 mt-1.5 text-xs text-secondary font-semibold">
+                <span class="material-symbols-outlined text-[14px]">payments</span>
+                <span>Direct Benefit Transfer Stipend Linked</span>
               </div>
             </div>
           </div>
 
-          <!-- Roadmap Action Buttons -->
-          <div class="roadmap-actions">
-            <button id="btnPrintRoadmap" class="btn-action-primary">
-              🖨️ Print Roadmap Summary
+          <!-- Step 2 -->
+          <div class="flex items-start gap-space-md relative pb-6">
+            <div class="absolute left-4 top-8 bottom-0 w-0.5 bg-secondary/30"></div>
+            <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 z-10">2</div>
+            <div class="flex flex-col flex-1 min-w-0 pt-0.5">
+              <div class="flex items-center justify-between gap-1">
+                <span id="step2Title" class="font-display font-bold text-sm text-on-surface">Practical Training at District Center</span>
+                <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded font-medium">30 Days</span>
+              </div>
+              <p id="step2Desc" class="text-xs text-on-surface-variant mt-1">Jan Shikshan Sansthan (JSS) &amp; District PMKK Center with hands-on toolkits.</p>
+              <div class="flex items-center gap-1.5 mt-1.5 text-xs text-on-surface font-medium">
+                <span class="material-symbols-outlined text-[14px] text-on-surface-variant">location_on</span>
+                <span id="step2Location">Local District Industrial Training Lab</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="flex items-start gap-space-md relative pb-6">
+            <div class="absolute left-4 top-8 bottom-0 w-0.5 bg-secondary/30"></div>
+            <div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-xs flex-shrink-0 z-10">3</div>
+            <div class="flex flex-col flex-1 min-w-0 pt-0.5">
+              <div class="flex items-center justify-between gap-1">
+                <span id="step3Title" class="font-display font-bold text-sm text-on-surface">NSQF National Skill Certification</span>
+                <span class="text-[10px] text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded font-medium">Govt Exam</span>
+              </div>
+              <p id="step3Desc" class="text-xs text-on-surface-variant mt-1">Practical assessment and issuance of DigiLocker-verifiable QR credential.</p>
+              <div class="flex items-center gap-1.5 mt-1.5 text-xs text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">qr_code_2</span>
+                <span>National Skills Registry Recognized</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="flex items-start gap-space-md relative">
+            <div class="w-8 h-8 rounded-full bg-[#10b981] text-on-secondary flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 z-10">4</div>
+            <div class="flex flex-col flex-1 min-w-0 pt-0.5">
+              <div class="flex items-center justify-between gap-1">
+                <span id="step4Title" class="font-display font-bold text-sm text-on-surface">Enterprise Launch / Credit Linkage</span>
+                <span class="text-[10px] text-[#065f46] bg-[#ecfdf5] px-1.5 py-0.5 rounded font-bold">Goal</span>
+              </div>
+              <p id="step4Desc" class="text-xs text-on-surface-variant mt-1">Mudra Shishu Loan up to ₹50,000 capital subsidy grant or local cluster linkage.</p>
+              <div class="flex items-center gap-1.5 mt-1.5 text-xs text-[#065f46] font-semibold">
+                <span class="material-symbols-outlined text-[14px]">storefront</span>
+                <span>Subsidized Machinery &amp; Market Off-take</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- District Facilitation Contact Note -->
+      <div class="bg-surface-container-low rounded-xl p-space-md flex items-center gap-space-sm mt-1">
+        <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
+          <span class="material-symbols-outlined text-[24px]">support_agent</span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-xs font-bold text-on-surface">District Welfare &amp; Skill Officer Desk</span>
+          <span class="text-[11px] text-on-surface-variant" id="districtContactLine">Collectorate Kendra • Toll-Free: 1800-11-7625</span>
+        </div>
+      </div>
+
+      <!-- Action Panel -->
+      <div class="flex flex-col gap-space-xs mt-2">
+        <div class="grid grid-cols-2 gap-space-sm">
+          <button id="btnPrintRoadmap" class="flex items-center justify-center gap-2 bg-surface-container-lowest text-on-surface py-2.5 px-space-sm rounded-xl shadow-sm active:bg-surface-container text-xs font-bold transition-colors">
+            <span class="material-symbols-outlined text-secondary text-[18px]">picture_as_pdf</span>
+            <span>Print Summary</span>
+          </button>
+          <button id="btnSmsRoadmap" class="flex items-center justify-center gap-2 bg-surface-container-lowest text-on-surface py-2.5 px-space-sm rounded-xl shadow-sm active:bg-surface-container text-xs font-bold transition-colors">
+            <span class="material-symbols-outlined text-[#10b981] text-[18px]">chat</span>
+            <span>Send to Phone</span>
+          </button>
+        </div>
+        <button id="btnNewRoadmapAssessment" class="w-full bg-primary text-on-primary py-3 px-space-md rounded-xl shadow-md active:opacity-95 text-xs font-bold flex items-center justify-center gap-2 transition-all">
+          <span>Start Next Assessment</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 3: TOLL-FREE IVR LINE & RETRO FEATURE PHONE SIMULATOR        -->
+    <!-- ================================================================= -->
+    <section id="viewIvr" class="view-panel flex-col w-full px-margin-mobile pb-space-xl gap-space-md">
+      
+      <!-- Advisory & Connectivity Resilience Banner -->
+      <div class="bg-surface-container-low rounded-2xl p-space-md shadow-sm">
+        <div class="flex items-center justify-between gap-space-xs mb-space-xs">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container">
+            <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">cell_tower</span>
+            <span class="text-[10px] font-bold tracking-wide uppercase">Zero-Data / 2G Offline Resilient</span>
+          </div>
+          <span class="text-xs text-on-surface-variant flex items-center gap-1">
+            <span class="inline-block w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+            24x7 Active
+          </span>
+        </div>
+        <div class="flex flex-col gap-1 mt-1">
+          <span class="text-xs text-on-surface-variant font-medium">Toll-Free PM-AJAY Voice &amp; SMS Gateway</span>
+          <div class="flex items-baseline justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary text-[24px]">call</span>
+              <a href="tel:180011762529" class="font-display font-bold text-xl text-on-surface hover:text-secondary transition-colors tracking-tight">1800-11-762529</a>
+            </div>
+            <span class="text-xs px-2 py-0.5 rounded-md bg-surface-container-high text-on-surface font-semibold">1800-11-PMAJAY</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mt-space-sm pt-space-xs">
+          <div class="flex flex-col items-center text-center p-2 rounded-xl bg-surface-container-lowest shadow-sm">
+            <span class="material-symbols-outlined text-secondary text-[20px] mb-1">hearing</span>
+            <span class="text-[11px] text-on-surface font-semibold">12 Dialects</span>
+          </div>
+          <div class="flex flex-col items-center text-center p-2 rounded-xl bg-surface-container-lowest shadow-sm">
+            <span class="material-symbols-outlined text-secondary text-[20px] mb-1">sms</span>
+            <span class="text-[11px] text-on-surface font-semibold">SMS Slip</span>
+          </div>
+          <div class="flex flex-col items-center text-center p-2 rounded-xl bg-surface-container-lowest shadow-sm">
+            <span class="material-symbols-outlined text-secondary text-[20px] mb-1">support_agent</span>
+            <span class="text-[11px] text-on-surface font-semibold">Mitra Visit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skeuomorphic Feature Phone Simulator Frame (AJAY-PHONE) -->
+      <div class="flex flex-col items-center">
+        <div class="w-full max-w-[340px] bg-primary-container text-on-primary-container rounded-[36px] p-4 shadow-xl flex flex-col items-center select-none">
+          <!-- Top Speaker Grille & Ashoka Emboss -->
+          <div class="w-full flex items-center justify-between px-3 pt-1 pb-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#1e293b]"></div>
+            <div class="flex gap-1.5 px-3 py-1 rounded-full bg-[#0a0f1d]">
+              <div class="w-1.5 h-1.5 rounded-full bg-[#334155]"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-[#334155]"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-[#334155]"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-[#334155]"></div>
+            </div>
+            <span class="text-[10px] text-primary-fixed-dim uppercase tracking-widest font-bold">NIVARA-PHONE</span>
+          </div>
+
+          <!-- Monochromatic Retro LCD Display Screen -->
+          <div id="retroScreen" class="w-full bg-[#95a88d] text-[#122013] rounded-2xl p-3 shadow-inner font-mono flex flex-col justify-between min-h-[175px] transition-colors duration-300">
+            <!-- Status Bar -->
+            <div class="flex items-center justify-between text-[11px] pb-1 border-b border-[#7b8d73] font-bold">
+              <div class="flex items-center gap-1">
+                <span>📶 BSNL 4G</span>
+                <span class="text-[9px] bg-[#82967a] px-1 rounded">2G/IVR</span>
+              </div>
+              <span id="lcdTime">12:30 PM</span>
+              <div class="flex items-center gap-1">
+                <span>🔋100%</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Screen Content -->
+            <div class="py-2 flex flex-col gap-1 min-h-[96px] justify-center">
+              <div class="flex items-center justify-between">
+                <span id="callStatusBadge" class="font-bold text-[11px] tracking-wide text-[#09140a]">● CALL CONNECTED</span>
+                <span id="timerBadge" class="text-[10px] bg-[#82967a] px-1 rounded">00:42</span>
+              </div>
+              <div id="ivrCallerId" class="font-bold text-[13px] tracking-tight text-[#071108]">Nivara Helpline 1800-11-7625</div>
+              <div id="lcdPrompt" class="text-[11px] leading-tight text-[#162717] mt-1 bg-[#889b80] p-1.5 rounded">
+                "प्रेस 1 हिंदी के लिए, 2 मराठीसाठी, 3 ਪੰਜਾਬੀ ਲਈ... ऋण व कौशल्य मार्गदर्शन के लिए 9 दबाएं"
+              </div>
+              <div id="lcdDialed" class="text-xs font-bold text-center tracking-widest text-[#09140a]"></div>
+            </div>
+
+            <!-- LCD Footer Action Line -->
+            <div class="flex items-center justify-between text-[10px] pt-1 border-t border-[#7b8d73] font-bold">
+              <span id="leftSoftKey">Menu</span>
+              <span id="lcdAudioStatus" class="text-[9px] px-1 rounded bg-[#7d9175]">AUDIO READY</span>
+              <span id="rightSoftKey">Clear</span>
+            </div>
+          </div>
+
+          <!-- Government Initiative Badge -->
+          <div class="w-full flex items-center justify-center gap-1.5 py-2.5">
+            <span class="text-[10px] text-primary-fixed-dim uppercase tracking-wider font-semibold">सत्यमेव जयते • MSJE Govt of India</span>
+          </div>
+
+          <!-- Navigation & Action Control Deck -->
+          <div class="w-full grid grid-cols-3 gap-2 px-1 mb-2">
+            <button id="keyCall" aria-label="Start Call" class="h-10 rounded-xl bg-[#15803d] text-on-primary flex items-center justify-center shadow-md active:scale-95 transition-transform" title="Call">
+              <span class="material-symbols-outlined text-[20px]">call</span>
             </button>
-            <button id="btnSmsRoadmap" class="btn-action-secondary">
-              📱 Send SMS to Phone
+            <button id="keyNav" aria-label="OK Menu" class="h-10 rounded-xl bg-surface-container text-on-surface flex items-center justify-center shadow-md active:scale-95 transition-transform font-bold text-xs">
+              OK / 🔊
             </button>
-            <button id="btnNewRoadmapAssessment" class="btn-action-outline">
-              ➕ Start Next Assessment
+            <button id="keyEnd" aria-label="End Call" class="h-10 rounded-xl bg-[#b91c1c] text-on-primary flex items-center justify-center shadow-md active:scale-95 transition-transform" title="End Call">
+              <span class="material-symbols-outlined text-[20px]">call_end</span>
             </button>
+          </div>
+
+          <!-- Tactile 12-Key Pad -->
+          <div class="w-full grid grid-cols-3 gap-2 px-1">
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="1">
+              <span class="font-display font-bold text-base leading-none">1</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">हिंदी</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="2">
+              <span class="font-display font-bold text-base leading-none">2</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">मराठी</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="3">
+              <span class="font-display font-bold text-base leading-none">3</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">ਪੰਜਾਬੀ</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="4">
+              <span class="font-display font-bold text-base leading-none">4</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">GHI</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="5">
+              <span class="font-display font-bold text-base leading-none">5</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">JKL</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="6">
+              <span class="font-display font-bold text-base leading-none">6</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">MNO</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="7">
+              <span class="font-display font-bold text-base leading-none">7</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">Mitra</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="8">
+              <span class="font-display font-bold text-base leading-none">8</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">SMS</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="9">
+              <span class="font-display font-bold text-base leading-none">9</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">Loan</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="*">
+              <span class="font-display font-bold text-base leading-none">*</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">Replay</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="0">
+              <span class="font-display font-bold text-base leading-none">0</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">Help</span>
+            </button>
+            <button class="keypad-btn h-12 rounded-xl bg-[#1e293b] text-on-primary flex flex-col items-center justify-center shadow-md active:bg-secondary active:scale-95 transition-all" data-key="#">
+              <span class="font-display font-bold text-base leading-none">#</span>
+              <span class="text-[10px] text-primary-fixed-dim leading-none mt-0.5">Confirm</span>
+            </button>
+          </div>
+
+          <div class="w-full flex justify-end px-6 pt-3 pb-1">
+            <div class="w-1.5 h-1.5 rounded-full bg-[#0a0f1d]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-world Impact Field Story Card -->
+      <div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex items-center gap-space-sm">
+        <div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
+          <img class="w-full h-full object-cover" alt="Ramesh Kumar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgRljB8fpX96hLJbpLOYBI-M9YNLcDAB_D2tE20ndv9FoM9PcYZOtGYioB0tkkyAJ_1JK0QC4l-dHnwpoft8oLKWxS1HtoDhzJJuUZsflnStkH1wa3LhmdL2psqlJUCLbox8IxYQj6PvTLMCOzC7FC9KNWSDVXh9gAgEK7WbajqMgVt0mxXNqlZRHGsruxCZI8uUPGxmrGkmipAlPLFRNOJmuurW5bPV1XSRutlqN-rvE1xFl0I6Ou"/>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-[10px] text-secondary font-bold uppercase tracking-wider">Field Beneficiary Story</span>
+          <span class="text-xs text-on-surface font-semibold truncate">Ramesh Kumar, Dindori (M.P.)</span>
+          <span class="text-xs text-on-surface-variant line-clamp-2">"No smartphone or internet in my village. I pressed 1 and 9 on my basic phone. Within 2 hours, Gram Mitra verified my PM-AJAY dairy loan."</span>
+        </div>
+      </div>
+
+      <!-- How Spoken IVR Works -->
+      <div class="flex flex-col gap-space-sm">
+        <div class="flex items-center justify-between">
+          <h3 class="font-display font-bold text-base text-on-surface">How Spoken IVR Works</h3>
+          <span class="text-xs text-secondary font-semibold">100% Free Toll Service</span>
+        </div>
+        <div class="grid grid-cols-2 gap-space-xs">
+          <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col gap-1">
+            <span class="text-secondary font-bold text-sm">1. Dial Hotline</span>
+            <p class="text-[11px] text-on-surface-variant">Call 1800-11-7625 from any mobile with zero balance.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col gap-1">
+            <span class="text-secondary font-bold text-sm">2. Pick Dialect</span>
+            <p class="text-[11px] text-on-surface-variant">Press 1 for Hindi, 2 for Marathi, 3 for Punjabi.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col gap-1">
+            <span class="text-secondary font-bold text-sm">3. Spoken Answers</span>
+            <p class="text-[11px] text-on-surface-variant">Speak your trade interest and district location.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col gap-1">
+            <span class="text-secondary font-bold text-sm">4. Instant SMS</span>
+            <p class="text-[11px] text-on-surface-variant">Get training center address and stipend voucher via SMS.</p>
           </div>
         </div>
       </div>
 
     </section>
 
-    <!-- VIEW 2: CALL / IVR INFO SCREEN & INTERACTIVE FEATURE-PHONE SIMULATOR -->
-    <section id="viewIvr" class="view-panel">
-      <div class="ivr-container">
-        
-        <!-- Low Connectivity Explainer Card -->
-        <div class="ivr-info-card">
-          <div class="ivr-badge">📡 LOW-CONNECTIVITY & FEATURE PHONE FALLBACK</div>
-          <h2>Toll-Free PM-AJAY Voice Hotline</h2>
-          <p class="ivr-lead">
-            For beneficiaries with basic keypad button-phones or zero internet connectivity. Reachable directly through standard telecom carrier lines with zero data balance.
-          </p>
-
-          <div class="helpline-highlight">
-            <span class="phone-big-icon">📞</span>
-            <div class="helpline-numbers">
-              <span class="helpline-label">Toll-Free National Helpline</span>
-              <span class="helpline-digits">1800-11-PMAJAY</span>
-              <span class="helpline-alt">(1800-11-762529) • 24x7 Multi-lingual</span>
+    <!-- ================================================================= -->
+    <!-- VIEW 4: DISTRICT WELFARE & PLACEMENT DASHBOARD                   -->
+    <!-- ================================================================= -->
+    <section id="viewAdmin" class="view-panel flex-col w-full px-margin-mobile pb-space-xl gap-space-md">
+      
+      <!-- District Officer Context Header -->
+      <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-secondary via-secondary-container to-surface-container-high"></div>
+        <div class="flex items-start justify-between gap-space-sm">
+          <div class="flex items-center gap-space-sm min-w-0">
+            <div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center flex-shrink-0 text-on-secondary-fixed">
+              <span class="material-symbols-outlined text-[22px]">badge</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold">Admin Desk · Nivara GovTech</span>
+              <h1 class="font-display font-bold text-lg text-on-surface truncate">Nivara District Welfare Portal</h1>
+              <span class="text-xs text-secondary font-medium">जिला कल्याण अधिकारी डैशबोर्ड</span>
             </div>
           </div>
-
-          <div class="ivr-features-list">
-            <div class="ivr-feature">
-              <span class="feat-icon">🎙️</span>
-              <div>
-                <strong>Spoken Interactive Tree (IVR)</strong>
-                <p>Press 1 for Hindi, 2 for Marathi, 3 for Punjabi. Speak your trade preference directly into the phone.</p>
-              </div>
-            </div>
-            <div class="ivr-feature">
-              <span class="feat-icon">💬</span>
-              <div>
-                <strong>SMS Roadmap Confirmation</strong>
-                <p>Sends SMS summary with nearest training center address and District Welfare Officer contact.</p>
-              </div>
-            </div>
-            <div class="ivr-feature">
-              <span class="feat-icon">👥</span>
-              <div>
-                <strong>Village Facilitator Callback</strong>
-                <p>Automated dispatch notification sent to local ASHA / JSS coordinator for doorstep guidance.</p>
-              </div>
-            </div>
-          </div>
+          <button id="btnRefreshDashboard" class="flex items-center gap-1 bg-surface-container-low hover:bg-surface-container px-2.5 py-1 rounded-full text-on-surface transition-all flex-shrink-0 active:scale-95 shadow-sm">
+            <span class="material-symbols-outlined text-[16px] text-secondary" id="syncIcon">sync</span>
+            <span class="text-xs font-semibold">Live Sync</span>
+          </button>
         </div>
 
-        <!-- Interactive Feature Phone Keypad Simulator -->
-        <div class="phone-simulator-card">
-          <div class="phone-chassis">
-            <div class="phone-speaker-slot"></div>
-            
-            <!-- Phone LCD Screen -->
-            <div class="phone-lcd">
-              <div class="lcd-header">
-                <span>PM-AJAY IVR</span>
-                <span id="lcdTime">12:00</span>
-                <span>📶 100%</span>
-              </div>
-              <div class="lcd-body" id="lcdBody">
-                <p class="lcd-prompt" id="lcdPrompt">
-                  Dial 1800-11-7625 or tap green Call button to connect...
-                </p>
-                <div class="lcd-dialed" id="lcdDialed"></div>
-              </div>
-              <div class="lcd-footer">
-                <span id="lcdAudioStatus">READY</span>
-              </div>
-            </div>
-
-            <!-- Keypad Buttons -->
-            <div class="keypad-grid">
-              <button class="keypad-btn key-action-call" id="keyCall" title="Call">📞 Call</button>
-              <button class="keypad-btn key-nav">▲</button>
-              <button class="keypad-btn key-action-end" id="keyEnd" title="End">🔴 End</button>
-
-              <button class="keypad-btn" data-key="1">1 <span>हिंदी</span></button>
-              <button class="keypad-btn" data-key="2">2 <span>मराठी</span></button>
-              <button class="keypad-btn" data-key="3">3 <span>ਪੰਜਾਬੀ</span></button>
-
-              <button class="keypad-btn" data-key="4">4 <span>GHI</span></button>
-              <button class="keypad-btn" data-key="5">5 <span>JKL</span></button>
-              <button class="keypad-btn" data-key="6">6 <span>MNO</span></button>
-
-              <button class="keypad-btn" data-key="7">7 <span>PQRS</span></button>
-              <button class="keypad-btn" data-key="8">8 <span>TUV</span></button>
-              <button class="keypad-btn" data-key="9">9 <span>WXYZ</span></button>
-
-              <button class="keypad-btn" data-key="*">*</button>
-              <button class="keypad-btn" data-key="0">0 <span>+</span></button>
-              <button class="keypad-btn" data-key="#">#</button>
-            </div>
-            
-            <p class="simulator-hint">
-              Interactive Prototype: Click 'Call' to listen to simulated carrier IVR flow.
-            </p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- VIEW 3: ADMIN DASHBOARD (District Officer View) -->
-    <section id="viewAdmin" class="view-panel">
-      <div class="admin-dashboard-container">
-        
-        <!-- Dashboard Top Toolbar -->
-        <div class="dashboard-toolbar">
-          <div class="toolbar-title-block">
-            <h2>District Officer Administration & Placements</h2>
-            <p>PM-AJAY Skill Development & Livelihood Monitoring System</p>
-          </div>
-          
-          <div class="district-filter-group">
-            <label for="districtSelect">Select District:</label>
-            <select id="districtSelect" class="district-dropdown">
+        <!-- District Selector Strip -->
+        <div class="flex flex-wrap items-center justify-between gap-space-xs pt-space-xs bg-surface-container-low/60 p-space-xs rounded-lg">
+          <div class="relative flex items-center bg-surface-container-lowest rounded-md px-2 py-1 shadow-sm">
+            <span class="material-symbols-outlined text-[16px] text-secondary mr-1">location_on</span>
+            <select id="districtSelect" aria-label="Filter by District" class="appearance-none bg-transparent text-xs font-semibold text-on-surface pr-5 py-0.5 focus:outline-none cursor-pointer">
               <option value="all">All Districts (Consolidated)</option>
-              <option value="Pune" selected>Pune</option>
-              <option value="Solapur">Solapur</option>
-              <option value="Nagpur">Nagpur</option>
-              <option value="Amritsar">Amritsar</option>
-              <option value="Varanasi">Varanasi</option>
-              <option value="Madurai">Madurai</option>
-              <option value="Mysuru">Mysuru</option>
-              <option value="Ranchi">Ranchi</option>
-              <option value="Medinipur">Medinipur</option>
-              <option value="Kamrup">Kamrup</option>
-              <option value="Bhopal">Bhopal</option>
-              <option value="Raipur">Raipur</option>
+              <option value="Pune" selected>Pune (West)</option>
+              <option value="Solapur">Solapur (West)</option>
+              <option value="Nagpur">Nagpur (West)</option>
+              <option value="Amritsar">Amritsar (North)</option>
+              <option value="Varanasi">Varanasi (North)</option>
+              <option value="Madurai">Madurai (South)</option>
+              <option value="Mysuru">Mysuru (South)</option>
+              <option value="Ranchi">Ranchi (East)</option>
+              <option value="Medinipur">Medinipur (East)</option>
+              <option value="Kamrup">Kamrup (North-East)</option>
+              <option value="Bhopal">Bhopal (Central)</option>
+              <option value="Raipur">Raipur (Central)</option>
             </select>
-            <button id="btnRefreshDashboard" class="btn-refresh" title="Refresh metrics">🔄 Refresh</button>
+            <span class="material-symbols-outlined text-[14px] text-on-surface-variant absolute right-1 pointer-events-none">expand_more</span>
+          </div>
+          <div class="flex items-center gap-1 text-on-surface-variant text-[11px]">
+            <span class="material-symbols-outlined text-[13px]">schedule</span>
+            <span id="syncTime">Updated: Live Sync Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Bento KPI Metric Cards -->
+      <div class="grid grid-cols-2 gap-gutter-mobile">
+        <!-- Active Enrolments -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs text-on-surface-variant font-medium">Active Enrolments</span>
+            <div class="w-7 h-7 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary">
+              <span class="material-symbols-outlined text-[18px]">how_to_reg</span>
+            </div>
+          </div>
+          <span class="font-display font-extrabold text-2xl text-on-surface my-0.5" id="valEnrolments">5</span>
+          <div class="flex items-center gap-1 text-[#065f46] text-[10px] font-bold bg-[#ecfdf5] px-1.5 py-0.5 rounded-full w-fit">
+            <span class="material-symbols-outlined text-[12px]">trending_up</span>
+            <span>Undergoing NSQF</span>
           </div>
         </div>
 
-        <!-- 4 Key Stat Cards -->
-        <div class="metrics-grid">
-          <div class="metric-card metric-enrolled">
-            <div class="metric-icon">📝</div>
-            <div class="metric-content">
-              <span class="metric-label">Active Enrolments</span>
-              <h3 class="metric-value" id="valEnrolments">5</h3>
-              <span class="metric-sub">Undergoing NSQF training</span>
+        <!-- Placements -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs text-on-surface-variant font-medium">Placements</span>
+            <div class="w-7 h-7 rounded-lg bg-surface-container-low flex items-center justify-center text-[#065f46]">
+              <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
             </div>
           </div>
-
-          <div class="metric-card metric-placed">
-            <div class="metric-icon">💼</div>
-            <div class="metric-content">
-              <span class="metric-label">Successful Placements</span>
-              <h3 class="metric-value" id="valPlacements">3</h3>
-              <span class="metric-sub">Wage or enterprise credit</span>
-            </div>
-          </div>
-
-          <div class="metric-card metric-dropout">
-            <div class="metric-icon">⚠️</div>
-            <div class="metric-content">
-              <span class="metric-label">Reported Dropouts</span>
-              <h3 class="metric-value" id="valDropouts">1</h3>
-              <span class="metric-sub">Flagged for counsellor intervention</span>
-            </div>
-          </div>
-
-          <div class="metric-card metric-total">
-            <div class="metric-icon">👥</div>
-            <div class="metric-content">
-              <span class="metric-label">Total Beneficiaries</span>
-              <h3 class="metric-value" id="valTotalBeneficiaries">10</h3>
-              <span class="metric-sub">Covered under PM-AJAY</span>
-            </div>
+          <span class="font-display font-extrabold text-2xl text-on-surface my-0.5" id="valPlacements">3</span>
+          <div class="flex items-center gap-1 text-[#065f46] text-[10px] font-bold bg-[#ecfdf5] px-1.5 py-0.5 rounded-full w-fit">
+            <span class="material-symbols-outlined text-[12px]">check_circle</span>
+            <span>Wage &amp; Enterprise</span>
           </div>
         </div>
 
-        <!-- Skill Demand Chart & Follow-up Queue Grid -->
-        <div class="dashboard-main-grid">
+        <!-- At-Risk Dropouts -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs text-on-surface-variant font-medium">Reported Dropouts</span>
+            <div class="w-7 h-7 rounded-lg bg-error-container/40 flex items-center justify-center text-error">
+              <span class="material-symbols-outlined text-[18px]">warning</span>
+            </div>
+          </div>
+          <span class="font-display font-extrabold text-2xl text-error my-0.5" id="valDropouts">1</span>
+          <div class="flex items-center gap-1 text-on-error-container text-[10px] font-bold bg-error-container/60 px-1.5 py-0.5 rounded-full w-fit">
+            <span class="material-symbols-outlined text-[12px]">call</span>
+            <span>Alert Counselor</span>
+          </div>
+        </div>
+
+        <!-- Total Profiled -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs text-on-surface-variant font-medium">Total Profiled</span>
+            <div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface">
+              <span class="material-symbols-outlined text-[18px]">group</span>
+            </div>
+          </div>
+          <span class="font-display font-extrabold text-2xl text-on-surface my-0.5" id="valTotalBeneficiaries">10</span>
+          <div class="flex items-center gap-1 text-on-surface-variant text-[10px] font-bold bg-surface-container-low px-1.5 py-0.5 rounded-full w-fit">
+            <span class="material-symbols-outlined text-[12px]">fact_check</span>
+            <span>Nivara Registry</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regional Demand vs. Training Capacity Analysis Panel (Feature: Aggregate Demand vs Training Capacity) -->
+      <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm" id="capacityGapSection">
+        
+        <!-- Header & Section Title -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs pb-1 border-b border-secondary/10">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-4 rounded-full bg-primary"></div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-display font-bold text-base text-on-surface">Demand vs. Training Capacity</h2>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wide">Regional Analysis</span>
+              </div>
+              <p class="text-xs text-on-surface-variant mt-0.5">Aggregate citizen trade aspiration vs. estimated training-center seat capacity per region.</p>
+            </div>
+          </div>
           
-          <!-- Skill Demand by Trade Breakdown -->
-          <div class="card-demand-breakdown">
-            <div class="card-header">
-              <h3>📈 Skill Demand by NSQF Trade</h3>
-              <span class="card-tag">Real-Time Intake</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-semibold text-secondary flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-full shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+              <span id="capacityActiveStateLabel">Delhi</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Regional State Selector Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar" id="capacityStateTabs">
+          <button type="button" class="capacity-state-btn text-xs font-bold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-secondary text-on-secondary border-secondary shadow-sm" data-state="Delhi">
+            Delhi
+          </button>
+          <button type="button" class="capacity-state-btn text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-surface-container-low text-on-surface-variant border-secondary/15 hover:bg-surface-container" data-state="Maharashtra">
+            Maharashtra
+          </button>
+          <button type="button" class="capacity-state-btn text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-surface-container-low text-on-surface-variant border-secondary/15 hover:bg-surface-container" data-state="Tamil Nadu">
+            Tamil Nadu
+          </button>
+          <button type="button" class="capacity-state-btn text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-surface-container-low text-on-surface-variant border-secondary/15 hover:bg-surface-container" data-state="Karnataka">
+            Karnataka
+          </button>
+          <button type="button" class="capacity-state-btn text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-surface-container-low text-on-surface-variant border-secondary/15 hover:bg-surface-container" data-state="Uttar Pradesh">
+            Uttar Pradesh
+          </button>
+          <button type="button" class="capacity-state-btn text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-surface-container-low text-on-surface-variant border-secondary/15 hover:bg-surface-container" data-state="all">
+            All Regions
+          </button>
+        </div>
+
+        <!-- Visually & Textually Distinguished Data Reliability Notice (Requirement 2) -->
+        <div class="flex items-start gap-2 bg-[#fffbeb] border border-[#fde68a] text-[#92400e] p-space-sm rounded-xl text-xs">
+          <span class="material-symbols-outlined text-[18px] text-[#d97706] flex-shrink-0 mt-0.5">verified_user</span>
+          <div class="flex flex-col gap-0.5">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="font-bold text-[#b45309]">Estimated capacity — illustrative, pending integration with Skill India Digital Hub</span>
+              <span class="text-[10px] bg-[#fef3c7] text-[#92400e] px-1.5 py-0.5 rounded border border-[#fde68a] font-semibold">Benchmark Model</span>
             </div>
-            <div id="demandBarsContainer" class="demand-bars-list">
-              <!-- Dynamically rendered -->
+            <p class="text-[11px] text-[#78350f] leading-relaxed">
+              <strong class="text-secondary font-bold">Demand Count</strong> reflects verified citizen aspiration recorded live across Nivara voice &amp; mobile intakes. In contrast, <strong class="text-[#b45309]">Estimated Capacity</strong> figures are indicative planning benchmarks for district centers and are clearly demarcated.
+            </p>
+          </div>
+        </div>
+
+        <!-- Regional High-Level Summary Card -->
+        <div class="grid grid-cols-3 gap-space-xs bg-surface-container-low/70 p-space-sm rounded-xl text-xs">
+          <div class="flex flex-col">
+            <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Real Demand</span>
+            <div class="flex items-baseline gap-1 mt-0.5">
+              <span class="font-display font-bold text-base text-on-surface" id="capacityTotalDemand">0</span>
+              <span class="text-[10px] text-secondary font-semibold">Citizens</span>
             </div>
           </div>
-
-          <!-- Beneficiary Follow-Up Tracker Table -->
-          <div class="card-beneficiary-table">
-            <div class="card-header">
-              <h3>📋 Beneficiary Follow-Up & Retention Queue</h3>
-              <span class="card-tag" id="beneficiaryCountTag">10 Records</span>
-            </div>
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Beneficiary</th>
-                    <th>Location</th>
-                    <th>Recommended Trade</th>
-                    <th>Entry Mode</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="beneficiaryTableBody">
-                  <!-- Dynamically rendered -->
-                </tbody>
-              </table>
+          <div class="flex flex-col">
+            <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Est. Capacity</span>
+            <div class="flex items-baseline gap-1 mt-0.5">
+              <span class="font-display font-bold text-base text-on-surface" id="capacityTotalEst">0</span>
+              <span class="text-[10px] text-amber-700 font-semibold">Seats (Est)</span>
             </div>
           </div>
+          <div class="flex flex-col">
+            <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Region Status</span>
+            <div class="mt-0.5" id="capacityOverallContainer">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ecfdf5] text-[#065f46]" id="capacityOverallBadge">
+                Surplus Capacity
+              </span>
+            </div>
+          </div>
+        </div>
 
+        <!-- Dynamic Capacity vs Demand Table & Progress Bars -->
+        <div class="flex flex-col gap-space-sm pt-1" id="capacityTableContainer">
+          <!-- Dynamically populated per trade -->
         </div>
 
       </div>
+
+      <!-- Trade Demand Distribution Panel -->
+      <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-4 rounded-full bg-secondary"></div>
+            <h2 class="font-display font-bold text-base text-on-surface">Trade Demand Trends</h2>
+          </div>
+          <span class="text-xs text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded font-semibold" id="beneficiaryCountTag">10 Records</span>
+        </div>
+        <p class="text-xs text-on-surface-variant">Real-time allocation preferences expressed via regional voice bot and district touchpoints.</p>
+        <div class="flex flex-col gap-space-sm pt-1" id="demandBarsContainer">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Beneficiary Follow-Up Queue -->
+      <div class="flex flex-col gap-space-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display font-bold text-base text-on-surface">Beneficiary Queue</h2>
+            <span class="text-xs text-on-surface-variant">Live Dispatch &amp; Retention Tracking</span>
+          </div>
+          <div class="flex items-center gap-1 bg-surface-container-lowest px-2 py-1 rounded-lg shadow-sm">
+            <span class="material-symbols-outlined text-[16px] text-secondary">filter_list</span>
+            <span class="text-xs text-on-surface font-semibold">Priority</span>
+          </div>
+        </div>
+
+        <!-- Beneficiary Queue Card Container -->
+        <div class="flex flex-col gap-space-sm" id="beneficiaryTableBody">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Quick Action Administrative Hub -->
+      <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-md flex flex-col gap-space-sm mt-space-xs">
+        <div class="flex items-center justify-between mb-0.5">
+          <span class="font-display font-bold text-sm text-on-surface">Administrative Actions</span>
+          <span class="text-[11px] text-on-surface-variant font-medium">NIC Data Bridge</span>
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+          <button id="btnExportReport" class="w-full bg-surface-container-low hover:bg-surface-container text-on-surface py-2.5 px-space-md rounded-lg flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-[0.98]">
+            <span class="material-symbols-outlined text-[18px] text-secondary">file_download</span>
+            <span>Export District Report (NIC/Excel)</span>
+          </button>
+          <button id="btnBulkSms" class="w-full bg-secondary hover:bg-secondary-container text-on-secondary py-2.5 px-space-md rounded-lg flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-[0.98] shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">cell_tower</span>
+            <span>Bulk SMS Broadcast to Beneficiaries</span>
+          </button>
+        </div>
+      </div>
+
     </section>
 
   </main>
 
-  <!-- Notification Toast -->
-  <div id="toastNotification" class="toast-notification hidden">
-    <span id="toastIcon">✅</span>
-    <span id="toastMessage">Success</span>
+  <!-- ================================================================= -->
+  <!-- FIXED BOTTOM NAVIGATION BAR                                      -->
+  <!-- ================================================================= -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.06)] border-t border-secondary/10">
+    <div class="h-16 px-space-xs flex items-center justify-around">
+      <button class="nav-tab active flex flex-col items-center justify-center min-w-[68px] h-12 px-2 transition-all" data-view="viewVoiceApp" data-title="Voice Assistant">
+        <span class="material-symbols-outlined text-[24px]">mic</span>
+        <span class="text-[11px] font-semibold mt-0.5">Voice AI</span>
+      </button>
+      <button class="nav-tab flex flex-col items-center justify-center min-w-[68px] h-12 px-2 text-on-surface-variant transition-all" data-view="viewRoadmap" data-title="Roadmap &amp; Skills">
+        <span class="material-symbols-outlined text-[24px]">route</span>
+        <span class="text-[11px] font-semibold mt-0.5">Pathways</span>
+      </button>
+      <button class="nav-tab flex flex-col items-center justify-center min-w-[68px] h-12 px-2 text-on-surface-variant transition-all" data-view="viewIvr" data-title="IVR Line">
+        <span class="material-symbols-outlined text-[24px]">phone_in_talk</span>
+        <span class="text-[11px] font-semibold mt-0.5">IVR Line</span>
+      </button>
+      <button class="nav-tab flex flex-col items-center justify-center min-w-[68px] h-12 px-2 text-on-surface-variant transition-all" data-view="viewAdmin" data-title="District Admin">
+        <span class="material-symbols-outlined text-[24px]">analytics</span>
+        <span class="text-[11px] font-semibold mt-0.5">District</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ================================================================= -->
+  <!-- TOAST NOTIFICATION CONTAINER                                     -->
+  <!-- ================================================================= -->
+  <div id="toastNotification" class="fixed bottom-20 left-4 right-4 z-50 bg-primary-container text-on-primary px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transition-opacity duration-300 opacity-0 pointer-events-none">
+    <span class="material-symbols-outlined text-[#10b981]" id="toastIcon">check_circle</span>
+    <span class="text-xs font-medium flex-1" id="toastMessage">Success</span>
   </div>
 
   <script src="/static/app.js"></script>

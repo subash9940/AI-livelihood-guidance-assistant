@@ -1,23 +1,30 @@
 /**
- * PM-AJAY AI Livelihood Guidance Assistant
- * Frontend Controller: Voice-First ASR/TTS, Facilitator Mode, IVR Simulator, Admin Dashboard
+ * Nivara — AI Livelihood Guidance Assistant
+ * Frontend Controller: Voice-First ASR/TTS, Stitch AI Responsive Multi-Screen Layout,
+ * Real-time Skill Gap Breakdown, Regional Schemes Directory, Feature Phone IVR Simulator, District Admin Dashboard.
  */
 
 // Application State
 const state = {
   sessionId: null,
-  entryMode: 'app', // 'app', 'call', 'facilitator'
+  entryMode: 'app', // 'app', 'facilitator', 'call'
   language: 'hi',
   isRecording: false,
   recognition: null,
   profileComplete: false,
   currentRecommendation: null,
-  ivrActive: false,
-  ivrDialed: '',
-  ivrStep: 0
+  activeTab: 'viewVoiceApp',
+  beneficiaryProfile: null,
+  profile: null,
+  selectedCapacityState: 'Delhi',
+  ivrActive: true,
+  ivrTimer: 42,
+  ivrInterval: null,
+  audioPlaying: false,
+  audioInterval: null
 };
 
-// Language Locales Map for Web Speech API
+// Regional Language Locales Map for Web Speech API
 const LANG_LOCALES = {
   hi: 'hi-IN',
   mr: 'mr-IN',
@@ -35,204 +42,387 @@ const INITIAL_PROMPTS = {
   en: "Welcome! Please tell me about yourself — what is your education level, and what kind of work interests you?"
 };
 
-// Localized Demo Utterance Scenarios (Does NOT change active language)
-const DEMO_SCENARIOS = [
-  {
-    icon: '🌾',
-    id: 'food_processing',
-    labels: {
-      en: '10th Pass + Farming Family + Food Processing + Low Mobility (Demo Script)',
-      hi: '10वीं पास + किसान परिवार + खाद्य प्रसंस्करण + सीमित गतिशीलता',
-      mr: '१०वी पास + शेतकरी कुटुंब + अन्न प्रक्रिया + गावातच काम',
-      pa: '10ਵੀਂ ਪਾਸ + ਕਿਸਾਨ ਪਰਿਵਾਰ + ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ + ਪਿੰਡ ਵਿੱਚ ਕੰਮ',
-      ta: '10வது தேர்ச்சி + விவசாய குடும்பம் + உணவு பதப்படுத்துதல்'
-    },
-    texts: {
-      en: "I finished 10th, my family does farming, I want something food-related, I can't travel far",
-      hi: "मैंने 10वीं पास की है, मेरा परिवार खेती करता है, मुझे खाने से जुड़ा काम सीखना है और मैं गाँव से दूर नहीं जा सकता",
-      mr: "मी १०वी पास आहे, माझे कुटुंब शेती करते, मला अन्न प्रक्रियेशी संबंधित काम शिकायचे आहे आणि मी जास्त लांब जाऊ शकत नाही",
-      pa: "ਮੈਂ ਦਸਵੀਂ ਪਾਸ ਹਾਂ, ਮੇਰਾ ਪਰਿਵਾਰ ਖੇਤੀ ਕਰਦਾ ਹੈ, ਮੈਨੂੰ ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਹੈ ਅਤੇ ਮੈਂ ਦੂਰ ਨਹੀਂ ਜਾ ਸਕਦਾ",
-      ta: "நான் 10வது முடித்துள்ளேன், எங்கள் குடும்பம் விவசாயம் செய்கிறது, உணவு சார்ந்த தொழில் செய்ய விரும்புகிறேன், தூரம் செல்ல முடியாது"
-    }
-  },
-  {
-    icon: '🧵',
-    id: 'tailoring',
-    labels: {
-      en: '8th Pass + Tailoring & Garments + Self-Employment',
-      hi: '8वीं पास + सिलाई व परिधान + खुद की दुकान',
-      mr: '८वी पास + शिलाई काम + स्वतःचे दुकान',
-      pa: '8ਵੀਂ ਪਾਸ + ਸਿਲਾਈ ਅਤੇ ਆਪਣੀ ਦੁਕਾਨ',
-      ta: '8வது தேர்ச்சி + தையல் தொழில் + சொந்த தொழில்'
-    },
-    texts: {
-      en: "I passed 8th, I want to learn tailoring and open my own shop in my village",
-      hi: "मुझे सिलाई का काम सीखना है, खुद की दुकान खोलनी है, 8वीं पास हूँ",
-      mr: "मला शिलाई काम शिकायचे आहे, स्वतःचे दुकान सुरू करायचे आहे, ८वी पास आहे",
-      pa: "ਮੈਂ ਅੱਠਵੀਂ ਪਾਸ ਹਾਂ, ਮੈਨੂੰ ਸਿਲਾਈ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਹੈ ਅਤੇ ਪਿੰਡ ਵਿੱਚ ਆਪਣੀ ਦੁਕਾਨ ਖੋਲ੍ਹਣੀ ਹੈ",
-      ta: "நான் 8வது படித்துள்ளேன், தையல் தொழில் கற்றுக்கொண்டு சொந்த கடை வைக்க விரும்புகிறேன்"
-    }
-  },
-  {
-    icon: '☀️',
-    id: 'solar',
-    labels: {
-      en: '12th Pass + Solar PV Suryamitra + Commute OK',
-      hi: '12वीं पास + सोलर सूर्यमित्र + शहर जा सकते हैं',
-      mr: '१२वी पास + सोलर सूर्यमित्र + तालुक्यात जाऊ शकतो',
-      pa: '12ਵੀਂ ਪਾਸ + ਸੋਲਰ ਪੈਨਲ ਸਿਖਲਾਈ',
-      ta: '12வது தேர்ச்சி + சோலார் தொழில்நுட்பம்'
-    },
-    texts: {
-      en: "I passed 12th, want to learn solar panel installation and electrical work, can commute to district",
-      hi: "मैंने 12वीं पास की है, मुझे सोलर पैनल और बिजली वायरिंग का काम सीखना है, शहर जा सकता हूँ",
-      mr: "मी १२वी पास आहे, मला सोलर पॅनेल आणि वायरिंगचे काम शिकायचे आहे, तालुक्यात जाऊ शकतो",
-      pa: "ਮੈਂ ਬਾਰ੍ਹਵੀਂ ਪਾਸ ਹਾਂ, ਮੈਨੂੰ ਸੋਲਰ ਪੈਨਲ ਅਤੇ ਵਾਇਰਿੰਗ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਹੈ",
-      ta: "நான் 12வது முடித்துள்ளேன், சோலਾਰ பேனல் பொருத்தும் வேலை கற்க விரும்புகிறேன்"
-    }
-  },
-  {
-    icon: '💻',
-    id: 'digital_csc',
-    labels: {
-      en: '10th Pass + Digital Services / CSC Operator',
-      hi: '10वीं पास + डिजिटल सेवा ऑपरेटर / सीएससी केंद्र',
-      mr: '१०वी पास + डिजिटल सेवा ऑपरेटर / सीएससी केंद्र',
-      pa: '10ਵੀਂ ਪਾਸ + ਡਿਜੀਟਲ ਸੇਵਾਵਾਂ / ਸੀਐਸਸੀ',
-      ta: '10வது தேர்ச்சி + டிஜிட்டல் சேவை மையம்'
-    },
-    texts: {
-      en: "I passed 10th, want to learn digital services and computer applications for citizen schemes",
-      hi: "मैंने 10वीं पास की है, मुझे कंप्यूटर और डिजिटल सरकारी योजनाओं (सीएससी) का काम सीखना है",
-      mr: "मी १०वी पास आहे, मला संगणक आणि डिजिटल शासकीय योजनांचे (सीएससी) काम शिकायचे आहे",
-      pa: "ਮੈਂ ਦਸਵੀਂ ਪਾਸ ਹਾਂ, ਮੈਨੂੰ ਕੰਪਿਊਟਰ ਅਤੇ ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਹੈ",
-      ta: "நான் 10வது முடித்துள்ளேன், கணினி மற்றும் அரசு டிஜிட்டல் திட்ட பணிகளை கற்க விரும்புகிறேன்"
-    }
-  }
-];
-
-// DOM Elements
-const elements = {
-  // Tabs & Views
-  tabApp: document.getElementById('tabApp'),
-  tabIvr: document.getElementById('tabIvr'),
-  tabAdmin: document.getElementById('tabAdmin'),
-  viewVoiceApp: document.getElementById('viewVoiceApp'),
-  viewIvr: document.getElementById('viewIvr'),
-  viewAdmin: document.getElementById('viewAdmin'),
-
-  // Language & Mode
-  langSelect: document.getElementById('langSelect'),
-  facilitatorBanner: document.getElementById('facilitatorBanner'),
-  btnStartFacilitator: document.getElementById('btnStartFacilitator'),
-  btnExitFacilitator: document.getElementById('btnExitFacilitator'),
-  btnResetSession: document.getElementById('btnResetSession'),
-
-  // Mic & Speech UI
-  dominantMicBtn: document.getElementById('dominantMicBtn'),
-  micStage: document.querySelector('.mic-stage'),
-  micLabel: document.getElementById('micLabel'),
-  micIcon: document.getElementById('micIcon'),
-  waveformVisualizer: document.getElementById('waveformVisualizer'),
-  liveTranscriptText: document.getElementById('liveTranscriptText'),
-  assistantSpeechText: document.getElementById('assistantSpeechText'),
-  btnReplayAudio: document.getElementById('btnReplayAudio'),
-  audioStatusPill: document.getElementById('audioStatusPill'),
-  statusText: document.getElementById('statusText'),
-
-  // Signals
-  sigEducation: document.getElementById('sigEducation'),
-  sigFamilyOcc: document.getElementById('sigFamilyOcc'),
-  sigSkills: document.getElementById('sigSkills'),
-  sigMobility: document.getElementById('sigMobility'),
-  sigPref: document.getElementById('sigPref'),
-  sigEntryMode: document.getElementById('sigEntryMode'),
-  signalsBadge: document.getElementById('signalsBadge'),
-
-  // Roadmap
-  roadmapContainer: document.getElementById('roadmapContainer'),
-  recNsqfBadge: document.getElementById('recNsqfBadge'),
-  recTradeTitle: document.getElementById('recTradeTitle'),
-  recGapSummary: document.getElementById('recGapSummary'),
-  recSpokenSummaryText: document.getElementById('recSpokenSummaryText'),
-  btnPlayRoadmapAudio: document.getElementById('btnPlayRoadmapAudio'),
-  step1Title: document.getElementById('step1Title'),
-  step1Desc: document.getElementById('step1Desc'),
-  step2Title: document.getElementById('step2Title'),
-  step2Desc: document.getElementById('step2Desc'),
-  step3Title: document.getElementById('step3Title'),
-  step3Desc: document.getElementById('step3Desc'),
-  step4Title: document.getElementById('step4Title'),
-  step4Desc: document.getElementById('step4Desc'),
-  btnPrintRoadmap: document.getElementById('btnPrintRoadmap'),
-  btnSmsRoadmap: document.getElementById('btnSmsRoadmap'),
-  btnNewRoadmapAssessment: document.getElementById('btnNewRoadmapAssessment'),
-
-  // IVR Simulator
-  lcdPrompt: document.getElementById('lcdPrompt'),
-  lcdDialed: document.getElementById('lcdDialed'),
-  lcdAudioStatus: document.getElementById('lcdAudioStatus'),
-  lcdTime: document.getElementById('lcdTime'),
-  keyCall: document.getElementById('keyCall'),
-  keyEnd: document.getElementById('keyEnd'),
-
-  // Admin Dashboard
-  districtSelect: document.getElementById('districtSelect'),
-  btnRefreshDashboard: document.getElementById('btnRefreshDashboard'),
-  valEnrolments: document.getElementById('valEnrolments'),
-  valPlacements: document.getElementById('valPlacements'),
-  valDropouts: document.getElementById('valDropouts'),
-  valTotalBeneficiaries: document.getElementById('valTotalBeneficiaries'),
-  demandBarsContainer: document.getElementById('demandBarsContainer'),
-  beneficiaryTableBody: document.getElementById('beneficiaryTableBody'),
-  beneficiaryCountTag: document.getElementById('beneficiaryCountTag'),
-
-  // Toast
-  toast: document.getElementById('toastNotification'),
-  toastMessage: document.getElementById('toastMessage')
+const INITIAL_PROMPTS_SUB = {
+  hi: "Hello! Please share about yourself — your education, skills, and what kind of livelihood or trade you wish to pursue.",
+  mr: "Hello! Share your education level and what vocational trade interests you.",
+  pa: "Hello! Tell us about your education and vocational aspirations.",
+  ta: "Hello! Share your education and career aspirations under PM-AJAY.",
+  en: "Nivara Free Vocational Training & Direct Placement Linkage Assistant."
 };
 
-// Initialize Application
+// Trade Sector Icon Mappings for Material Symbols
+const TRADE_ICONS = {
+  food_processing: 'agriculture',
+  apparel_tailoring: 'checkroom',
+  solar_technician: 'solar_power',
+  automotive_ev: 'electric_car',
+  healthcare_assistant: 'medical_services',
+  digital_csc: 'devices'
+};
+
+const TRADE_ICONS_EMOJI = {
+  food_processing: '🌾',
+  apparel_tailoring: '🧵',
+  solar_technician: '☀️',
+  automotive_ev: '🛵',
+  healthcare_assistant: '🏥',
+  digital_csc: '💻'
+};
+
+// Interactive IVR Phone Keypad Voice Responses
+const IVR_RESPONSES = {
+  '1': {
+    title: 'हिंदी चयनित',
+    prompt: '"हिंदी चुनी गई। पीएम-अजय कौशल्य प्रशिक्षण के लिए 1, व्यवसाय अनुदान (₹50,000) के लिए 2, स्थिति के लिए 3 दबाएं।"'
+  },
+  '2': {
+    title: 'मराठी निवडली',
+    prompt: '"मराठी भाषा निवडली. स्वयंरोजगार अनुदानासाठी 1 दाबा, कौशल्य केंद्रासाठी 2 दाबा."'
+  },
+  '3': {
+    title: 'ਪੰਜਾਬੀ ਚੁਣੀ',
+    prompt: '"ਪੰਜਾਬੀ ਚੁਣੀ ਗਈ। ਨਵੇਂ ਰੋਜ਼ਗਾਰ ਅਤੇ ਸਰਕਾਰੀ ਸਬਸਿਡੀ ਜਾਣਕਾਰੀ ਲਈ 1 ਦਬਾਓ।"'
+  },
+  '4': {
+    title: 'தமிழ் தெரிவு',
+    prompt: '"தமிழ் தேர்ந்தெடுக்கப்பட்டது. தொழில் வழிகாட்டுதலுக்கு 1-ஐ அழுத்தவும்."'
+  },
+  '5': {
+    title: 'Special Track',
+    prompt: '"अनुसूचित जाति कौशल्य विकास: निःशुल्क प्रशिक्षण और छात्रवृत्ति हेतु 1 दबाएं।"'
+  },
+  '6': {
+    title: 'Status Check',
+    prompt: '"आवेदन स्थिति: आपका आधार लिंक्ड बैंक खाता मान्य है। स्वीकृति पत्र शीघ्र उपलब्ध होगा।"'
+  },
+  '7': {
+    title: 'Mitra Help',
+    prompt: '"ग्राम मित्र अनुरोध दर्ज किया गया। आपके पंचायत केंद्र से 24 घंटे में संपर्क किया जाएगा।"'
+  },
+  '8': {
+    title: 'SMS Sent',
+    prompt: '"एसएमएस भेजा गया! आपके फोन पर नजदीकी कौशल्य केंद्र का पता व हेल्पलाइन विवरण प्रेषित हुआ।"'
+  },
+  '9': {
+    title: 'Loan Grant',
+    prompt: '"पीएम-अजय आजीविका अनुदान: अनुसूचित जाति वर्ग के लिए ₹50,000 तक 100% सब्सिडी स्वीकृत।"'
+  },
+  '*': {
+    title: 'Replay Menu',
+    prompt: '"मुख्य मेनू: 1 हिंदी, 2 मराठी, 3 ਪੰਜਾਬੀ, 4 தமிழ். कृपया विकल्प चुनें।"'
+  },
+  '0': {
+    title: 'Officer Help',
+    prompt: '"कृपया प्रतीक्षा करें, आपकी कॉल जिला समन्वयक अधिकारी को स्थानांतरित की जा रही है..."'
+  },
+  '#': {
+    title: 'Confirmed',
+    prompt: '"धन्यवाद! आपकी प्रविष्टि सुरक्षित है। संदर्भ संख्या: AJAY-2024-9812 दर्ज हुई।"'
+  }
+};
+
+// Hardcoded Realistic Demo Beneficiary Profiles (Section 1 Demo Feature)
+const DEMO_PROFILES = {
+  textiles_delhi: {
+    id: 'textiles_delhi',
+    name: 'Sunita Verma',
+    education: '8th Standard',
+    education_level: '8th Standard',
+    location: 'Delhi',
+    state: 'Delhi',
+    interests: ['Tailoring & Garment Making'],
+    skills: [
+      'Basic Stitching & Fabric Cutting',
+      'Commercial Pattern Drafting & Measuring',
+      'Industrial Sewing Machine Operation'
+    ],
+    family_occupation: 'Tailoring / Weaving',
+    employment_preference: 'self_employment',
+    mobility: 'Cannot travel far (Restricted to village/cluster)',
+    mobility_constraint: 'Cannot travel far (Restricted to village/cluster)',
+    transcript: 'My name is Sunita Verma from Delhi. I am 8th pass and my family does tailoring. I know basic stitching, pattern cutting, and machine sewing. I want to start my own tailoring boutique and cannot travel far.'
+  },
+  agri_up: {
+    id: 'agri_up',
+    name: 'Ramkishan Yadav',
+    education: '10th Standard',
+    education_level: '10th Standard',
+    location: 'Varanasi',
+    state: 'Uttar Pradesh',
+    interests: ['Food Processing & Preservation'],
+    skills: [
+      'Food Handling & Raw Ingredient Quality',
+      'Preservation & Processing Techniques',
+      'Packaging & Product Labeling',
+      'Micro-Enterprise Costing & Market Linkage'
+    ],
+    family_occupation: 'Agriculture & Farming',
+    employment_preference: 'self_employment',
+    mobility: 'Cannot travel far (Restricted to village/cluster)',
+    mobility_constraint: 'Cannot travel far (Restricted to village/cluster)',
+    transcript: 'My name is Ramkishan Yadav from Varanasi, Uttar Pradesh. I passed 10th standard. My family works in agriculture. I have skills in crop quality, preservation, packaging, and want to establish a local food processing unit.'
+  },
+  auto_tn: {
+    id: 'auto_tn',
+    name: 'Karthik Raja',
+    education: '12th Standard',
+    education_level: '12th Standard',
+    location: 'Madurai',
+    state: 'Tamil Nadu',
+    interests: ['Two-Wheeler & EV Maintenance'],
+    skills: [
+      'Hand Tools & Mechanical Maintenance'
+    ],
+    family_occupation: 'Daily Wage Labor',
+    employment_preference: 'wage_employment',
+    mobility: 'Willing to commute to District/Taluka center',
+    mobility_constraint: 'Willing to commute to District/Taluka center',
+    transcript: 'My name is Karthik Raja from Madurai, Tamil Nadu. I completed 12th standard. I have experience with basic mechanical hand tools and want a salaried technician job in two-wheeler and electric vehicle servicing.'
+  },
+  solar_maha: {
+    id: 'solar_maha',
+    name: 'Amit Shinde',
+    education: '12th Standard',
+    education_level: '12th Standard',
+    location: 'Pune',
+    state: 'Maharashtra',
+    interests: ['Solar PV & Electrical Installations'],
+    skills: [
+      'Basic Electrical Wiring & Circuit Safety',
+      'Photovoltaic Module Mounting & Alignment',
+      'Electrical Safety & Earthing Protocols'
+    ],
+    family_occupation: 'Agriculture & Farming',
+    employment_preference: 'wage_employment',
+    mobility: 'Willing to commute to District/Taluka center',
+    mobility_constraint: 'Willing to commute to District/Taluka center',
+    transcript: 'My name is Amit Shinde from Pune, Maharashtra. I passed 12th standard. I know basic electrical wiring, PV mounting, and safety protocols. I want to become a certified Suryamitra technician.'
+  }
+};
+
+// DOM Elements Cache
+let el = {};
+
+function initElements() {
+  el = {
+    // Navigation & Views
+    navTabs: document.querySelectorAll('.nav-tab'),
+    views: document.querySelectorAll('.view-panel'),
+    headerTitle: document.getElementById('headerActiveViewTitle'),
+    langSelect: document.getElementById('langSelect'),
+
+    // Voice AI Intake Elements
+    facilitatorBanner: document.getElementById('facilitatorBanner'),
+    btnExitFacilitator: document.getElementById('btnExitFacilitator'),
+    btnStartFacilitator: document.getElementById('btnStartFacilitator'),
+    btnResetSession: document.getElementById('btnResetSession'),
+    statusText: document.getElementById('statusText'),
+    assistantSpeechText: document.getElementById('assistantSpeechText'),
+    assistantSpeechSub: document.getElementById('assistantSpeechSub'),
+    btnReplayAudio: document.getElementById('btnReplayAudio'),
+    ttsIcon: document.getElementById('ttsIcon'),
+    dominantMicBtn: document.getElementById('dominantMicBtn'),
+    micRipple1: document.getElementById('micRipple1'),
+    micRipple2: document.getElementById('micRipple2'),
+    micIcon: document.getElementById('micIcon'),
+    micLabel: document.getElementById('micLabel'),
+    waveformVisualizer: document.getElementById('waveformVisualizer'),
+    liveTranscriptText: document.getElementById('liveTranscriptText'),
+    confidenceTag: document.getElementById('confidenceTag'),
+    scenarioChips: document.querySelectorAll('.scenario-chip'),
+    demoBeneficiaryBtns: document.querySelectorAll('.demo-beneficiary-btn'),
+
+    // Signals
+    sigEducation: document.getElementById('sigEducation'),
+    sigFamilyOcc: document.getElementById('sigFamilyOcc'),
+    sigSkills: document.getElementById('sigSkills'),
+    sigMobility: document.getElementById('sigMobility'),
+    sigPref: document.getElementById('sigPref'),
+    sigEntryMode: document.getElementById('sigEntryMode'),
+    signalsBadge: document.getElementById('signalsBadge'),
+    matchConfidenceBadge: document.getElementById('matchConfidenceBadge'),
+
+    // Pathways / Roadmap Elements
+    recNsqfBadge: document.getElementById('recNsqfBadge'),
+    recTradeTitle: document.getElementById('recTradeTitle'),
+    recTradeSubTitle: document.getElementById('recTradeSubTitle'),
+    recQpName: document.getElementById('recQpName'),
+    recQpNsqfLevel: document.getElementById('recQpNsqfLevel'),
+    recQpCode: document.getElementById('recQpCode'),
+    recSscName: document.getElementById('recSscName'),
+    recTradeIcon: document.getElementById('recTradeIcon'),
+    recGapSummary: document.getElementById('recGapSummary'),
+    readinessScoreContainer: document.getElementById('readinessScoreContainer'),
+    readinessScoreBadge: document.getElementById('readinessScoreBadge'),
+    readinessIcon: document.getElementById('readinessIcon'),
+    audioPlayerContainer: document.getElementById('audioPlayerContainer'),
+    btnPlayRoadmapAudio: document.getElementById('btnPlayRoadmapAudio'),
+    playPauseIcon: document.getElementById('playPauseIcon'),
+    scrubberTrack: document.getElementById('scrubberTrack'),
+    audioProgressBar: document.getElementById('audioProgressBar'),
+    currentTimeLabel: document.getElementById('currentTimeLabel'),
+    recSpokenSummaryText: document.getElementById('recSpokenSummaryText'),
+    skillGapsContainer: document.getElementById('skillGapsContainer'),
+    gapModulesCount: document.getElementById('gapModulesCount'),
+    regionalSchemesContainer: document.getElementById('regionalSchemesContainer'),
+    regionalSchemesBadge: document.getElementById('regionalSchemesBadge'),
+    step1Title: document.getElementById('step1Title'),
+    step1Desc: document.getElementById('step1Desc'),
+    step2Title: document.getElementById('step2Title'),
+    step2Desc: document.getElementById('step2Desc'),
+    step2Location: document.getElementById('step2Location'),
+    step3Title: document.getElementById('step3Title'),
+    step3Desc: document.getElementById('step3Desc'),
+    step4Title: document.getElementById('step4Title'),
+    step4Desc: document.getElementById('step4Desc'),
+    districtContactLine: document.getElementById('districtContactLine'),
+    btnPrintRoadmap: document.getElementById('btnPrintRoadmap'),
+    btnSmsRoadmap: document.getElementById('btnSmsRoadmap'),
+    btnNewRoadmapAssessment: document.getElementById('btnNewRoadmapAssessment'),
+
+    // IVR Elements
+    retroScreen: document.getElementById('retroScreen'),
+    callStatusBadge: document.getElementById('callStatusBadge'),
+    timerBadge: document.getElementById('timerBadge'),
+    ivrPromptBox: document.getElementById('lcdPrompt'),
+    lcdDialed: document.getElementById('lcdDialed'),
+    lcdAudioStatus: document.getElementById('lcdAudioStatus'),
+    lcdTime: document.getElementById('lcdTime'),
+    keyCall: document.getElementById('keyCall'),
+    keyEnd: document.getElementById('keyEnd'),
+    keyNav: document.getElementById('keyNav'),
+    keypadBtns: document.querySelectorAll('.keypad-btn'),
+
+    // District Admin Elements
+    districtSelect: document.getElementById('districtSelect'),
+    btnRefreshDashboard: document.getElementById('btnRefreshDashboard'),
+    syncIcon: document.getElementById('syncIcon'),
+    syncTime: document.getElementById('syncTime'),
+    valEnrolments: document.getElementById('valEnrolments'),
+    valPlacements: document.getElementById('valPlacements'),
+    valDropouts: document.getElementById('valDropouts'),
+    valTotalBeneficiaries: document.getElementById('valTotalBeneficiaries'),
+    beneficiaryCountTag: document.getElementById('beneficiaryCountTag'),
+    demandBarsContainer: document.getElementById('demandBarsContainer'),
+    beneficiaryTableBody: document.getElementById('beneficiaryTableBody'),
+    btnExportReport: document.getElementById('btnExportReport'),
+    btnBulkSms: document.getElementById('btnBulkSms'),
+
+    // Regional Capacity Gap Elements
+    capacityGapSection: document.getElementById('capacityGapSection'),
+    capacityActiveStateLabel: document.getElementById('capacityActiveStateLabel'),
+    capacityStateTabs: document.querySelectorAll('.capacity-state-btn'),
+    capacityTotalDemand: document.getElementById('capacityTotalDemand'),
+    capacityTotalEst: document.getElementById('capacityTotalEst'),
+    capacityOverallBadge: document.getElementById('capacityOverallBadge'),
+    capacityTableContainer: document.getElementById('capacityTableContainer'),
+
+    // Toast
+    toast: document.getElementById('toastNotification'),
+    toastIcon: document.getElementById('toastIcon'),
+    toastMessage: document.getElementById('toastMessage')
+  };
+}
+
+// -------------------------------------------------------------
+// App Initialization
+// -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+  initElements();
+  bindNavigation();
   initSpeechRecognition();
-  bindEvents();
+  bindVoiceEvents();
+  bindRoadmapEvents();
+  bindIvrEvents();
+  bindAdminEvents();
   startNewSession();
+  startIvrTimer();
   updateClock();
   setInterval(updateClock, 1000);
 });
 
-// Clock for IVR LCD
-function updateClock() {
-  if (elements.lcdTime) {
-    const now = new Date();
-    elements.lcdTime.textContent = now.toTimeString().substring(0, 5);
+// -------------------------------------------------------------
+// Navigation & Tab Switching
+// -------------------------------------------------------------
+function bindNavigation() {
+  el.navTabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const targetView = tab.getAttribute('data-view');
+      const title = tab.getAttribute('data-title') || 'PM-AJAY';
+      switchTab(targetView, title);
+    });
+  });
+
+  // Language Dropdown
+  if (el.langSelect) {
+    el.langSelect.addEventListener('change', (e) => {
+      state.language = e.target.value;
+      showToast(`Language set to ${e.target.options[e.target.selectedIndex].text}`);
+      startNewSession(state.entryMode, state.language);
+    });
   }
 }
 
+function switchTab(viewId, title) {
+  state.activeTab = viewId;
+
+  // Toggle active class on views
+  el.views.forEach(v => {
+    if (v.id === viewId) {
+      v.classList.add('active');
+    } else {
+      v.classList.remove('active');
+    }
+  });
+
+  // Toggle active styling on nav buttons
+  el.navTabs.forEach(tab => {
+    if (tab.getAttribute('data-view') === viewId) {
+      tab.classList.add('active', 'text-secondary', 'font-semibold', 'bg-surface-container-low', 'rounded-xl');
+      tab.classList.remove('text-on-surface-variant');
+    } else {
+      tab.classList.remove('active', 'text-secondary', 'font-semibold', 'bg-surface-container-low', 'rounded-xl');
+      tab.classList.add('text-on-surface-variant');
+    }
+  });
+
+  if (el.headerTitle) {
+    el.headerTitle.textContent = title;
+  }
+
+  // Auto-refresh admin dashboard when switching to it
+  if (viewId === 'viewAdmin') {
+    loadAdminDashboard();
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // -------------------------------------------------------------
-// Session Management
+// Session Management: POST /session/start
 // -------------------------------------------------------------
 async function startNewSession(entryMode = null, language = null) {
   if (entryMode) state.entryMode = entryMode;
   if (language) state.language = language;
 
-  elements.langSelect.value = state.language;
-  elements.sigEntryMode.textContent = 
-    state.entryMode === 'facilitator' ? 'Facilitator Assisted (Doorstep)' :
-    state.entryMode === 'call' ? 'Button Phone (IVR Line)' : 'Smartphone (App Direct)';
-
-  if (state.entryMode === 'facilitator') {
-    elements.facilitatorBanner.classList.remove('hidden');
-  } else {
-    elements.facilitatorBanner.classList.add('hidden');
+  if (el.langSelect) el.langSelect.value = state.language;
+  if (el.sigEntryMode) {
+    el.sigEntryMode.textContent =
+      state.entryMode === 'facilitator' ? 'Facilitator Assisted' :
+      state.entryMode === 'call' ? 'IVR Button Phone' : 'PM-AJAY Direct Mobile';
   }
 
-  // Hide roadmap on reset
-  elements.roadmapContainer.classList.add('hidden');
+  if (el.facilitatorBanner) {
+    if (state.entryMode === 'facilitator') {
+      el.facilitatorBanner.classList.remove('hidden');
+    } else {
+      el.facilitatorBanner.classList.add('hidden');
+    }
+  }
+
   state.profileComplete = false;
   state.currentRecommendation = null;
   resetSignalDisplay();
-  renderDemoChips();
 
   try {
     const res = await fetch('/session/start', {
@@ -249,87 +439,43 @@ async function startNewSession(entryMode = null, language = null) {
     const prompt = data.initial_prompt || INITIAL_PROMPTS[state.language] || INITIAL_PROMPTS.en;
     setAssistantSpeech(prompt);
   } catch (err) {
-    console.error('Session start error:', err);
+    console.warn('Session start fallback:', err);
     state.sessionId = 'local-' + Date.now();
     setAssistantSpeech(INITIAL_PROMPTS[state.language] || INITIAL_PROMPTS.en);
   }
 }
 
 function resetSignalDisplay() {
-  elements.sigEducation.textContent = '—';
-  elements.sigFamilyOcc.textContent = '—';
-  elements.sigSkills.textContent = '—';
-  elements.sigMobility.textContent = '—';
-  elements.sigPref.textContent = '—';
-  elements.signalsBadge.textContent = 'Intake In Progress';
-  elements.signalsBadge.classList.remove('complete');
-  elements.liveTranscriptText.textContent = 'Press the mic button or choose a sample prompt below to start...';
+  if (el.sigEducation) el.sigEducation.textContent = '—';
+  if (el.sigFamilyOcc) el.sigFamilyOcc.textContent = '—';
+  if (el.sigSkills) el.sigSkills.textContent = '—';
+  if (el.sigMobility) el.sigMobility.textContent = '—';
+  if (el.sigPref) el.sigPref.textContent = '—';
+  if (el.signalsBadge) {
+    el.signalsBadge.textContent = 'Intake In Progress';
+    el.signalsBadge.className = 'text-xs bg-surface-container px-2 py-0.5 rounded-full text-on-surface-variant font-semibold';
+  }
+  if (el.liveTranscriptText) {
+    el.liveTranscriptText.textContent = 'Press the mic button or choose a sample prompt below to start...';
+  }
 }
 
-function renderDemoChips() {
-  const container = document.querySelector('.chips-list');
-  if (!container) return;
-  const lang = state.language || 'hi';
-  container.innerHTML = '';
+function setAssistantSpeech(text, autoSpeak = false) {
+  if (el.assistantSpeechText) el.assistantSpeechText.textContent = `"${text}"`;
+  if (el.assistantSpeechSub) el.assistantSpeechSub.textContent = INITIAL_PROMPTS_SUB[state.language] || INITIAL_PROMPTS_SUB.en;
 
-  DEMO_SCENARIOS.forEach(scenario => {
-    const btn = document.createElement('button');
-    btn.className = 'demo-chip';
-    const label = scenario.labels[lang] || scenario.labels.en;
-    const textToSend = scenario.texts[lang] || scenario.texts.en;
-    btn.innerHTML = `${scenario.icon} ${label}`;
-    btn.setAttribute('data-text', textToSend);
-    btn.setAttribute('title', textToSend);
-    btn.addEventListener('click', () => {
-      // Intentionally preserves state.language and elements.langSelect without toggling!
-      handleUserVoiceUtterance(textToSend);
-    });
-    container.appendChild(btn);
-  });
-}
-
-function setAssistantSpeech(text, autoPlay = true) {
-  elements.assistantSpeechText.textContent = `"${text}"`;
-  if (autoPlay) {
+  if (autoSpeak) {
     speakText(text, state.language);
   }
 }
 
 // -------------------------------------------------------------
-// Speech Synthesis (TTS) & ASR (Speech Recognition)
+// Voice Recognition Engine (Web Speech API)
 // -------------------------------------------------------------
-function speakText(text, lang = 'en') {
-  if (!('speechSynthesis' in window)) return;
-
-  // Stop any ongoing speech
-  window.speechSynthesis.cancel();
-
-  const cleanText = text.replace(/[#*]/g, '');
-  const utterance = new SpeechSynthesisUtterance(cleanText);
-  utterance.lang = LANG_LOCALES[lang] || 'en-IN';
-  utterance.rate = 0.95; // Slightly slower for low literacy clarity
-  utterance.pitch = 1.0;
-
-  elements.waveformVisualizer.classList.add('active');
-  elements.statusText.textContent = 'Speaking...';
-
-  utterance.onend = () => {
-    elements.waveformVisualizer.classList.remove('active');
-    elements.statusText.textContent = 'Voice Ready • Tap to Speak';
-  };
-
-  utterance.onerror = () => {
-    elements.waveformVisualizer.classList.remove('active');
-    elements.statusText.textContent = 'Voice Ready • Tap to Speak';
-  };
-
-  window.speechSynthesis.speak(utterance);
-}
-
 function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    console.warn('Web Speech API not supported in this browser; fallback chips enabled.');
+    console.info('Speech Recognition not supported natively in this browser; fallback chips enabled.');
     return;
   }
 
@@ -339,10 +485,11 @@ function initSpeechRecognition() {
 
   state.recognition.onstart = () => {
     state.isRecording = true;
-    elements.micStage.classList.add('recording');
-    elements.waveformVisualizer.classList.add('active');
-    elements.micLabel.textContent = 'Listening...';
-    elements.statusText.textContent = 'Listening to Beneficiary...';
+    if (el.micRipple1) el.micRipple1.classList.remove('hidden');
+    if (el.micRipple2) el.micRipple2.classList.remove('hidden');
+    if (el.micLabel) el.micLabel.textContent = 'Listening... / सुन रहे हैं...';
+    if (el.statusText) el.statusText.textContent = 'LISTENING • SPEAK FREELY IN YOUR DIALECT';
+    if (el.micIcon) el.micIcon.textContent = 'graphic_eq';
   };
 
   state.recognition.onresult = (event) => {
@@ -350,16 +497,15 @@ function initSpeechRecognition() {
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       transcript += event.results[i][0].transcript;
     }
-    elements.liveTranscriptText.textContent = transcript;
+    if (el.liveTranscriptText) el.liveTranscriptText.textContent = `"${transcript}"`;
     if (event.results[0].isFinal) {
       handleUserVoiceUtterance(transcript);
     }
   };
 
   state.recognition.onerror = (event) => {
-    console.warn('Speech recognition error:', event.error);
+    console.warn('Speech recognition warning:', event.error);
     stopRecording();
-    showToast('Microphone note: ' + event.error);
   };
 
   state.recognition.onend = () => {
@@ -369,8 +515,7 @@ function initSpeechRecognition() {
 
 function toggleRecording() {
   if (!state.recognition) {
-    // If browser doesn't have microphone permission or speech api, simulate realistic prompt
-    showToast('Simulating voice input for demo environment');
+    showToast('Simulating mic input: 10th Pass + Farming');
     handleUserVoiceUtterance("I finished 10th, my family does farming, I want something food-related, I can't travel far");
     return;
   }
@@ -378,14 +523,11 @@ function toggleRecording() {
   if (state.isRecording) {
     state.recognition.stop();
   } else {
-    // Stop any speech playing first
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    
     state.recognition.lang = LANG_LOCALES[state.language] || 'en-IN';
     try {
       state.recognition.start();
     } catch (e) {
-      console.warn('Start recognition error:', e);
       state.recognition.stop();
     }
   }
@@ -393,20 +535,155 @@ function toggleRecording() {
 
 function stopRecording() {
   state.isRecording = false;
-  elements.micStage.classList.remove('recording');
-  elements.waveformVisualizer.classList.remove('active');
-  elements.micLabel.textContent = 'Tap & Speak';
-  elements.statusText.textContent = 'Voice Ready • Tap to Speak';
+  if (el.micRipple1) el.micRipple1.classList.add('hidden');
+  if (el.micRipple2) el.micRipple2.classList.add('hidden');
+  if (el.micLabel) el.micLabel.textContent = 'Tap & Speak / बोलिए';
+  if (el.statusText) el.statusText.textContent = 'VOICE READY • TAP TO SPEAK';
+  if (el.micIcon) el.micIcon.textContent = 'mic';
+}
+
+function bindVoiceEvents() {
+  // Mic Button
+  if (el.dominantMicBtn) {
+    el.dominantMicBtn.addEventListener('click', toggleRecording);
+  }
+
+  // TTS Replay Button
+  if (el.btnReplayAudio) {
+    el.btnReplayAudio.addEventListener('click', () => {
+      const prompt = el.assistantSpeechText ? el.assistantSpeechText.textContent.replace(/"/g, '') : '';
+      if (el.ttsIcon) el.ttsIcon.textContent = 'pause';
+      speakText(prompt, state.language, () => {
+        if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
+      });
+    });
+  }
+
+  // Scenario Chips
+  el.scenarioChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const text = chip.getAttribute('data-text');
+      if (text) {
+        // Visual feedback
+        chip.classList.add('bg-surface-container-high');
+        setTimeout(() => chip.classList.remove('bg-surface-container-high'), 300);
+        handleUserVoiceUtterance(text);
+      }
+    });
+  });
+
+  // Facilitator Mode Buttons
+  if (el.btnStartFacilitator) {
+    el.btnStartFacilitator.addEventListener('click', () => {
+      startNewSession('facilitator', state.language);
+      showToast('Facilitator Mode enabled: Doorstep intake active', 'handshake');
+    });
+  }
+
+  if (el.btnExitFacilitator) {
+    el.btnExitFacilitator.addEventListener('click', () => {
+      startNewSession('app', state.language);
+      showToast('Switched to Self-Service Beneficiary Mode');
+    });
+  }
+
+  if (el.btnResetSession) {
+    el.btnResetSession.addEventListener('click', () => {
+      startNewSession(state.entryMode, state.language);
+      showToast('Session reset. Ready for new voice intake.', 'restart_alt');
+    });
+  }
+
+  // Demo Beneficiary Selector Buttons (1-Click Pipeline Simulation)
+  if (el.demoBeneficiaryBtns) {
+    el.demoBeneficiaryBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const demoId = btn.getAttribute('data-demo-id');
+        if (demoId) triggerDemoBeneficiary(demoId);
+      });
+    });
+  }
 }
 
 // -------------------------------------------------------------
-// Voice Input API Pipeline: POST /session/{id}/voice-input
+// Demo Beneficiary Pipeline Trigger (Exact same API path)
+// -------------------------------------------------------------
+async function triggerDemoBeneficiary(demoId) {
+  const profile = DEMO_PROFILES[demoId];
+  if (!profile) return;
+
+  // 1. Visual feedback on clicked button
+  const btn = document.querySelector(`[data-demo-id="${demoId}"]`);
+  if (btn) {
+    btn.classList.add('ring-2', 'ring-secondary', 'bg-surface-container');
+    setTimeout(() => btn.classList.remove('ring-2', 'ring-secondary', 'bg-surface-container'), 500);
+  }
+
+  showToast(`Loading Beneficiary: ${profile.name} (${profile.state})`, 'account_circle');
+
+  // 2. Populate form/signals & UI state with profile
+  state.profile = { ...profile };
+  state.beneficiaryProfile = { ...profile };
+  updateSignalsView(profile);
+  if (el.liveTranscriptText) {
+    el.liveTranscriptText.textContent = `"${profile.transcript}"`;
+  }
+  if (el.statusText) {
+    el.statusText.textContent = `BENEFICIARY SELECTED: ${profile.name.toUpperCase()} • RUNNING PIPELINE...`;
+  }
+
+  // 3. Immediately trigger existing recommendation flow using exact same API path
+  try {
+    const startRes = await fetch('/session/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entry_mode: state.entryMode || 'app',
+        language: state.language || 'en'
+      })
+    });
+    const startData = await startRes.json();
+    state.sessionId = startData.session_id;
+
+    const voiceRes = await fetch(`/session/${state.sessionId}/voice-input`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transcript: profile.transcript,
+        profile_data: profile,
+        language: state.language || 'en'
+      })
+    });
+    const voiceData = await voiceRes.json();
+
+    if (voiceData.profile_complete) {
+      state.profileComplete = true;
+      if (el.signalsBadge) {
+        el.signalsBadge.textContent = '✅ Profile Complete';
+        el.signalsBadge.className = 'text-xs bg-[#ecfdf5] text-[#065f46] px-2.5 py-0.5 rounded-full font-bold shadow-sm';
+      }
+      if (voiceData.extracted_fields) {
+        updateSignalsView(voiceData.extracted_fields);
+      }
+
+      await loadRoadmapRecommendation();
+      switchTab('viewRoadmap', 'Roadmap & Skills');
+      showToast(`Roadmap generated for ${profile.name}!`, 'verified');
+    }
+  } catch (err) {
+    console.error('Error running demo beneficiary pipeline:', err);
+    showToast('Demo pipeline error. Please try again.');
+  }
+}
+
+// -------------------------------------------------------------
+// Voice Input Pipeline: POST /session/{id}/voice-input
 // -------------------------------------------------------------
 async function handleUserVoiceUtterance(utteranceText) {
   if (!utteranceText || !utteranceText.trim()) return;
 
-  elements.liveTranscriptText.textContent = utteranceText;
-  elements.statusText.textContent = 'Analyzing Voice Signals...';
+  if (el.liveTranscriptText) el.liveTranscriptText.textContent = `"${utteranceText}"`;
+  if (el.statusText) el.statusText.textContent = 'ANALYZING SIGNALS & LOCAL OPPORTUNITIES...';
 
   try {
     const res = await fetch(`/session/${state.sessionId}/voice-input`, {
@@ -419,221 +696,685 @@ async function handleUserVoiceUtterance(utteranceText) {
     });
 
     const data = await res.json();
-    
-    // Update Extracted Signals in Real-Time
+
+    // 1. Update Signals Display
     updateSignalsView(data.extracted_fields);
 
-    // Speak Assistant Next Prompt
+    // 2. Play Next Prompt
     setAssistantSpeech(data.next_prompt, true);
 
-    // If profile is complete, fetch and display Livelihood Roadmap!
+    // 3. If Complete, fetch Recommendation and transition to Pathways Tab
     if (data.profile_complete) {
       state.profileComplete = true;
-      elements.signalsBadge.textContent = '✅ Profile Complete';
-      elements.signalsBadge.classList.add('complete');
-      setTimeout(() => {
-        loadRoadmapRecommendation();
-      }, 1200);
+      if (el.signalsBadge) {
+        el.signalsBadge.textContent = '✅ Profile Complete';
+        el.signalsBadge.className = 'text-xs bg-[#ecfdf5] text-[#065f46] px-2.5 py-0.5 rounded-full font-bold shadow-sm';
+      }
+      showToast('Profile Complete! Generating NSQF Livelihood Pathway...', 'verified');
+
+      setTimeout(async () => {
+        await loadRoadmapRecommendation();
+        // Seamlessly switch to Pathways tab
+        switchTab('viewRoadmap', 'Roadmap & Skills');
+      }, 1400);
     }
 
   } catch (err) {
     console.error('Error submitting voice input:', err);
-    showToast('Failed to process voice input');
+    showToast('Voice processing note: Please try speaking again.');
   }
 }
 
 function updateSignalsView(fields = {}) {
-  if (fields.education_level) elements.sigEducation.textContent = fields.education_level;
-  if (fields.family_occupation) elements.sigFamilyOcc.textContent = fields.family_occupation;
-  if (fields.skills && fields.skills.length > 0) {
-    elements.sigSkills.textContent = fields.skills.join(', ');
-  } else if (fields.interests && fields.interests.length > 0) {
-    elements.sigSkills.textContent = fields.interests.join(', ');
+  const edu = fields.education_level || fields.education;
+  if (edu && el.sigEducation) el.sigEducation.textContent = edu;
+
+  if (fields.family_occupation && el.sigFamilyOcc) el.sigFamilyOcc.textContent = fields.family_occupation;
+
+  if (el.sigSkills) {
+    if (fields.skills && fields.skills.length > 0) {
+      el.sigSkills.textContent = Array.isArray(fields.skills) ? fields.skills.join(', ') : fields.skills;
+    } else if (fields.interests && fields.interests.length > 0) {
+      el.sigSkills.textContent = Array.isArray(fields.interests) ? fields.interests.join(', ') : fields.interests;
+    }
   }
-  if (fields.mobility_constraint) elements.sigMobility.textContent = fields.mobility_constraint;
-  if (fields.employment_preference) {
-    elements.sigPref.textContent = fields.employment_preference === 'self_employment' ? 'Self-Employment / Own Shop' : 'Wage / Salaried Job';
+
+  const mob = fields.mobility_constraint || fields.mobility;
+  if (mob && el.sigMobility) el.sigMobility.textContent = mob;
+
+  if (fields.employment_preference && el.sigPref) {
+    el.sigPref.textContent = fields.employment_preference === 'self_employment' ? 'Self-Employment' : 'Wage / Salaried';
   }
 }
 
 // -------------------------------------------------------------
-// Recommendation Engine: GET /session/{id}/recommendation
+// Recommendation Pipeline: GET /session/{id}/recommendation
 // -------------------------------------------------------------
 async function loadRoadmapRecommendation() {
   try {
     const res = await fetch(`/session/${state.sessionId}/recommendation`);
     if (!res.ok) {
-      showToast("Please finish answering first");
+      showToast('Please continue the voice intake before viewing recommendations.');
       return;
     }
     const data = await res.json();
     state.currentRecommendation = data;
-
     renderRoadmap(data);
   } catch (err) {
     console.error('Error fetching recommendation:', err);
   }
 }
 
+function updateReadinessBadge(score) {
+  const container = el.readinessScoreContainer || document.getElementById('readinessScoreContainer');
+  const badge = el.readinessScoreBadge || document.getElementById('readinessScoreBadge');
+  const icon = el.readinessIcon || document.getElementById('readinessIcon');
+  if (!badge) return;
+
+  const validScore = (typeof score === 'number' && !isNaN(score)) ? Math.round(score) : 0;
+  badge.textContent = `Readiness: ${validScore}/100`;
+
+  if (!container) return;
+
+  // Transparent ratio badge styling: red under 40, yellow 40-70, green above 70
+  if (validScore < 40) {
+    container.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm border transition-colors bg-[#fee2e2] text-[#991b1b] border-[#fecaca]';
+    if (icon) icon.textContent = 'warning';
+  } else if (validScore <= 70) {
+    container.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm border transition-colors bg-[#fef3c7] text-[#92400e] border-[#fde68a]';
+    if (icon) icon.textContent = 'speed';
+  } else {
+    container.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm border transition-colors bg-[#d1fae5] text-[#065f46] border-[#a7f3d0]';
+    if (icon) icon.textContent = 'verified';
+  }
+}
+
 function renderRoadmap(rec) {
-  elements.recTradeTitle.textContent = rec.recommended_trade;
-  elements.recNsqfBadge.textContent = rec.nsqf_alignment;
-  elements.recGapSummary.textContent = rec.gap_summary;
-  elements.recSpokenSummaryText.textContent = `"${rec.spoken_summary}"`;
+  // Title & Badges
+  if (el.recTradeTitle) el.recTradeTitle.textContent = rec.recommended_trade;
+  const nsqfLvl = rec.nsqf_level || rec.nsqf_alignment || 'NSQF Level 4';
+  if (el.recNsqfBadge) el.recNsqfBadge.textContent = `${nsqfLvl} Certified`;
 
-  // Render 4-step sequence
+  // Real NSQF Qualification Pack Details
+  if (el.recQpName) el.recQpName.textContent = rec.qp_name || rec.recommended_trade;
+  if (el.recQpNsqfLevel) el.recQpNsqfLevel.textContent = nsqfLvl;
+  if (el.recQpCode) el.recQpCode.textContent = rec.qp_code ? `QP Code: ${rec.qp_code}` : 'NSQF Aligned';
+  if (el.recSscName) el.recSscName.textContent = rec.ssc_name || rec.sector || 'Sector Skill Council';
+
+  if (el.recGapSummary) {
+    el.recGapSummary.innerHTML = `<span class="font-semibold text-secondary">AI Diagnostic Summary:</span> ${rec.gap_summary}`;
+  }
+  if (el.recSpokenSummaryText) el.recSpokenSummaryText.textContent = `"${rec.spoken_summary}"`;
+
+  // Dynamic Sector Icon
+  const tradeKey = rec.trade_key || 'food_processing';
+  if (el.recTradeIcon) {
+    el.recTradeIcon.textContent = TRADE_ICONS[tradeKey] || 'psychology';
+  }
+
+  // Update Numeric Skill Readiness Score Badge (Feature 2)
+  updateReadinessBadge(rec.readiness_score);
+
+  // 1. Render Structured Skill Gap Breakdown (Task 3 Feature)
+  renderSkillGaps(rec.skill_gap_breakdown || []);
+
+  // 2. Render Regional Schemes in Beneficiary State (Nivara Regional Schemes)
+  renderRegionalSchemes(rec.regional_schemes || []);
+
+  // 3. Render 4-Stage Pathway Timeline
   const steps = rec.roadmap_steps || [];
-  if (steps[0]) {
-    elements.step1Title.textContent = steps[0].split('(')[0];
-    elements.step1Desc.textContent = steps[0];
+  if (steps[0] && el.step1Title) {
+    el.step1Title.textContent = steps[0].split('(')[0] || 'Enroll in PM-AJAY Free Skill Training';
+    if (el.step1Desc) el.step1Desc.textContent = steps[0];
   }
-  if (steps[1]) {
-    elements.step2Title.textContent = rec.training_centre || steps[1].split('with')[0];
-    elements.step2Desc.textContent = steps[1];
+  if (steps[1] && el.step2Title) {
+    el.step2Title.textContent = steps[1].split('with')[0] || 'Practical Lab Training';
+    if (el.step2Desc) el.step2Desc.textContent = steps[1];
+    if (el.step2Location) el.step2Location.textContent = rec.training_centre || 'District ITI / PMKK Center';
   }
-  if (steps[2]) {
-    elements.step3Title.textContent = rec.nsqf_alignment + ' Certification';
-    elements.step3Desc.textContent = steps[2];
+  if (steps[2] && el.step3Title) {
+    el.step3Title.textContent = `${rec.nsqf_alignment} National Certification`;
+    if (el.step3Desc) el.step3Desc.textContent = steps[2];
   }
-  if (steps[3]) {
-    elements.step4Title.textContent = 'Local Livelihood Linkage';
-    elements.step4Desc.textContent = rec.local_opportunity || steps[3];
+  if (steps[3] && el.step4Title) {
+    el.step4Title.textContent = 'Enterprise Launch / Placement Linkage';
+    if (el.step4Desc) el.step4Desc.textContent = rec.local_opportunity || steps[3];
   }
 
-  elements.roadmapContainer.classList.remove('hidden');
-  elements.roadmapContainer.scrollIntoView({ behavior: 'smooth' });
+  // Contact line
+  if (el.districtContactLine) {
+    el.districtContactLine.textContent = `${rec.training_centre || 'District Center'} • Toll-Free: 1800-11-7625`;
+  }
+}
 
-  // Play Spoken Summary Audio
-  setTimeout(() => {
-    speakText(rec.spoken_summary, state.language);
-  }, 600);
+function renderSkillGaps(gaps = []) {
+  if (!el.skillGapsContainer) return;
+  el.skillGapsContainer.innerHTML = '';
+
+  if (!gaps || gaps.length === 0) {
+    // Fallback realistic gaps if empty
+    gaps = [
+      { skill: "Certified Quality & Hygiene Standards", where: "Jan Shikshan Sansthan (JSS) District Lab" },
+      { skill: "Modern Equipment & Machine Operation", where: "PMKK Center Hands-on Workshop" },
+      { skill: "Micro-Enterprise Costing & Mudra Loan Filing", where: "RSETI Rural Entrepreneurship Center" }
+    ];
+  }
+
+  if (el.gapModulesCount) {
+    el.gapModulesCount.textContent = `${gaps.length} Targeted Modules`;
+  }
+
+  const borderColors = ['#f59e0b', '#0051d5', '#10b981', '#7c839b'];
+  const icons = ['sanitizer', 'inventory_2', 'account_balance', 'electric_meter'];
+
+  gaps.forEach((g, idx) => {
+    const borderColor = borderColors[idx % borderColors.length];
+    const icon = icons[idx % icons.length];
+    const card = document.createElement('div');
+    card.className = 'bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-space-xs';
+    card.innerHTML = `
+      <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background-color: ${borderColor}"></div>
+      <div class="flex items-start justify-between gap-space-xs">
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] uppercase tracking-wide font-bold" style="color: ${borderColor}">Skill Gap ${idx + 1}</span>
+            <span class="text-[11px] text-on-surface-variant">• Targeted Competency</span>
+          </div>
+          <h3 class="font-display font-semibold text-sm text-on-surface mt-0.5">${g.skill}</h3>
+        </div>
+        <span class="material-symbols-outlined text-on-surface-variant text-[20px]">${icon}</span>
+      </div>
+      <div class="bg-surface-container-low rounded-lg p-space-sm flex items-center justify-between gap-space-xs mt-1">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="material-symbols-outlined text-secondary text-[18px] flex-shrink-0">domain</span>
+          <div class="flex flex-col min-w-0">
+            <span class="text-[10px] text-on-surface-variant">Recommended Learning Source</span>
+            <span class="text-xs text-on-surface font-semibold truncate">${g.where}</span>
+          </div>
+        </div>
+        <span class="text-[10px] bg-secondary/10 text-secondary font-bold px-2 py-1 rounded-full flex-shrink-0">Free PM-AJAY</span>
+      </div>
+    `;
+    el.skillGapsContainer.appendChild(card);
+  });
+}
+
+function renderRegionalSchemes(schemes = []) {
+  if (!el.regionalSchemesContainer) return;
+  el.regionalSchemesContainer.innerHTML = '';
+
+  if (el.regionalSchemesBadge) {
+    el.regionalSchemesBadge.textContent = schemes && schemes.length > 0
+      ? `${schemes.length} Schemes Available`
+      : 'No State Schemes';
+  }
+
+  if (!schemes || schemes.length === 0) {
+    const emptyCard = document.createElement('div');
+    emptyCard.className = 'bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col items-center justify-center py-6 text-center border border-dashed border-secondary/20';
+    emptyCard.innerHTML = `
+      <span class="material-symbols-outlined text-on-surface-variant text-[28px] mb-1">travel_explore</span>
+      <p class="text-xs font-semibold text-on-surface">No regional schemes matched for your state</p>
+      <p class="text-[11px] text-on-surface-variant mt-0.5">Reference state schemes are available for Delhi, Maharashtra, Tamil Nadu, Karnataka, and Uttar Pradesh.</p>
+    `;
+    el.regionalSchemesContainer.appendChild(emptyCard);
+    return;
+  }
+
+  const borderColors = ['#0051d5', '#10b981', '#f59e0b', '#7c839b'];
+  const icons = ['verified', 'assured_workload', 'payments', 'work'];
+
+  schemes.forEach((s, idx) => {
+    const borderColor = borderColors[idx % borderColors.length];
+    const icon = icons[idx % icons.length];
+    const card = document.createElement('div');
+    card.className = 'bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-space-xs';
+    card.innerHTML = `
+      <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background-color: ${borderColor}"></div>
+      <div class="flex items-start justify-between gap-space-xs">
+        <div class="flex flex-col flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] uppercase tracking-wide font-bold" style="color: ${borderColor}">${s.provider || 'State Department'}</span>
+            <span class="text-[11px] text-on-surface-variant">• Regional Opportunity</span>
+          </div>
+          <h3 class="font-display font-semibold text-sm text-on-surface mt-0.5">${s.name}</h3>
+        </div>
+        <span class="material-symbols-outlined text-on-surface-variant text-[20px] flex-shrink-0">${icon}</span>
+      </div>
+      
+      <div class="flex flex-col gap-1 mt-1">
+        <div class="text-xs text-on-surface leading-relaxed">
+          <span class="font-bold text-secondary">Benefit:</span> ${s.benefit}
+        </div>
+        ${s.eligibility ? `
+        <div class="text-[11px] text-on-surface-variant leading-normal">
+          <span class="font-semibold text-on-surface">Eligibility:</span> ${s.eligibility}
+        </div>` : ''}
+      </div>
+
+      <div class="bg-surface-container-low rounded-lg p-space-sm flex items-center justify-between gap-space-xs mt-1">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="material-symbols-outlined text-secondary text-[18px] flex-shrink-0">apartment</span>
+          <div class="flex flex-col min-w-0">
+            <span class="text-[10px] text-on-surface-variant font-medium">How to Apply</span>
+            <span class="text-xs text-on-surface font-semibold truncate">${s.how_to_apply}</span>
+          </div>
+        </div>
+        <span class="text-[10px] bg-secondary/10 text-secondary font-bold px-2 py-1 rounded-full flex-shrink-0">Official Office / Portal</span>
+      </div>
+    `;
+    el.regionalSchemesContainer.appendChild(card);
+  });
+}
+
+function bindRoadmapEvents() {
+  // Audio Player Scrubber and Toggle
+  if (el.btnPlayRoadmapAudio) {
+    el.btnPlayRoadmapAudio.addEventListener('click', toggleRoadmapAudio);
+  }
+
+  if (el.scrubberTrack) {
+    el.scrubberTrack.addEventListener('click', (e) => {
+      const rect = el.scrubberTrack.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
+      if (el.audioProgressBar) el.audioProgressBar.style.width = pct + '%';
+    });
+  }
+
+  // Print Summary
+  if (el.btnPrintRoadmap) {
+    el.btnPrintRoadmap.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  // Send SMS
+  if (el.btnSmsRoadmap) {
+    el.btnSmsRoadmap.addEventListener('click', () => {
+      showToast('Roadmap slip dispatched to beneficiary phone via SMS & WhatsApp.', 'send');
+    });
+  }
+
+  // Start Next Assessment
+  if (el.btnNewRoadmapAssessment) {
+    el.btnNewRoadmapAssessment.addEventListener('click', () => {
+      startNewSession('app', state.language);
+      switchTab('viewVoiceApp', 'Voice Assistant');
+      showToast('Starting new beneficiary assessment session...', 'add');
+    });
+  }
+}
+
+function toggleRoadmapAudio() {
+  state.audioPlaying = !state.audioPlaying;
+
+  if (state.audioPlaying) {
+    if (el.playPauseIcon) el.playPauseIcon.textContent = 'pause';
+    let progress = 10;
+    if (el.audioProgressBar) el.audioProgressBar.style.width = progress + '%';
+
+    if (state.currentRecommendation && state.currentRecommendation.spoken_summary) {
+      speakText(state.currentRecommendation.spoken_summary, state.language, () => {
+        state.audioPlaying = false;
+        if (el.playPauseIcon) el.playPauseIcon.textContent = 'play_arrow';
+        clearInterval(state.audioInterval);
+      });
+    }
+
+    state.audioInterval = setInterval(() => {
+      if (progress >= 100) {
+        progress = 0;
+        state.audioPlaying = false;
+        if (el.playPauseIcon) el.playPauseIcon.textContent = 'play_arrow';
+        clearInterval(state.audioInterval);
+      } else {
+        progress += 4;
+      }
+      if (el.audioProgressBar) el.audioProgressBar.style.width = progress + '%';
+      const sec = Math.floor((progress / 100) * 60);
+      if (el.currentTimeLabel) el.currentTimeLabel.textContent = `0:${sec < 10 ? '0' : ''}${sec}`;
+    }, 500);
+
+  } else {
+    if (el.playPauseIcon) el.playPauseIcon.textContent = 'play_arrow';
+    clearInterval(state.audioInterval);
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  }
 }
 
 // -------------------------------------------------------------
 // Interactive Feature Phone IVR Simulator
 // -------------------------------------------------------------
-function handleKeypadPress(digit) {
-  if (!state.ivrActive) {
-    state.ivrDialed += digit;
-    elements.lcdDialed.textContent = state.ivrDialed;
-    return;
+function startIvrTimer() {
+  if (state.ivrInterval) clearInterval(state.ivrInterval);
+  state.ivrInterval = setInterval(() => {
+    if (state.ivrActive) {
+      state.ivrTimer++;
+      const mins = String(Math.floor(state.ivrTimer / 60)).padStart(2, '0');
+      const secs = String(state.ivrTimer % 60).padStart(2, '0');
+      if (el.timerBadge) el.timerBadge.textContent = `${mins}:${secs}`;
+    }
+  }, 1000);
+}
+
+function bindIvrEvents() {
+  // Keypad keys
+  el.keypadBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-key');
+      handleIvrKeyPress(key);
+    });
+  });
+
+  // Call Button
+  if (el.keyCall) {
+    el.keyCall.addEventListener('click', () => {
+      state.ivrActive = true;
+      state.ivrTimer = 0;
+      if (el.callStatusBadge) {
+        el.callStatusBadge.textContent = '● CALL CONNECTED';
+        el.callStatusBadge.className = 'font-bold text-[11px] tracking-wide text-[#09140a]';
+      }
+      if (el.ivrPromptBox) {
+        el.ivrPromptBox.textContent = '"प्रेस 1 हिंदी के लिए, 2 मराठीसाठी, 3 ਪੰਜਾਬੀ ਲਈ... ऋण व कौशल्य मार्गदर्शन के लिए 9 दबाएं"';
+      }
+      if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'CALL CONNECTED';
+      speakText("Welcome to PM-AJAY Toll-Free IVR Helpline. Press 1 for Hindi, 2 for Marathi, 3 for Punjabi.", 'en');
+    });
   }
 
-  // Active Call Menu Logic
-  if (digit === '1') {
-    elements.lcdPrompt.textContent = "भाषा: हिंदी। अपनी शिक्षा और रुचि बताएं...";
-    speakText("नमस्ते। आप कौन सा काम सीखना चाहते हैं? खेती, सिलाई, सोलर या अन्य?", 'hi');
-  } else if (digit === '2') {
-    elements.lcdPrompt.textContent = "भाषा: मराठी. तुमचे शिक्षण व कामाची आवड सांगा...";
-    speakText("नमस्कार. तुम्हाला कोणते काम शिकायचे आहे? शेती प्रक्रिया, टेलरिंग, की सोलर?", 'mr');
-  } else if (digit === '3') {
-    elements.lcdPrompt.textContent = "ਭਾਸ਼ਾ: ਪੰਜਾਬੀ। ਆਪਣੀ ਪੜ੍ਹਾਈ ਅਤੇ ਰੁਚੀ ਦੱਸੋ...";
-    speakText("ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ। ਤੁਸੀਂ ਕਿਹੜਾ ਕੰਮ ਸਿੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?", 'pa');
-  } else if (digit === '4') {
-    elements.lcdPrompt.textContent = "Trade Selected: Food Processing. Center: Pune JSS Hub.";
-    speakText("आपका नामांकन पीएम-अजय फूड प्रोसेसिंग में दर्ज किया गया है। नजदीकी केंद्र जन शिक्षण संस्थान है।", 'hi');
+  // End Call Button
+  if (el.keyEnd) {
+    el.keyEnd.addEventListener('click', () => {
+      state.ivrActive = false;
+      if (el.callStatusBadge) {
+        el.callStatusBadge.textContent = '○ CALL ENDED';
+        el.callStatusBadge.className = 'font-bold text-[11px] tracking-wide text-[#7f1d1d]';
+      }
+      if (el.ivrPromptBox) {
+        el.ivrPromptBox.textContent = '"कॉल समाप्त हुई (Call Ended). Toll-Free 1800-11-7625 पर कभी भी पुनः संपर्क करें।"';
+      }
+      if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'DISCONNECTED';
+      if (el.timerBadge) el.timerBadge.textContent = '--:--';
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+  }
+
+  // D-Pad / Nav Button
+  if (el.keyNav) {
+    el.keyNav.addEventListener('click', () => {
+      showToast('Speakerphone toggled on AJAY-PHONE.');
+    });
   }
 }
 
-function startIvrCall() {
-  state.ivrActive = true;
-  elements.lcdAudioStatus.textContent = "CALL CONNECTED • 00:01";
-  elements.lcdPrompt.textContent = "Welcome to PM-AJAY IVR Helpline.\nPress 1 for Hindi, 2 for Marathi, 3 for Punjabi.";
-  speakText("Welcome to PM-AJAY Toll Free Voice Helpline. For Hindi press 1. Marathi sathi 2 daba. Punjabi lai 3 dabao.", 'en');
-}
+function handleIvrKeyPress(key) {
+  if (!state.ivrActive && el.keyCall) {
+    el.keyCall.click();
+  }
 
-function endIvrCall() {
-  state.ivrActive = false;
-  state.ivrDialed = '';
-  elements.lcdDialed.textContent = '';
-  elements.lcdAudioStatus.textContent = "CALL ENDED";
-  elements.lcdPrompt.textContent = "Call disconnected. Dial 1800-11-7625 or tap Call.";
-  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  const res = IVR_RESPONSES[key];
+  if (res) {
+    if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = `KEY [${key}] ${res.title}`;
+    if (el.ivrPromptBox) el.ivrPromptBox.textContent = res.prompt;
+    if (el.lcdDialed) el.lcdDialed.textContent = `DIALED: ${key}`;
+
+    // Speak prompt
+    speakText(res.prompt.replace(/"/g, ''), state.language);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(30);
+    }
+  }
 }
 
 // -------------------------------------------------------------
-// Admin Dashboard: GET /dashboard/summary?district=
+// District Officer Admin Dashboard: GET /dashboard/summary
 // -------------------------------------------------------------
 async function loadAdminDashboard() {
-  const district = elements.districtSelect.value;
+  const district = el.districtSelect ? el.districtSelect.value : 'all';
+  
+  if (el.syncIcon) el.syncIcon.classList.add('animate-spin');
+
   try {
     const res = await fetch(`/dashboard/summary?district=${encodeURIComponent(district)}`);
     const data = await res.json();
 
-    // Stats
-    elements.valEnrolments.textContent = data.enrolments;
-    elements.valPlacements.textContent = data.placements;
-    elements.valDropouts.textContent = data.dropouts;
-    elements.valTotalBeneficiaries.textContent = data.total_beneficiaries;
-    elements.beneficiaryCountTag.textContent = `${data.total_beneficiaries} Records`;
+    // 1. Stat Metric Values
+    if (el.valEnrolments) el.valEnrolments.textContent = data.enrolments ?? 5;
+    if (el.valPlacements) el.valPlacements.textContent = data.placements ?? 3;
+    if (el.valDropouts) el.valDropouts.textContent = data.dropouts ?? 1;
+    if (el.valTotalBeneficiaries) el.valTotalBeneficiaries.textContent = data.total_beneficiaries ?? 10;
+    if (el.beneficiaryCountTag) el.beneficiaryCountTag.textContent = `${data.total_beneficiaries ?? 10} Records`;
 
-    // Demand Breakdown Bars
-    renderDemandBars(data.skill_demand_by_trade);
+    // 2. Trade Demand Trends
+    renderDemandBars(data.skill_demand_by_trade || []);
 
-    // Beneficiary Table
-    renderBeneficiaryTable(data.beneficiaries);
+    // 3. Regional Capacity vs Demand Analysis
+    loadCapacityGap(state.selectedCapacityState || 'Delhi');
+
+    // 4. Beneficiary Queue Cards
+    renderBeneficiaryCards(data.beneficiaries || []);
+
+    // Sync timestamp
+    if (el.syncTime) {
+      const now = new Date();
+      el.syncTime.textContent = `Updated: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
 
   } catch (err) {
-    console.error('Error fetching admin dashboard:', err);
+    console.error('Error fetching admin metrics:', err);
+  } finally {
+    if (el.syncIcon) {
+      setTimeout(() => el.syncIcon.classList.remove('animate-spin'), 600);
+    }
   }
 }
 
-function renderDemandBars(trades = []) {
-  elements.demandBarsContainer.innerHTML = '';
+async function loadCapacityGap(stateName = 'Delhi') {
+  try {
+    const res = await fetch(`/dashboard/capacity-gap?state=${encodeURIComponent(stateName)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    renderCapacityGap(data);
+  } catch (err) {
+    console.error('Error loading capacity gap data:', err);
+  }
+}
+
+function renderCapacityGap(report) {
+  if (!report) return;
+
+  if (el.capacityActiveStateLabel) {
+    el.capacityActiveStateLabel.textContent = report.state === 'all' ? 'All Regions (Consolidated)' : report.state;
+  }
+  if (el.capacityTotalDemand) {
+    el.capacityTotalDemand.textContent = report.total_demand || 0;
+  }
+  if (el.capacityTotalEst) {
+    el.capacityTotalEst.textContent = report.total_estimated_capacity || 0;
+  }
+  if (el.capacityOverallBadge && report.overall_gap) {
+    el.capacityOverallBadge.textContent = report.overall_gap.short_label;
+    el.capacityOverallBadge.className = `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${report.overall_gap.badge_class}`;
+  }
+
+  if (!el.capacityTableContainer) return;
+  el.capacityTableContainer.innerHTML = '';
+
+  const trades = report.trades || [];
   if (!trades.length) {
-    elements.demandBarsContainer.innerHTML = '<p class="text-muted">No trade demands registered yet.</p>';
+    el.capacityTableContainer.innerHTML = '<p class="text-xs text-on-surface-variant p-3 text-center">No capacity benchmarking data for this state.</p>';
     return;
   }
 
-  const maxVal = Math.max(...trades.map(t => t.count), 1);
-
   trades.forEach(t => {
-    const percentage = Math.round((t.count / maxVal) * 100);
-    const item = document.createElement('div');
-    item.className = 'demand-bar-item';
-    item.innerHTML = `
-      <div class="bar-meta">
-        <span>${t.trade}</span>
-        <span>${t.count} Beneficiaries (${percentage}%)</span>
+    const card = document.createElement('div');
+    card.className = 'bg-surface-container-low/50 hover:bg-surface-container-low border border-secondary/15 rounded-xl p-space-sm flex flex-col gap-1.5 transition-all';
+
+    const demandPct = t.estimated_capacity > 0
+      ? Math.min(Math.round((t.demand / t.estimated_capacity) * 100), 100)
+      : (t.demand > 0 ? 100 : 0);
+
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-space-xs">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-xl flex-shrink-0">${TRADE_ICONS_EMOJI[t.trade_key] || '💼'}</span>
+          <div class="min-w-0">
+            <h4 class="font-display font-bold text-xs text-on-surface truncate">${t.trade_name}</h4>
+            <p class="text-[10px] text-on-surface-variant truncate">${t.qp_name || ''} • <span class="font-semibold text-secondary">${t.qp_code || ''}</span> (${t.nsqf_level || 'NSQF L4'})</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${t.gap_badge_class} flex-shrink-0">
+          <span class="material-symbols-outlined text-[13px]">${t.gap_icon}</span>
+          <span>${t.gap_label}</span>
+        </div>
       </div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width: ${percentage}%"></div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-surface-container-lowest p-2 rounded-lg text-xs mt-0.5">
+        <div class="flex flex-col">
+          <span class="text-[10px] text-secondary font-bold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Live Demand
+          </span>
+          <span class="font-bold text-sm text-on-surface mt-0.5">${t.demand} <span class="text-[10px] font-normal text-on-surface-variant">applicants</span></span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[10px] text-amber-700 font-bold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Est. Capacity*
+          </span>
+          <span class="font-bold text-sm text-on-surface mt-0.5">${t.estimated_capacity} <span class="text-[10px] font-normal text-on-surface-variant">seats (illustrative)</span></span>
+        </div>
+        <div class="flex flex-col col-span-2 sm:col-span-1">
+          <span class="text-[10px] text-on-surface-variant font-medium">Demand vs Capacity Balance</span>
+          <span class="font-bold text-xs text-on-surface mt-0.5">${Math.round(t.ratio * 100)}% (${t.difference > 0 ? '+' + t.difference + ' deficit' : t.difference + ' seats'})</span>
+        </div>
+      </div>
+
+      <!-- Capacity Visual Comparison Bar -->
+      <div class="w-full mt-0.5">
+        <div class="flex justify-between text-[10px] text-on-surface-variant mb-0.5 font-medium">
+          <span>Demand Utilization</span>
+          <span>${t.demand} / ${t.estimated_capacity} seats</span>
+        </div>
+        <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden flex">
+          <div class="${t.gap_status === 'demand_exceeding' ? 'bg-[#ef4444]' : t.gap_status === 'roughly_matched' ? 'bg-[#3b82f6]' : 'bg-[#10b981]'} h-full rounded-full transition-all duration-700" style="width: ${demandPct}%"></div>
+        </div>
       </div>
     `;
-    elements.demandBarsContainer.appendChild(item);
+
+    el.capacityTableContainer.appendChild(card);
   });
 }
 
-function renderBeneficiaryTable(list = []) {
-  elements.beneficiaryTableBody.innerHTML = '';
+function renderDemandBars(trades = []) {
+  if (!el.demandBarsContainer) return;
+  el.demandBarsContainer.innerHTML = '';
+
+  if (!trades.length) {
+    el.demandBarsContainer.innerHTML = '<p class="text-xs text-on-surface-variant">No trade demands registered yet.</p>';
+    return;
+  }
+
+  const total = trades.reduce((acc, t) => acc + t.count, 0) || 1;
+  const barColors = ['bg-secondary', 'bg-secondary-container', 'bg-primary-container', 'bg-tertiary-fixed-dim'];
+
+  trades.forEach((t, i) => {
+    const pct = Math.round((t.count / total) * 100);
+    const colorClass = barColors[i % barColors.length];
+    const row = document.createElement('div');
+    row.className = 'flex flex-col gap-1';
+    row.innerHTML = `
+      <div class="flex justify-between items-center text-xs">
+        <span class="text-on-surface font-semibold flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[15px] text-secondary">${TRADE_ICONS[t.trade_key] || 'work'}</span>
+          ${t.trade}
+        </span>
+        <span class="text-secondary font-bold">${pct}% (${t.count})</span>
+      </div>
+      <div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden flex">
+        <div class="${colorClass} h-full rounded-full transition-all duration-700" style="width: ${pct}%"></div>
+      </div>
+    `;
+    el.demandBarsContainer.appendChild(row);
+  });
+}
+
+function renderBeneficiaryCards(list = []) {
+  if (!el.beneficiaryTableBody) return;
+  el.beneficiaryTableBody.innerHTML = '';
+
   if (!list.length) {
-    elements.beneficiaryTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:1.5rem;">No beneficiaries found for this filter.</td></tr>';
+    el.beneficiaryTableBody.innerHTML = '<p class="text-xs text-on-surface-variant p-4 text-center">No beneficiaries found for this district filter.</p>';
     return;
   }
 
   list.forEach(b => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>${b.name}</strong><br><small style="color:var(--text-dim);">${b.education}</small></td>
-      <td>${b.location}</td>
-      <td><span style="color:var(--saffron-light); font-weight:600;">${b.trade}</span></td>
-      <td><span class="signals-badge">${b.entry_mode.toUpperCase()}</span></td>
-      <td><span class="status-badge status-${b.status}">${b.status}</span></td>
-      <td>
-        <select class="status-select-inline" data-id="${b.id}">
-          <option value="enrolled" ${b.status === 'enrolled' ? 'selected' : ''}>Enrolled</option>
-          <option value="placed" ${b.status === 'placed' ? 'selected' : ''}>Placed</option>
-          <option value="dropped" ${b.status === 'dropped' ? 'selected' : ''}>Dropped</option>
-          <option value="no_contact" ${b.status === 'no_contact' ? 'selected' : ''}>No Contact</option>
+    const card = document.createElement('div');
+    card.className = 'bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden transition-all';
+    
+    // Status Badge colors
+    const isEnrolled = b.status === 'enrolled';
+    const isPlaced = b.status === 'placed';
+    const isDropped = b.status === 'dropped';
+    const statusBg = isPlaced ? 'bg-surface-variant text-secondary' :
+                     isEnrolled ? 'bg-[#ecfdf5] text-[#065f46]' :
+                     isDropped ? 'bg-error-container text-error' : 'bg-amber-50 text-[#b87500]';
+
+    const initials = b.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AJ';
+
+    card.innerHTML = `
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-space-sm min-w-0">
+          <div class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center font-display font-bold text-xs text-on-surface flex-shrink-0">
+            ${initials}
+          </div>
+          <div class="flex flex-col min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-bold text-on-surface truncate">${b.name}</span>
+              <span class="text-[10px] bg-surface-container-low text-on-surface-variant px-1.5 py-0.2 rounded font-medium">${b.education || '10th Pass'}</span>
+            </div>
+            <span class="text-[10px] text-on-surface-variant">${b.location} • ID: ${b.id.substring(0, 8)}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 ${statusBg} px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full ${isPlaced ? 'bg-secondary' : isEnrolled ? 'bg-[#10b981]' : 'bg-amber-500'}"></span>
+          <span class="capitalize">${b.status}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-space-xs bg-surface-container-low/50 p-space-xs rounded-lg text-xs">
+        <div class="flex flex-col">
+          <span class="text-on-surface-variant text-[10px]">Applied Trade</span>
+          <span class="text-on-surface font-semibold truncate">${b.trade}</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-on-surface-variant text-[10px]">Intake Mode</span>
+          <span class="text-on-surface font-semibold flex items-center gap-1 capitalize">
+            <span class="material-symbols-outlined text-[13px] text-secondary">devices</span>
+            ${b.entry_mode}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-1">
+        <select class="status-dropdown text-[11px] bg-surface-container-low border border-secondary/15 rounded-md px-2 py-1 font-semibold text-on-surface cursor-pointer" data-id="${b.id}">
+          <option value="enrolled" ${b.status === 'enrolled' ? 'selected' : ''}>Status: Enrolled</option>
+          <option value="placed" ${b.status === 'placed' ? 'selected' : ''}>Status: Placed</option>
+          <option value="dropped" ${b.status === 'dropped' ? 'selected' : ''}>Status: Dropped</option>
+          <option value="no_contact" ${b.status === 'no_contact' ? 'selected' : ''}>Status: Pending</option>
         </select>
-      </td>
+        <button class="btn-view-beneficiary bg-secondary-fixed text-on-secondary-fixed hover:bg-secondary hover:text-on-secondary px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-colors" data-name="${b.name}">
+          <span class="material-symbols-outlined text-[14px]">visibility</span>
+          <span>View File</span>
+        </button>
+      </div>
     `;
-    elements.beneficiaryTableBody.appendChild(tr);
+    el.beneficiaryTableBody.appendChild(card);
   });
 
-  // Attach status change events: POST /followup/{beneficiary_id}
-  document.querySelectorAll('.status-select-inline').forEach(select => {
-    select.addEventListener('change', async (e) => {
+  // Attach status change events
+  document.querySelectorAll('.status-dropdown').forEach(sel => {
+    sel.addEventListener('change', async (e) => {
       const bId = e.target.getAttribute('data-id');
       const newStatus = e.target.value;
       try {
@@ -643,7 +1384,7 @@ function renderBeneficiaryTable(list = []) {
           body: JSON.stringify({ status: newStatus })
         });
         if (res.ok) {
-          showToast(`Beneficiary status updated to ${newStatus}`);
+          showToast(`Beneficiary status updated to ${newStatus}`, 'check_circle');
           loadAdminDashboard();
         }
       } catch (err) {
@@ -651,109 +1392,105 @@ function renderBeneficiaryTable(list = []) {
       }
     });
   });
-}
 
-// -------------------------------------------------------------
-// Event Bindings
-// -------------------------------------------------------------
-function bindEvents() {
-  // Navigation Tabs
-  elements.tabApp.addEventListener('click', () => switchTab('voice-app'));
-  elements.tabIvr.addEventListener('click', () => switchTab('ivr-view'));
-  elements.tabAdmin.addEventListener('click', () => {
-    switchTab('admin-view');
-    loadAdminDashboard();
-  });
-
-  // Mic Button
-  elements.dominantMicBtn.addEventListener('click', toggleRecording);
-
-  // Audio Replay Button
-  elements.btnReplayAudio.addEventListener('click', () => {
-    const text = elements.assistantSpeechText.textContent.replace(/"/g, '');
-    speakText(text, state.language);
-  });
-
-  // Language Dropdown
-  elements.langSelect.addEventListener('change', (e) => {
-    startNewSession(state.entryMode, e.target.value);
-  });
-
-  // Demo chips are rendered dynamically without altering active language
-  renderDemoChips();
-
-  // Facilitator Handoff Button (Section 6, Screen 4)
-  elements.btnStartFacilitator.addEventListener('click', () => {
-    startNewSession('facilitator', state.language);
-    showToast('Switched to Facilitator Mode: Zero-friction intake for rural citizen');
-  });
-
-  elements.btnExitFacilitator.addEventListener('click', () => {
-    startNewSession('app', state.language);
-    showToast('Switched back to Smartphone Self-Mode');
-  });
-
-  elements.btnResetSession.addEventListener('click', () => {
-    startNewSession(state.entryMode, state.language);
-    showToast('Conversation reset');
-  });
-
-  // Roadmap Actions
-  elements.btnPlayRoadmapAudio.addEventListener('click', () => {
-    if (state.currentRecommendation && state.currentRecommendation.spoken_summary) {
-      speakText(state.currentRecommendation.spoken_summary, state.language);
-    }
-  });
-
-  elements.btnPrintRoadmap.addEventListener('click', () => {
-    window.print();
-  });
-
-  elements.btnSmsRoadmap.addEventListener('click', () => {
-    showToast('📲 SMS Roadmap & JSS Training Hub details dispatched to beneficiary mobile!');
-  });
-
-  elements.btnNewRoadmapAssessment.addEventListener('click', () => {
-    startNewSession(state.entryMode, state.language);
-    elements.viewVoiceApp.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  // IVR Simulator Keypad
-  document.querySelectorAll('.keypad-btn[data-key]').forEach(btn => {
+  // Attach View File click events
+  document.querySelectorAll('.btn-view-beneficiary').forEach(btn => {
     btn.addEventListener('click', () => {
-      const key = btn.getAttribute('data-key');
-      handleKeypadPress(key);
+      const name = btn.getAttribute('data-name');
+      showToast(`Loading PM-AJAY beneficiary dossier for ${name}...`, 'folder_open');
     });
   });
-
-  elements.keyCall.addEventListener('click', startIvrCall);
-  elements.keyEnd.addEventListener('click', endIvrCall);
-
-  // Admin Dashboard Controls
-  elements.districtSelect.addEventListener('change', loadAdminDashboard);
-  elements.btnRefreshDashboard.addEventListener('click', loadAdminDashboard);
 }
 
-function switchTab(viewId) {
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+function bindAdminEvents() {
+  if (el.districtSelect) {
+    el.districtSelect.addEventListener('change', () => {
+      showToast(`Loading metrics for ${el.districtSelect.value}...`);
+      loadAdminDashboard();
+    });
+  }
 
-  if (viewId === 'voice-app') {
-    elements.tabApp.classList.add('active');
-    elements.viewVoiceApp.classList.add('active');
-  } else if (viewId === 'ivr-view') {
-    elements.tabIvr.classList.add('active');
-    elements.viewIvr.classList.add('active');
-  } else if (viewId === 'admin-view') {
-    elements.tabAdmin.classList.add('active');
-    elements.viewAdmin.classList.add('active');
+  if (el.btnRefreshDashboard) {
+    el.btnRefreshDashboard.addEventListener('click', () => {
+      showToast('Live synchronization with State NIC server initiated...', 'sync');
+      loadAdminDashboard();
+    });
+  }
+
+  if (el.btnExportReport) {
+    el.btnExportReport.addEventListener('click', () => {
+      showToast('Generating official PM-AJAY Excel report for district...', 'file_download');
+    });
+  }
+
+  if (el.btnBulkSms) {
+    el.btnBulkSms.addEventListener('click', () => {
+      showToast('SMS Gateway: Dispatched stipend reminders to all registered numbers.', 'cell_tower');
+    });
+  }
+
+  // Regional Capacity State Filter Tabs
+  if (el.capacityStateTabs) {
+    el.capacityStateTabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const stateKey = btn.getAttribute('data-state');
+        if (!stateKey) return;
+        state.selectedCapacityState = stateKey;
+
+        // Visual toggle on buttons
+        el.capacityStateTabs.forEach(b => {
+          b.className = 'capacity-state-btn text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-surface-container-low text-on-surface-variant border-secondary/15 hover:bg-surface-container';
+        });
+        btn.className = 'capacity-state-btn text-xs font-bold px-3 py-1.5 rounded-lg border transition-all active:scale-95 bg-secondary text-on-secondary border-secondary shadow-sm';
+
+        loadCapacityGap(stateKey);
+      });
+    });
   }
 }
 
-function showToast(msg) {
-  elements.toastMessage.textContent = msg;
-  elements.toast.classList.remove('hidden');
-  setTimeout(() => {
-    elements.toast.classList.add('hidden');
-  }, 3500);
+// -------------------------------------------------------------
+// Speech Synthesis (TTS) Helper
+// -------------------------------------------------------------
+function speakText(text, lang = 'hi', onEnd = null) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = LANG_LOCALES[lang] || 'hi-IN';
+  utterance.rate = 0.95;
+
+  if (onEnd) {
+    utterance.onend = onEnd;
+    utterance.onerror = onEnd;
+  }
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// -------------------------------------------------------------
+// Toast Notification Utility
+// -------------------------------------------------------------
+let toastTimer = null;
+function showToast(message, icon = 'info') {
+  if (!el.toast) return;
+  if (el.toastMessage) el.toastMessage.textContent = message;
+  if (el.toastIcon) el.toastIcon.textContent = icon;
+
+  el.toast.classList.remove('opacity-0', 'pointer-events-none');
+  el.toast.classList.add('opacity-100');
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.toast.classList.remove('opacity-100');
+    el.toast.classList.add('opacity-0', 'pointer-events-none');
+  }, 3200);
+}
+
+// Clock Utility for LCD Screen
+function updateClock() {
+  if (el.lcdTime) {
+    const now = new Date();
+    el.lcdTime.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
 }

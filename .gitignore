@@ -49,3 +49,6 @@ ENV/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Agent customizations
+.agents/
