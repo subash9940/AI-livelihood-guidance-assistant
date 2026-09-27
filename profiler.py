@@ -4,6 +4,7 @@ Extracts structured schema fields from conversational natural language input (sp
 """
 import re
 from typing import Dict, Any, Tuple, List
+import llm_extractor
 
 # Common multilingual vocabulary patterns
 EDU_PATTERNS = [
@@ -114,9 +115,16 @@ def is_soft_skill(skill_name: str) -> bool:
     """Checks whether a skill string represents a soft/interpersonal skill."""
     s = skill_name.strip().lower()
     for soft in SOFT_SKILLS_SET:
-        if s == soft.lower() or soft.lower() in s:
+        if s == soft.lower() or soft.lower() in s or s in soft.lower():
             return True
-    return False
+    soft_keywords = {
+        "communication", "patient", "patience", "hardworking", "hard working", "interpersonal",
+        "good with people", "people skill", "people", "team", "teamwork", "adaptable", "punctual",
+        "honest", "trustworthy", "problem solving", "leadership", "collaborative", "dedicated",
+        "discipline", "disciplined", "attentive", "soft skill", "listening", "empathy", "friendly",
+        "relationship", "multitask", "reliable", "dependable"
+    }
+    return any(k in s for k in soft_keywords)
 
 def has_concrete_interest_or_technical_skill(profile: Dict[str, Any]) -> bool:
     """
@@ -144,6 +152,23 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
     Returns (updated_profile, is_complete).
     """
     profile = dict(current_profile or {})
+
+    # Optional Multi-Provider LLM Extraction (Claude / Gemini) if API key configured
+    if llm_extractor.has_llm_provider():
+        try:
+            llm_prof = llm_extractor.extract_profile_with_llm(text)
+            if llm_prof:
+                for k, v in llm_prof.items():
+                    if v and not profile.get(k):
+                        profile[k] = v
+                    elif k in ("skills", "interests") and v:
+                        existing = profile.get(k, [])
+                        if isinstance(existing, list) and isinstance(v, list):
+                            profile[k] = list(dict.fromkeys(existing + v))
+        except Exception:
+            # Fallback seamlessly to deterministic rule-based cascade
+            pass
+
     lowered = text.lower()
 
     # 0. Name extraction (from common conversational patterns)

@@ -21,6 +21,8 @@ import profiler
 import nsqf_rules
 import region_schemes
 import training_capacity
+import bhashini
+from voice_router import router as voice_router
 
 from contextlib import asynccontextmanager
 
@@ -40,6 +42,8 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+app.include_router(voice_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -89,18 +93,21 @@ async def voice_input(session_id: str, request: Request):
 
     content_type = request.headers.get("content-type", "")
     input_text = ""
+    audio_base64 = None
     lang = session.get("language", "en")
 
     profile_override = None
     if "application/json" in content_type:
         body = await request.json()
         input_text = body.get("transcript") or body.get("text") or ""
+        audio_base64 = body.get("audio_base64")
         if body.get("language"):
             lang = body.get("language")
         profile_override = body.get("profile_data") or body.get("profile")
     elif "multipart/form-data" in content_type or "application/x-www-form-urlencoded" in content_type:
         form = await request.form()
         input_text = form.get("text") or form.get("transcript") or ""
+        audio_base64 = form.get("audio_base64")
         if form.get("language"):
             lang = form.get("language")
     else:
@@ -108,11 +115,19 @@ async def voice_input(session_id: str, request: Request):
         try:
             body = await request.json()
             input_text = body.get("transcript") or body.get("text") or ""
+            audio_base64 = body.get("audio_base64")
             if body.get("language"):
                 lang = body.get("language")
             profile_override = body.get("profile_data") or body.get("profile")
         except Exception:
             pass
+
+    # If transcript wasn't provided directly but audio_base64 was sent, transcribe via Bhashini
+    if not input_text.strip() and audio_base64:
+        try:
+            input_text = bhashini.speech_to_text(audio_base64, lang)
+        except Exception as e:
+            print(f"ASR transcription error: {e}")
 
     if not input_text.strip():
         if profile_override and isinstance(profile_override, dict):
@@ -121,7 +136,7 @@ async def voice_input(session_id: str, request: Request):
             loc = profile_override.get("location") or profile_override.get("state") or "Local District"
             input_text = f"Profile submission for {name} from {loc} interested in {trade_interest}."
         else:
-            raise HTTPException(status_code=400, detail="No voice transcript or text provided")
+            raise HTTPException(status_code=400, detail="No voice transcript, audio, or text provided")
 
     # 1. Update Conversation History
     history = session.get("conversation_history", [])
@@ -229,10 +244,17 @@ async def voice_input(session_id: str, request: Request):
         beneficiary_id=beneficiary_id
     )
 
+    reply_audio_base64 = None
+    try:
+        reply_audio_base64 = bhashini.text_to_speech(next_prompt, lang)
+    except Exception:
+        pass
+
     response_data = {
         "transcript": input_text,
         "extracted_fields": updated_profile,
         "next_prompt": next_prompt,
+        "reply_audio_base64": reply_audio_base64,
         "profile_complete": is_complete,
         "session_id": session_id,
         "beneficiary_id": beneficiary_id

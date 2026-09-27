@@ -674,6 +674,63 @@ def test_local_opportunities_and_dashboard():
     assert "Nivara" in dash_res.text
     print("Verified GET /dashboard route serves dashboard page.")
 
+
+def test_voice_router_and_bhashini_endpoints():
+    print("\n--- Testing Voice Router & Indic Speech Pipeline (/api/asr, /api/tts, /api/chat) ---")
+    
+    # 1. Test /api/asr endpoint
+    asr_res = client.post("/api/asr", json={
+        "audio_base64": "UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA",
+        "language": "hi"
+    })
+    assert asr_res.status_code == 200
+    asr_json = asr_res.json()
+    assert "transcript" in asr_json
+    assert len(asr_json["transcript"]) > 0
+
+    # 2. Test /api/tts endpoint
+    tts_res = client.post("/api/tts", json={"text": "नमस्ते", "language": "hi"})
+    assert tts_res.status_code == 200
+    assert "audio_base64" in tts_res.json()
+
+    # 3. Test /api/chat endpoint (conversational profiling loop)
+    # 3a. Partial conversation -> returns missing fields and clarifying prompt
+    chat_partial = client.post("/api/chat", json={
+        "full_transcript": "I completed 10th standard and want to learn something useful.",
+        "language": "en"
+    })
+    assert chat_partial.status_code == 200
+    p_data = chat_partial.json()
+    assert p_data["done"] is False
+    assert len(p_data["missing"]) > 0
+    assert len(p_data["reply"]) > 0
+
+    # 3b. Complete conversation -> returns NSQF recommendation
+    chat_complete = client.post("/api/chat", json={
+        "full_transcript": "I completed 10th standard, my family does tailoring and weaving, I want to learn sewing and clothes design, I cannot travel far, prefer self employment in Delhi.",
+        "language": "en"
+    })
+    assert chat_complete.status_code == 200
+    c_data = chat_complete.json()
+    assert c_data["done"] is True
+    assert "recommendation" in c_data
+    assert "trade_name" in c_data["recommendation"]
+    assert "Tailor" in c_data["recommendation"]["trade_name"] or "Apparel" in c_data["recommendation"]["trade_name"]
+
+    # 4. Test /session/{id}/voice-input accepts audio_base64 and returns reply_audio_base64
+    s_res = client.post("/session/start", json={"entry_mode": "app", "language": "hi"})
+    session_id = s_res.json()["session_id"]
+    v_res = client.post(f"/session/{session_id}/voice-input", json={
+        "audio_base64": "UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA",
+        "language": "hi"
+    })
+    assert v_res.status_code == 200
+    v_data = v_res.json()
+    assert len(v_data["transcript"]) > 0
+    assert "reply_audio_base64" in v_data
+    print("Voice router & Indic speech pipeline tests passed successfully.")
+
+
 if __name__ == "__main__":
     test_full_pipeline()
     test_regional_schemes_static_data_and_lookup()
@@ -687,5 +744,6 @@ if __name__ == "__main__":
     test_broad_skill_profile_validation_and_tiers()
     test_graceful_fallbacks_and_completeness_gating()
     test_local_opportunities_and_dashboard()
-    print("\nAll 12 test suites passed successfully!")
+    test_voice_router_and_bhashini_endpoints()
+    print("\nAll 13 test suites passed successfully!")
 
