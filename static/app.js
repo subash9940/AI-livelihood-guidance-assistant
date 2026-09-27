@@ -50,37 +50,61 @@ if ('speechSynthesis' in window) {
   window.speechSynthesis.onvoiceschanged = refreshVoices;
 }
 
+let audioCtx = null;
+
 /**
- * Prime & unlock browser speech synthesis & HTML5 Audio synchronously
- * off an active user gesture (tap/click/touch) to bypass Chrome autoplay blocks.
+ * Plays a pleasant auditory chime via Web Audio API.
+ * Works universally on all browsers and devices without any external audio files.
+ */
+function playChime(freq = 587.33, duration = 0.18) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + duration * 0.5);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+
+/**
+ * Prime & unpause browser speech synthesis & HTML5 Audio synchronously
+ * off an active user gesture (tap/click/touch) to satisfy Chrome autoplay security.
  */
 function unlockSpeechAndAudio() {
-  if (isAudioUnlocked) return;
-  isAudioUnlocked = true;
-
   if ('speechSynthesis' in window) {
     try {
-      window.speechSynthesis.resume();
-      // Synchronous silent primer utterance inside user gesture chain
-      const primer = new SpeechSynthesisUtterance('');
-      primer.volume = 0;
-      primer.rate = 10;
-      window.speechSynthesis.speak(primer);
-    } catch (e) {
-      console.warn('SpeechSynthesis unlock note:', e);
-    }
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    } catch (e) {}
   }
 
   try {
-    const silentAudio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAP8A');
-    silentAudio.volume = 0;
-    silentAudio.play().then(() => silentAudio.pause()).catch(() => {});
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext && !audioCtx) {
+      audioCtx = new AudioContext();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
   } catch (e) {}
 }
 
 // Global passive unlock on first user interaction
 ['click', 'touchstart', 'keydown'].forEach(evt => {
-  document.addEventListener(evt, unlockSpeechAndAudio, { passive: true, once: true });
+  document.addEventListener(evt, unlockSpeechAndAudio, { passive: true });
 });
 
 // Initial Greeting Prompts by Language
@@ -271,6 +295,7 @@ function initElements() {
     assistantSpeechText: document.getElementById('assistantSpeechText'),
     assistantSpeechSub: document.getElementById('assistantSpeechSub'),
     btnReplayAudio: document.getElementById('btnReplayAudio'),
+    btnTestAudioOutput: document.getElementById('btnTestAudioOutput'),
     ttsIcon: document.getElementById('ttsIcon'),
     dominantMicBtn: document.getElementById('dominantMicBtn'),
     micRipple1: document.getElementById('micRipple1'),
@@ -836,6 +861,18 @@ function bindVoiceEvents() {
       if (text) {
         speak(text);
       }
+    });
+  }
+
+  // Dedicated Test Sound Button
+  if (el.btnTestAudioOutput) {
+    el.btnTestAudioOutput.addEventListener('click', () => {
+      unlockSpeechAndAudio();
+      playChime(587.33, 0.2);
+      setTimeout(() => {
+        speak("Hello! The Nivara audio assistant is working. Your system sound and browser voice output are active.");
+        showToast("Playing test voice... Audio output active!", "volume_up");
+      }, 80);
     });
   }
 
@@ -1951,8 +1988,8 @@ function speakViaBrowserTTS(text, onEnd = null) {
     return;
   }
 
+  // Unpause engine if paused (do NOT call cancel() right before speak() as it cancels the new utterance in Chrome!)
   try {
-    window.speechSynthesis.cancel();
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
@@ -1994,9 +2031,8 @@ function speakViaBrowserTTS(text, onEnd = null) {
     } else if (currentLang === 'ta') {
       voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('ta') || v.name.toLowerCase().includes('tamil'));
     } else {
-      // English default
-      voice = cachedVoices.find(v => v.lang === 'en-IN' || v.lang.replace('_', '-').toLowerCase() === 'en-in') ||
-              cachedVoices.find(v => v.lang.startsWith('en') && (v.name.includes('India') || v.name.includes('Heera') || v.name.includes('Ravi'))) ||
+      // English default: prioritize standard en-US (Microsoft David/Zira on Windows) or any English voice
+      voice = cachedVoices.find(v => v.lang === 'en-US' || v.lang === 'en_US') ||
               cachedVoices.find(v => v.lang.startsWith('en')) ||
               cachedVoices[0];
     }
@@ -2012,27 +2048,29 @@ function speakViaBrowserTTS(text, onEnd = null) {
     utterance.voice = voice;
     utterance.lang = voice.lang;
   } else {
-    utterance.lang = targetLocale;
+    utterance.lang = (currentLang === 'en') ? 'en-US' : targetLocale;
   }
 
   utterance.onstart = () => {
     if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
+    playChime(659.25, 0.12);
   };
 
   utterance.onend = () => {
-    activeUtterance = null;
+    window._activeUtterance = null;
     if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
     if (onEnd) onEnd();
   };
 
   utterance.onerror = (e) => {
     console.warn('SpeechSynthesis playback note:', e);
-    activeUtterance = null;
+    window._activeUtterance = null;
     if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
     if (onEnd) onEnd();
   };
 
-  activeUtterance = utterance;
+  // Assign to window object to prevent V8 garbage collector from stopping speech early
+  window._activeUtterance = utterance;
 
   try {
     if (window.speechSynthesis.paused) {
@@ -2050,7 +2088,7 @@ function speakViaBrowserTTS(text, onEnd = null) {
     } else if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
-  }, 3000);
+  }, 2500);
 }
 
 // -------------------------------------------------------------
