@@ -146,6 +146,23 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
     profile = dict(current_profile or {})
     lowered = text.lower()
 
+    # 0. Name extraction (from common conversational patterns)
+    if not profile.get("name"):
+        name_patterns = [
+            r"(?:my\s+name\s+is|i\s+am|i'm|this\s+is|naam\s+hai|mera\s+naam|मेरा\s+नाम|माझे\s+नाव|ਮੇਰਾ\s+ਨਾਮ)\s+([A-Za-z\u0900-\u0D7F]{2,}(?:\s+[A-Za-z\u0900-\u0D7F]{2,})*)",
+        ]
+        for pat in name_patterns:
+            m = re.search(pat, text, re.IGNORECASE)
+            if m:
+                name_candidate = m.group(1).strip()
+                # Avoid capturing common non-name words
+                skip_words = {"interested", "from", "living", "working", "looking", "studying", "here", "there"}
+                first_word = name_candidate.split()[0].lower()
+                if first_word not in skip_words and len(name_candidate) >= 2:
+                    profile["name"] = name_candidate.title()
+                break
+
+
     # 1. Education
     for pattern, val in EDU_PATTERNS:
         if re.search(pattern, lowered, re.IGNORECASE):
@@ -244,64 +261,110 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
 def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     """
     Generates a natural, spoken follow-up prompt based on what is missing from the profile.
+    Implements a priority-ordered question cascade covering all 7 PS 26097-required data points:
+      1. Name  2. Education  3. Skills/Interests  4. State/Location
+      5. Family Occupation  6. Mobility  7. Employment Preference
     If the user has provided soft skills but no concrete interest or technical skill,
     returns a clarifying follow-up question asking for a concrete interest or technical skill.
     """
     has_concrete = has_concrete_interest_or_technical_skill(profile)
     has_soft = any(is_soft_skill(s) for s in profile.get("skills", []))
-    missing_edu = not profile.get("education_level")
 
-    # If the beneficiary only provided soft skills with no concrete interest or technical skill:
+    # Priority 0: If the beneficiary only provided soft skills with no concrete interest or technical skill
     if has_soft and not has_concrete:
-        if language == "hi":
-            return "अपनी व्यक्तिगत खूबियों (जैसे मेहनत, धैर्य, या व्यवहार) को साझा करने के लिए धन्यवाद! सही ट्रेड का सुझाव देने के लिए, क्या आप किसी व्यावहारिक हुनर, रुचि या कार्यक्षेत्र (जैसे सिलाई, बिजली/वायरिंग, वाहन मरम्मत, खाद्य प्रसंस्करण, कंप्यूटर, या खेती) के बारे में बता सकते हैं?"
-        elif language == "mr":
-            return "तुमचे वैयक्तिक गुण (उदा. कष्टाळूपणा, संयम किंवा संवाद) सांगितल्याबद्दल धन्यवाद! योग्य उपजीविकेची शिफारस करण्यासाठी, तुम्हाला कोणत्या विशिष्ट कामात किंवा कौशल्यात रस आहे (उदा. सिलाई, इलेक्ट्रिकल काम, वाहन दुरुस्ती, अन्न प्रक्रिया, संगणक किंवा शेती) ते सांगू शकाल का?"
-        elif language == "pa":
-            return "ਆਪਣੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਮਿਹਨਤ, ਸਬਰ ਜਾਂ ਮਿਲਣਸਾਰ ਹੋਣਾ) ਸਾਂਝੀਆਂ ਕਰਨ ਲਈ ਧੰਨਵਾਦ! ਸਹੀ ਰੋਜ਼ਗਾਰ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕਰਨ ਲਈ, ਕੀ ਤੁਸੀਂ ਕਿਸੇ ਖਾਸ ਕੰਮ, ਹੁਨਰ ਜਾਂ ਖੇਤਰ (ਜਿਵੇਂ ਸਿਲਾਈ, ਬਿਜਲੀ ਦਾ ਕੰਮ, ਗੱਡੀਆਂ ਦੀ ਮੁਰੰਮਤ, ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ, ਕੰਪਿਊਟਰ ਜਾਂ ਖੇਤੀਬਾੜੀ) ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ?"
-        else:
-            return "Thank you for sharing your personal strengths! To recommend the right trade, could you tell me about a specific practical skill, trade interest, or work area you'd like to pursue (for example: electrical wiring, tailoring, two-wheeler repair, food processing, computers, or agriculture)?"
+        prompts = {
+            "hi": "अपनी व्यक्तिगत खूबियों (जैसे मेहनत, धैर्य, या व्यवहार) को साझा करने के लिए धन्यवाद! सही ट्रेड का सुझाव देने के लिए, क्या आप किसी व्यावहारिक हुनर, रुचि या कार्यक्षेत्र (जैसे सिलाई, बिजली/वायरिंग, वाहन मरम्मत, खाद्य प्रसंस्करण, कंप्यूटर, या खेती) के बारे में बता सकते हैं?",
+            "mr": "तुमचे वैयक्तिक गुण (उदा. कष्टाळूपणा, संयम किंवा संवाद) सांगितल्याबद्दल धन्यवाद! योग्य उपजीविकेची शिफारस करण्यासाठी, तुम्हाला कोणत्या विशिष्ट कामात किंवा कौशल्यात रस आहे (उदा. सिलाई, इलेक्ट्रिकल काम, वाहन दुरुस्ती, अन्न प्रक्रिया, संगणक किंवा शेती) ते सांगू शकाल का?",
+            "pa": "ਆਪਣੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਮਿਹਨਤ, ਸਬਰ ਜਾਂ ਮਿਲਣਸਾਰ ਹੋਣਾ) ਸਾਂਝੀਆਂ ਕਰਨ ਲਈ ਧੰਨਵਾਦ! ਸਹੀ ਰੋਜ਼ਗਾਰ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕਰਨ ਲਈ, ਕੀ ਤੁਸੀਂ ਕਿਸੇ ਖਾਸ ਕੰਮ, ਹੁਨਰ ਜਾਂ ਖੇਤਰ (ਜਿਵੇਂ ਸਿਲਾਈ, ਬਿਜਲੀ ਦਾ ਕੰਮ, ਗੱਡੀਆਂ ਦੀ ਮੁਰੰਮਤ, ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ, ਕੰਪਿਊਟਰ ਜਾਂ ਖੇਤੀਬਾੜੀ) ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ?",
+            "en": "Thank you for sharing your personal strengths! To recommend the right trade, could you tell me about a specific practical skill, trade interest, or work area you'd like to pursue (for example: electrical wiring, tailoring, two-wheeler repair, food processing, computers, or agriculture)?"
+        }
+        return prompts.get(language, prompts["en"])
 
-    # If no skills at all:
+    # Determine what's missing — priority-ordered cascade for 7 PS-required data points
     missing_skills = not has_concrete and not has_soft
+    missing_edu = not profile.get("education_level")
+    missing_name = not profile.get("name")
+    missing_state = not profile.get("state") and not profile.get("location")
+    missing_family_occ = not profile.get("family_occupation")
+    missing_mobility = not profile.get("mobility_constraint")
+    missing_emp_pref = not profile.get("employment_preference")
 
-    if language == "hi":
-        if missing_skills and missing_edu:
-            return "नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आपकी क्या खूबियां या हुनर हैं? यह कोई पारंपरिक काम (जैसे खेती, सिलाई), तकनीकी हुनर, या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा मेलजोल, धैर्य, या मेहनत) भी हो सकती है।"
-        elif missing_skills:
-            return "बहुत अच्छा! क्या आप अपने कौशल या खूबियों के बारे में बता सकते हैं? यह केवल तकनीकी काम ही नहीं, बल्कि पारंपरिक पारिवारिक काम (जैसे खेती, शिल्प) या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा व्यवहार, धैर्य, या लगन) भी हो सकती है।"
-        elif missing_edu:
-            return "बहुत अच्छा! क्या आप अपनी पढ़ाई के बारे में बता सकते हैं, जैसे 8वीं, 10वीं या 12वीं पास?"
-        else:
-            return "क्या आप खुद की दुकान या व्यवसाय शुरू करना चाहते हैं, या किसी कंपनी में नौकरी करना चाहते हैं?"
+    # Priority 1: Name + Education + Skills (initial greeting — bundle if multiple are missing)
+    if missing_skills and missing_edu:
+        prompts = {
+            "hi": "नमस्ते! आप अपने बारे में बताएं — आपका नाम क्या है, पढ़ाई कितनी हुई है, और आपकी क्या खूबियां या हुनर हैं? यह कोई पारंपरिक काम (जैसे खेती, सिलाई), तकनीकी हुनर, या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा मेलजोल, धैर्य, या मेहनत) भी हो सकती है।",
+            "mr": "नमस्कार! तुमच्याबद्दल सांगा — तुमचे नाव, शिक्षण किती झाले आणि तुमच्याकडे कोणती कौशल्ये किंवा गुण आहेत? हे कोणतेही कौटुंबिक काम (उदा. शेती, विणकाम), तांत्रिक काम, किंवा तुमचे व्यक्तिमत्त्व गुण (उदा. लोकांसोबत चांगले संबंध, संयम, कष्ट करण्याची तयारी) असू शकते.",
+            "pa": "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਆਪਣੇ ਬਾਰੇ ਦੱਸੋ — ਤੁਹਾਡਾ ਨਾਮ ਕੀ ਹੈ, ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ ਅਤੇ ਤੁਹਾਡਾ ਕੀ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਹੈ? ਇਹ ਕੋਈ ਪਰਿਵਾਰਕ ਕੰਮ (ਜਿਵੇਂ ਖੇਤੀ, ਸਿਲਾਈ), ਤਕਨੀਕੀ ਹੁਨਰ, ਜਾਂ ਤੁਹਾਡੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਚੰਗਾ ਰਾਬਤਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤ) ਵੀ ਹੋ ਸਕਦਾ ਹੈ।",
+            "en": "Welcome! Please tell me about yourself — what is your name, education level, and what are your strengths or skills? This could be family or traditional work (like farming or tailoring), practical technical skills, or personal strengths like being good with people, patient, or hardworking."
+        }
+        return prompts.get(language, prompts["en"])
 
-    elif language == "mr":
-        if missing_skills and missing_edu:
-            return "नमस्कार! तुमच्याबद्दल सांगा — तुमचे शिक्षण किती झाले आहे आणि तुमच्याकडे कोणती कौशल्ये किंवा गुण आहेत? हे कोणतेही कौटुंबिक काम (उदा. शेती, विणकाम), तांत्रिक काम, किंवा तुमचे व्यक्तिमत्त्व गुण (उदा. लोकांसोबत चांगले संबंध, संयम, कष्ट करण्याची तयारी) असू शकते."
-        elif missing_skills:
-            return "छान! तुमच्याकडे कोणती कौशल्ये किंवा ताकदीचे पैलू आहेत ते सांगू शकाल का? हे केवळ तांत्रिक काम नसून पारंपरिक कौटुंबिक काम किंवा लोकांसोबत चांगले वागणे, संयम व कष्टाळूपणा यासारखे वैयक्तिक गुणही असू शकतात."
-        elif missing_edu:
-            return "छान! तुमचे शिक्षण कितवीपर्यंत झाले आहे ते सांगू शकता का (उदा. ८वी, १०वी किंवा १२वी)?"
-        else:
-            return "तुम्हाला स्वतःचा व्यवसाय सुरू करायचा आहे की नोकरी करायची आहे?"
+    # Priority 2: Skills missing (education already captured)
+    if missing_skills:
+        prompts = {
+            "hi": "बहुत अच्छा! क्या आप अपने कौशल या खूबियों के बारे में बता सकते हैं? यह केवल तकनीकी काम ही नहीं, बल्कि पारंपरिक पारिवारिक काम (जैसे खेती, शिल्प) या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा व्यवहार, धैर्य, या लगन) भी हो सकती है।",
+            "mr": "छान! तुमच्याकडे कोणती कौशल्ये किंवा ताकदीचे पैलू आहेत ते सांगू शकाल का? हे केवळ तांत्रिक काम नसून पारंपरिक कौटुंबिक काम किंवा लोकांसोबत चांगले वागणे, संयम व कष्टाळूपणा यासारखे वैयक्तिक गुणही असू शकतात.",
+            "pa": "ਬਹੁਤ ਵਧੀਆ! ਕੀ ਤੁਸੀਂ ਆਪਣੇ ਕਿਸੇ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ? ਇਹ ਕੋਈ ਰਵਾਇਤੀ ਜਾਂ ਪਰਿਵਾਰਕ ਕੰਮ ਹੋ ਸਕਦਾ ਹੈ ਜਾਂ ਨਿੱਜੀ ਖੂਬੀਆਂ ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਮਿਲਣਸਾਰ ਹੋਣਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤੀ ਸੁਭਾਅ ਵੀ ਹੋ ਸਕਦਾ ਹੈ।",
+            "en": "Great! Could you tell me about any skills or strengths you have? It doesn't have to be formal technical training — it could be traditional or family work (like farming or crafts), or personal strengths like being good with people, patient, or hardworking."
+        }
+        return prompts.get(language, prompts["en"])
 
-    elif language == "pa":
-        if missing_skills and missing_edu:
-            return "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਆਪਣੇ ਬਾਰੇ ਦੱਸੋ — ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ ਅਤੇ ਤੁਹਾਡਾ ਕੀ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਹੈ? ਇਹ ਕੋਈ ਪਰਿਵਾਰਕ ਕੰਮ (ਜਿਵੇਂ ਖੇਤੀ, ਸਿਲਾਈ), ਤਕਨੀਕੀ ਹੁਨਰ, ਜਾਂ ਤੁਹਾਡੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਚੰਗਾ ਰਾਬਤਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤ) ਵੀ ਹੋ ਸਕਦਾ ਹੈ।"
-        elif missing_skills:
-            return "ਬਹੁਤ ਵਧੀਆ! ਕੀ ਤੁਸੀਂ ਆਪਣੇ ਕਿਸੇ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ? ਇਹ ਕੋਈ ਰਵਾਇਤੀ ਜਾਂ ਪਰਿਵਾਰਕ ਕੰਮ ਹੋ ਸਕਦਾ ਹੈ ਜਾਂ ਨਿੱਜੀ ਖੂਬੀਆਂ ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਮਿਲਣਸਾਰ ਹੋਣਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤੀ ਸੁਭਾਅ ਵੀ ਹੋ ਸਕਦਾ ਹੈ।"
-        elif missing_edu:
-            return "ਬਹੁਤ ਵਧੀਆ! ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ, ਜਿਵੇਂ 8ਵੀਂ, 10ਵੀਂ ਜਾਂ 12ਵੀਂ?"
-        else:
-            return "ਕੀ ਤੁਸੀਂ ਆਪਣਾ ਕਾਰੋਬਾਰ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ ਜਾਂ ਨੌਕਰੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+    # Priority 3: Education missing (skills already captured)
+    if missing_edu:
+        prompts = {
+            "hi": "बहुत अच्छा! क्या आप अपनी पढ़ाई के बारे में बता सकते हैं, जैसे 8वीं, 10वीं या 12वीं पास?",
+            "mr": "छान! तुमचे शिक्षण कितवीपर्यंत झाले आहे ते सांगू शकता का (उदा. ८वी, १०वी किंवा १२वी)?",
+            "pa": "ਬਹੁਤ ਵਧੀਆ! ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ, ਜਿਵੇਂ 8ਵੀਂ, 10ਵੀਂ ਜਾਂ 12ਵੀਂ?",
+            "en": "Great! Could you tell me about your education level, such as 8th, 10th, or 12th standard?"
+        }
+        return prompts.get(language, prompts["en"])
 
-    else:
-        if missing_skills and missing_edu:
-            return "Welcome! Please tell me about yourself — what is your education level, and what are your strengths or skills? This could be family or traditional work (like farming or tailoring), practical technical skills, or personal strengths like being good with people, patient, or hardworking."
-        elif missing_skills:
-            return "Great! Could you tell me about any skills or strengths you have? It doesn't have to be formal technical training — it could be traditional or family work (like farming or crafts), or personal strengths like being good with people, patient, or hardworking."
-        elif missing_edu:
-            return "Great! Could you tell me about your education level, such as 8th, 10th, or 12th standard?"
-        else:
-            return "Would you prefer self-employment (your own small enterprise) or wage employment with a monthly salary?"
+    # Priority 4: State/Location missing
+    if missing_state:
+        prompts = {
+            "hi": "आप किस राज्य या जिले में रहते हैं? (जैसे दिल्ली, महाराष्ट्र, तमिलनाडु, कर्नाटक, या उत्तर प्रदेश)",
+            "mr": "तुम्ही कोणत्या राज्यात किंवा जिल्ह्यात राहता? (उदा. दिल्ली, महाराष्ट्र, तामिळनाडू, कर्नाटक, किंवा उत्तर प्रदेश)",
+            "pa": "ਤੁਸੀਂ ਕਿਸ ਰਾਜ ਜਾਂ ਜ਼ਿਲ੍ਹੇ ਵਿੱਚ ਰਹਿੰਦੇ ਹੋ? (ਜਿਵੇਂ ਦਿੱਲੀ, ਮਹਾਰਾਸ਼ਟਰ, ਤਾਮਿਲਨਾਡੂ, ਕਰਨਾਟਕ, ਜਾਂ ਉੱਤਰ ਪ੍ਰਦੇਸ਼)",
+            "en": "Which state or district do you live in? (For example: Delhi, Maharashtra, Tamil Nadu, Karnataka, or Uttar Pradesh)"
+        }
+        return prompts.get(language, prompts["en"])
+
+    # Priority 5: Family Occupation missing
+    if missing_family_occ:
+        prompts = {
+            "hi": "आपके परिवार का पारंपरिक पेशा क्या है? (जैसे खेती, मजदूरी, सिलाई, दुकानदारी, या पशुपालन)",
+            "mr": "तुमच्या कुटुंबाचा पारंपरिक व्यवसाय कोणता आहे? (उदा. शेती, मजुरी, शिलाई, दुकानदारी, किंवा पशुपालन)",
+            "pa": "ਤੁਹਾਡੇ ਪਰਿਵਾਰ ਦਾ ਰਵਾਇਤੀ ਕੰਮ ਕੀ ਹੈ? (ਜਿਵੇਂ ਖੇਤੀ, ਮਜ਼ਦੂਰੀ, ਸਿਲਾਈ, ਦੁਕਾਨਦਾਰੀ, ਜਾਂ ਪਸ਼ੂ ਪਾਲਣ)",
+            "en": "What is your family's traditional occupation? (For example: farming, daily wage labor, tailoring, shopkeeping, or dairy/animal husbandry)"
+        }
+        return prompts.get(language, prompts["en"])
+
+    # Priority 6: Mobility constraint missing
+    if missing_mobility:
+        prompts = {
+            "hi": "क्या आप प्रशिक्षण के लिए पास के शहर या तालुके तक जा सकते हैं, या आपको घर/गाँव के पास ही रहना ज़रूरी है?",
+            "mr": "तुम्ही प्रशिक्षणासाठी जवळच्या शहरात किंवा तालुक्यात जाऊ शकता का, की तुम्हाला गावाजवळच राहणे आवश्यक आहे?",
+            "pa": "ਕੀ ਤੁਸੀਂ ਸਿਖਲਾਈ ਲਈ ਨੇੜੇ ਦੇ ਸ਼ਹਿਰ ਜਾ ਸਕਦੇ ਹੋ, ਜਾਂ ਤੁਹਾਨੂੰ ਘਰ/ਪਿੰਡ ਦੇ ਨੇੜੇ ਹੀ ਰਹਿਣਾ ਜ਼ਰੂਰੀ ਹੈ?",
+            "en": "Can you travel to a nearby town or district center for training, or do you need something close to home?"
+        }
+        return prompts.get(language, prompts["en"])
+
+    # Priority 7: Employment Preference missing
+    if missing_emp_pref:
+        prompts = {
+            "hi": "क्या आप खुद की दुकान या व्यवसाय शुरू करना चाहते हैं, या किसी कंपनी में नौकरी करना चाहते हैं?",
+            "mr": "तुम्हाला स्वतःचा व्यवसाय सुरू करायचा आहे की नोकरी करायची आहे?",
+            "pa": "ਕੀ ਤੁਸੀਂ ਆਪਣਾ ਕਾਰੋਬਾਰ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ ਜਾਂ ਨੌਕਰੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+            "en": "Would you prefer self-employment (your own small enterprise) or wage employment with a monthly salary?"
+        }
+        return prompts.get(language, prompts["en"])
+
+    # All 7 fields captured — profile is rich enough for recommendation
+    prompts = {
+        "hi": "धन्यवाद! आपकी पूरी जानकारी मिल गई है। अब हम आपके लिए सबसे उपयुक्त पीएम-अजय कौशल योजना तैयार कर रहे हैं।",
+        "mr": "धन्यवाद! तुमची सर्व माहिती मिळाली आहे. आता तुमच्यासाठी योग्य पीएम-अजय कौशल्य योजना तयार केली जात आहे.",
+        "pa": "ਧੰਨਵਾਦ! ਤੁਹਾਡੀ ਪੂਰੀ ਜਾਣਕਾਰੀ ਮਿਲ ਗਈ ਹੈ। ਹੁਣ ਅਸੀਂ ਤੁਹਾਡੇ ਲਈ ਸਭ ਤੋਂ ਢੁਕਵੀਂ ਪੀਐਮ-ਅਜੇ ਸਿਖਲਾਈ ਯੋਜਨਾ ਤਿਆਰ ਕਰ ਰਹੇ ਹਾਂ।",
+        "en": "Thank you! We have all the information we need. Generating your customized PM-AJAY livelihood roadmap now."
+    }
+    return prompts.get(language, prompts["en"])
 

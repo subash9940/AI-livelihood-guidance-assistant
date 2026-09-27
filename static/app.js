@@ -266,6 +266,8 @@ function initElements() {
     gapModulesCount: document.getElementById('gapModulesCount'),
     regionalSchemesContainer: document.getElementById('regionalSchemesContainer'),
     regionalSchemesBadge: document.getElementById('regionalSchemesBadge'),
+    nearbyOpportunitiesContainer: document.getElementById('nearbyOpportunitiesContainer'),
+    nearbyOpportunitiesBadge: document.getElementById('nearbyOpportunitiesBadge'),
     step1Title: document.getElementById('step1Title'),
     step1Desc: document.getElementById('step1Desc'),
     step2Title: document.getElementById('step2Title'),
@@ -872,7 +874,10 @@ function renderRoadmap(rec) {
   // 2. Render Regional Schemes in Beneficiary State (Nivara Regional Schemes)
   renderRegionalSchemes(rec.regional_schemes || []);
 
-  // 3. Render 4-Stage Pathway Timeline
+  // 3. Render Nearby Employment & Enterprise Opportunities (Local Opportunities)
+  renderNearbyOpportunities(rec.nearby_opportunities || []);
+
+  // 4. Render 4-Stage Pathway Timeline
   const steps = rec.roadmap_steps || [];
   if (steps[0] && el.step1Title) {
     el.step1Title.textContent = steps[0].split('(')[0] || 'Enroll in PM-AJAY Free Skill Training';
@@ -1027,6 +1032,77 @@ function renderRegionalSchemes(schemes = []) {
       </div>
     `;
     el.regionalSchemesContainer.appendChild(card);
+  });
+}
+
+function renderNearbyOpportunities(opps = []) {
+  if (!el.nearbyOpportunitiesContainer) return;
+  el.nearbyOpportunitiesContainer.innerHTML = '';
+
+  if (el.nearbyOpportunitiesBadge) {
+    el.nearbyOpportunitiesBadge.textContent = opps && opps.length > 0
+      ? `${opps.length} Local Openings`
+      : 'No Openings Found';
+  }
+
+  if (!opps || opps.length === 0) {
+    const emptyCard = document.createElement('div');
+    emptyCard.className = 'bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col items-center justify-center py-6 text-center border border-dashed border-secondary/20';
+    emptyCard.innerHTML = `
+      <span class="material-symbols-outlined text-on-surface-variant text-[28px] mb-1">domain_disabled</span>
+      <p class="text-xs font-semibold text-on-surface">No local opportunities indexed for this sector</p>
+      <p class="text-[11px] text-on-surface-variant mt-0.5">District employment exchange data is being synchronized.</p>
+    `;
+    el.nearbyOpportunitiesContainer.appendChild(emptyCard);
+    return;
+  }
+
+  const borderColors = ['#10b981', '#0051d5', '#f59e0b', '#7c839b'];
+  const icons = ['storefront', 'precision_manufacturing', 'work_outline', 'handshake'];
+
+  opps.forEach((o, idx) => {
+    const borderColor = borderColors[idx % borderColors.length];
+    const icon = icons[idx % icons.length];
+    const card = document.createElement('div');
+    card.className = 'bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-space-xs';
+    card.innerHTML = `
+      <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background-color: ${borderColor}"></div>
+      <div class="flex items-start justify-between gap-space-xs">
+        <div class="flex flex-col flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] uppercase tracking-wide font-bold" style="color: ${borderColor}">${o.employer_type || 'Local Enterprise'}</span>
+            <span class="text-[11px] text-on-surface-variant">• ${o.distance || 'Local Cluster'}</span>
+          </div>
+          <h3 class="font-display font-semibold text-sm text-on-surface mt-0.5">${o.title}</h3>
+        </div>
+        <span class="material-symbols-outlined text-on-surface-variant text-[20px] flex-shrink-0">${icon}</span>
+      </div>
+
+      <!-- Provenance badge -->
+      <div class="flex flex-wrap items-center gap-2 my-1">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#eff6ff] text-[#1d4ed8] border border-[#93c5fd]/50 shadow-xs" title="Synthetic/illustrative local data pending direct integration with National Career Service (NCS) and UDYAM registries">
+          <span class="material-symbols-outlined text-[14px] text-[#2563eb]">info</span>
+          Estimated local cluster — pending NCS live registry
+        </span>
+        ${o.wage_range ? `
+        <span class="inline-flex items-center gap-1 text-[11px] text-[#065f46] bg-[#ecfdf5] px-2 py-0.5 rounded-full font-bold">
+          <span class="material-symbols-outlined text-[13px]">payments</span>
+          ${o.wage_range}
+        </span>` : ''}
+      </div>
+
+      <div class="bg-surface-container-low rounded-lg p-space-sm flex items-center justify-between gap-space-xs mt-1">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="material-symbols-outlined text-secondary text-[18px] flex-shrink-0">near_me</span>
+          <div class="flex flex-col min-w-0">
+            <span class="text-[10px] text-on-surface-variant font-medium">Linkage Channel</span>
+            <span class="text-xs text-on-surface font-semibold truncate">District Employment Office / PMKK Placement Cell</span>
+          </div>
+        </div>
+        <span class="text-[10px] bg-secondary/10 text-secondary font-bold px-2 py-1 rounded-full flex-shrink-0">Direct Linkage</span>
+      </div>
+    `;
+    el.nearbyOpportunitiesContainer.appendChild(card);
   });
 }
 

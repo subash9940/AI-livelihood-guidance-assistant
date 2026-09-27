@@ -6,6 +6,7 @@ against NSQF-aligned job roles and PM-AJAY skill training schemes.
 import re
 from typing import Dict, Any, List, Tuple
 import region_schemes
+import local_opportunities
 
 # NSQF Eligible Trades Catalog with PM-AJAY Alignment & Concrete Skill Gaps
 TRADES_CATALOG = {
@@ -715,6 +716,9 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
     readiness_score, relevant_count, total_required = compute_readiness_score(trade_key, profile.get("skills", []))
     readiness_tier = get_readiness_tier(readiness_score)
 
+    # Region-specific local employment/enterprise opportunities (PS 26097 requirement)
+    nearby_opportunities = local_opportunities.get_local_opportunities(canonical_state, trade_key)
+
     return {
         "recommended_trade": trade_display_name,
         "trade_key": trade_key,
@@ -732,6 +736,7 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
         "training_programme": trade["training_programme"],
         "training_centre": f"{trade['training_centre']} ({location})",
         "local_opportunity": trade["local_opportunity"],
+        "nearby_opportunities": nearby_opportunities,
         "roadmap_steps": steps,
         "spoken_summary": spoken_summary,
         "duration_hours": trade["duration_hours"],

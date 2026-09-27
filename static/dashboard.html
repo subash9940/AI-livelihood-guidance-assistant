@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nivara — GIA Coordination Dashboard</title>
+    <meta name="description" content="Government coordination dashboard for PM-AJAY beneficiary demand analysis, training capacity monitoring, and enrollment tracking across states.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2332;
+            --border: #1e293b;
+            --border-accent: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --gradient-blue: linear-gradient(135deg, #3b82f6, #2563eb);
+            --gradient-green: linear-gradient(135deg, #10b981, #059669);
+            --gradient-amber: linear-gradient(135deg, #f59e0b, #d97706);
+            --gradient-red: linear-gradient(135deg, #ef4444, #dc2626);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-left .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-amber);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .state-filter {
+            background: var(--bg-card);
+            border: 1px solid var(--border-accent);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-family: inherit;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .state-filter:focus { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+        .back-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-accent);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover { background: rgba(59, 130, 246, 0.1); border-color: var(--accent-blue); }
+
+        .dashboard-body { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+
+        /* KPI Cards Row */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .kpi-card:hover { transform: translateY(-2px); border-color: var(--border-accent); }
+
+        .kpi-card .kpi-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .kpi-card .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .kpi-blue .kpi-icon { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .kpi-blue .kpi-value { color: var(--accent-blue); }
+        .kpi-green .kpi-icon { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .kpi-green .kpi-value { color: var(--accent-green); }
+        .kpi-amber .kpi-icon { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .kpi-amber .kpi-value { color: var(--accent-amber); }
+        .kpi-red .kpi-icon { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .kpi-red .kpi-value { color: var(--accent-red); }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .chart-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-container { position: relative; height: 280px; }
+
+        /* Capacity Gap Table */
+        .full-width-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .full-width-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .gap-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .gap-table th {
+            text-align: left;
+            padding: 10px 14px;
+            background: rgba(30, 41, 59, 0.6);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .gap-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .gap-table tbody tr:hover { background: var(--bg-card-hover); }
+
+        .gap-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .gap-surplus { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .gap-balanced { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .gap-deficit { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .gap-critical { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+
+        .illustrative-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: var(--accent-amber);
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .export-btn {
+            background: var(--gradient-blue);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s;
+        }
+
+        .export-btn:hover { opacity: 0.9; }
+
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Beneficiary Table */
+        .beneficiary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .beneficiary-table th {
+            text-align: left;
+            padding: 8px 12px;
+            background: rgba(30, 41, 59, 0.6);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .beneficiary-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .beneficiary-table tbody tr:hover { background: var(--bg-card-hover); }
+
+        .status-badge {
+            display: inline-flex;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-enrolled { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .status-placed { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .status-dropped { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .status-no_contact { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
+
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .dashboard-header { padding: 16px; }
+            .dashboard-body { padding: 16px; }
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div>
+                <h1>Nivara — GIA Coordination Dashboard</h1>
+                <div class="subtitle">PM-AJAY Beneficiary Demand Analysis & Training Capacity Monitor</div>
+            </div>
+        </div>
+        <div class="header-controls">
+            <select id="stateFilter" class="state-filter" onchange="loadDashboard()">
+                <option value="all">All States</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+            </select>
+            <button class="export-btn" onclick="exportCSV()" id="exportBtn">↓ Export CSV</button>
+            <a href="/" class="back-link">← Beneficiary App</a>
+        </div>
+    </header>
+
+    <main class="dashboard-body">
+        <!-- KPI Cards -->
+        <section class="kpi-row" id="kpiRow">
+            <div class="kpi-card kpi-blue">
+                <div class="kpi-icon">📋</div>
+                <div class="kpi-value" id="kpiTotal">—</div>
+                <div class="kpi-label">Total Beneficiaries</div>
+            </div>
+            <div class="kpi-card kpi-green">
+                <div class="kpi-icon">✅</div>
+                <div class="kpi-value" id="kpiEnrolled">—</div>
+                <div class="kpi-label">Enrolled</div>
+            </div>
+            <div class="kpi-card kpi-amber">
+                <div class="kpi-icon">🎯</div>
+                <div class="kpi-value" id="kpiPlaced">—</div>
+                <div class="kpi-label">Placed</div>
+            </div>
+            <div class="kpi-card kpi-red">
+                <div class="kpi-icon">⚠️</div>
+                <div class="kpi-value" id="kpiDropped">—</div>
+                <div class="kpi-label">Dropped Out</div>
+            </div>
+        </section>
+
+        <!-- Charts -->
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3>📊 Demand by Trade</h3>
+                <div class="chart-container">
+                    <canvas id="demandChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>📈 Enrollment Status Breakdown</h3>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Capacity Gap Table -->
+        <section class="full-width-card" id="capacitySection">
+            <h3>
+                <span>🏗️ Training Capacity vs. Demand</span>
+                <span class="illustrative-badge">⚠ Capacity data is illustrative — pending integration with Skill India Digital Hub</span>
+            </h3>
+            <div id="capacityTableContainer">
+                <div class="loading-state"><div class="loading-spinner"></div> Loading capacity data...</div>
+            </div>
+        </section>
+
+        <!-- Beneficiary List -->
+        <section class="full-width-card">
+            <h3>
+                <span>👥 Beneficiary Registry</span>
+                <span class="header-badge">Live data from recommendations</span>
+            </h3>
+            <div id="beneficiaryTableContainer">
+                <div class="loading-state"><div class="loading-spinner"></div> Loading beneficiary data...</div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let dashboardData = null;
+        let demandChartInstance = null;
+        let statusChartInstance = null;
+
+        async function loadDashboard() {
+            const state = document.getElementById('stateFilter').value;
+            const districtParam = state === 'all' ? 'all' : state;
+
+            try {
+                const [summaryRes, capacityRes] = await Promise.all([
+                    fetch(`/dashboard/summary?district=${encodeURIComponent(districtParam)}`),
+                    fetch(`/dashboard/capacity-gap?state=${encodeURIComponent(districtParam)}`)
+                ]);
+
+                dashboardData = await summaryRes.json();
+                const capacityData = await capacityRes.json();
+
+                renderKPIs(dashboardData);
+                renderDemandChart(dashboardData.skill_demand_by_trade || []);
+                renderStatusChart(dashboardData);
+                renderCapacityTable(capacityData);
+                renderBeneficiaryTable(dashboardData.beneficiaries || []);
+            } catch (err) {
+                console.error('Dashboard load error:', err);
+            }
+        }
+
+        function renderKPIs(data) {
+            document.getElementById('kpiTotal').textContent = data.total_beneficiaries || 0;
+            document.getElementById('kpiEnrolled').textContent = data.enrolments || 0;
+            document.getElementById('kpiPlaced').textContent = data.placements || 0;
+            document.getElementById('kpiDropped').textContent = data.dropouts || 0;
+        }
+
+        function renderDemandChart(tradeData) {
+            const ctx = document.getElementById('demandChart').getContext('2d');
+            if (demandChartInstance) demandChartInstance.destroy();
+
+            const labels = tradeData.map(t => t.trade.length > 25 ? t.trade.substring(0, 25) + '…' : t.trade);
+            const values = tradeData.map(t => t.count);
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+
+            demandChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Demand Count',
+                        data: values,
+                        backgroundColor: colors.slice(0, values.length),
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        maxBarThickness: 48
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#94a3b8',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#64748b', font: { size: 11 } },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: { color: '#64748b', stepSize: 1 },
+                            grid: { color: 'rgba(51,65,85,0.3)' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderStatusChart(data) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            if (statusChartInstance) statusChartInstance.destroy();
+
+            const enrolled = data.enrolments || 0;
+            const placed = data.placements || 0;
+            const dropped = data.dropouts || 0;
+            const noContact = data.no_contacts || 0;
+
+            statusChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Enrolled', 'Placed', 'Dropped', 'No Contact'],
+                    datasets: [{
+                        data: [enrolled, placed, dropped, noContact],
+                        backgroundColor: ['#3b82f6', '#10b981', '#ef4444', '#64748b'],
+                        borderColor: '#111827',
+                        borderWidth: 3,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8',
+                                padding: 16,
+                                usePointStyle: true,
+                                pointStyleWidth: 10,
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#94a3b8',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderCapacityTable(capData) {
+            const container = document.getElementById('capacityTableContainer');
+            const trades = capData.trades || [];
+
+            if (trades.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:24px;">No capacity data available for selected region.</p>';
+                return;
+            }
+
+            let html = `<table class="gap-table">
+                <thead><tr>
+                    <th>Trade</th>
+                    <th>Demand (Actual)</th>
+                    <th>Capacity (Estimated)</th>
+                    <th>Gap</th>
+                    <th>Status</th>
+                </tr></thead><tbody>`;
+
+            for (const t of trades) {
+                const gap = (t.demand || 0) - (t.capacity || 0);
+                let statusClass, statusLabel;
+                if (gap <= 0) {
+                    statusClass = 'gap-surplus';
+                    statusLabel = '✓ Capacity Adequate';
+                } else if (gap <= 2) {
+                    statusClass = 'gap-balanced';
+                    statusLabel = '≈ Near Balance';
+                } else if (gap <= 5) {
+                    statusClass = 'gap-deficit';
+                    statusLabel = '↑ Demand Exceeds';
+                } else {
+                    statusClass = 'gap-critical';
+                    statusLabel = '⚠ Critical Shortfall';
+                }
+
+                html += `<tr>
+                    <td><strong>${t.trade_name || t.trade_key}</strong></td>
+                    <td>${t.demand || 0}</td>
+                    <td>${t.capacity || 0} <span class="illustrative-badge" style="margin-left:4px;">est.</span></td>
+                    <td>${gap > 0 ? '+' + gap : gap}</td>
+                    <td><span class="gap-indicator ${statusClass}">${statusLabel}</span></td>
+                </tr>`;
+            }
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function renderBeneficiaryTable(beneficiaries) {
+            const container = document.getElementById('beneficiaryTableContainer');
+
+            if (beneficiaries.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:24px;">No beneficiaries recorded yet. Use the Beneficiary App to generate recommendations.</p>';
+                return;
+            }
+
+            let html = `<table class="beneficiary-table">
+                <thead><tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Education</th>
+                    <th>Recommended Trade</th>
+                    <th>Status</th>
+                    <th>Last Contact</th>
+                </tr></thead><tbody>`;
+
+            for (const b of beneficiaries.slice(0, 50)) {
+                const statusClass = 'status-' + (b.status || 'enrolled');
+                html += `<tr>
+                    <td>${b.name || '—'}</td>
+                    <td>${b.location || '—'}</td>
+                    <td>${b.education || '—'}</td>
+                    <td>${b.trade || '—'}</td>
+                    <td><span class="status-badge ${statusClass}">${(b.status || 'enrolled').replace('_', ' ')}</span></td>
+                    <td>${b.last_contact || '—'}</td>
+                </tr>`;
+            }
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function exportCSV() {
+            if (!dashboardData || !dashboardData.beneficiaries) return;
+            const rows = [['Name', 'Location', 'Education', 'Trade', 'NSQF', 'Status', 'Last Contact']];
+            for (const b of dashboardData.beneficiaries) {
+                rows.push([
+                    b.name || '', b.location || '', b.education || '',
+                    b.trade || '', b.nsqf || '', b.status || '', b.last_contact || ''
+                ]);
+            }
+            const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nivara_beneficiaries_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initial load
+        loadDashboard();
+    </script>
+</body>
+</html>

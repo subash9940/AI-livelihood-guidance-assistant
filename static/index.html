@@ -105,8 +105,12 @@
         </div>
       </div>
 
-      <!-- Header Controls: Language Selector & Mode Avatar -->
+      <!-- Header Controls: GIA Dashboard Link, Language Selector & Mode Avatar -->
       <div class="flex items-center gap-space-sm flex-shrink-0">
+        <a href="/dashboard" class="flex items-center gap-1 bg-surface-container hover:bg-surface-container-high text-secondary text-xs font-bold px-2.5 py-1.5 rounded-full border border-secondary/20 shadow-sm transition-all" title="GIA Coordination Dashboard">
+          <span class="material-symbols-outlined text-[16px]">monitoring</span>
+          <span class="hidden sm:inline">GIA Dashboard</span>
+        </a>
         <div class="relative flex items-center bg-surface-container rounded-full px-2 py-1 shadow-sm border border-secondary/15">
           <span class="material-symbols-outlined text-[18px] text-secondary ml-1">translate</span>
           <select id="langSelect" aria-label="Select Regional Language" class="appearance-none bg-transparent text-xs font-semibold text-on-surface pl-1.5 pr-6 py-0.5 focus:outline-none cursor-pointer">
@@ -573,8 +577,21 @@
         </div>
         
         <!-- Regional Schemes Container (Dynamically rendered with same visual pattern as skill_gap_breakdown) -->
-        <div id="regionalSchemesContainer" class="flex flex-col gap-space-xs">
-          <!-- Dynamically populated from rec.regional_schemes -->
+      </div>
+
+      <!-- Section: Nearby Employment & Enterprise Opportunities -->
+      <div class="flex flex-col gap-space-sm mt-space-xs" id="nearbyOpportunitiesSection">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-space-xs">
+            <span class="material-symbols-outlined text-secondary text-[22px]">location_city</span>
+            <h2 class="font-display font-bold text-base text-on-surface">Nearby Opportunities (Around You)</h2>
+          </div>
+          <span id="nearbyOpportunitiesBadge" class="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full font-semibold">Local Openings</span>
+        </div>
+        
+        <!-- Nearby Opportunities Container (Dynamically rendered) -->
+        <div id="nearbyOpportunitiesContainer" class="flex flex-col gap-space-xs">
+          <!-- Dynamically populated from rec.nearby_opportunities -->
         </div>
       </div>
 

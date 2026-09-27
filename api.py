@@ -315,6 +315,7 @@ def get_recommendation(session_id: str):
         "spoken_summary": skill_res["spoken_summary"],
         "duration_hours": skill_res.get("duration_hours"),
         "sector": skill_res.get("ssc_name") or skill_res.get("sector"),
+        "nearby_opportunities": skill_res.get("nearby_opportunities", []),
         "beneficiary_id": session.get("beneficiary_id"),
         "profile": profile
     }
@@ -424,6 +425,7 @@ async def get_recommendation_direct(
             "spoken_summary": skill_res["spoken_summary"],
             "duration_hours": skill_res.get("duration_hours"),
             "sector": skill_res.get("ssc_name") or skill_res.get("sector"),
+            "nearby_opportunities": skill_res.get("nearby_opportunities", []),
             "profile": profile_data
         }
 
@@ -563,6 +565,13 @@ def serve_index():
     if os.path.exists(index_path):
         return FileResponse(index_path)
     return {"message": "Nivara API is running"}
+
+@app.get("/dashboard")
+def serve_dashboard():
+    dashboard_path = os.path.join(STATIC_DIR, "dashboard.html")
+    if os.path.exists(dashboard_path):
+        return FileResponse(dashboard_path)
+    return {"message": "Dashboard not found"}
 
 if __name__ == "__main__":
     import uvicorn

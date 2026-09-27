@@ -638,6 +638,42 @@ def test_graceful_fallbacks_and_completeness_gating():
     assert "I need more information to recommend confidently" in rec_api_tied.get("message")
     print("Verified graceful fallback for tied confidence score (no guessing): missing piece = clarity of intent.")
 
+def test_local_opportunities_and_dashboard():
+    print("\n--- Testing Local Opportunities and Dashboard Integration ---")
+    import local_opportunities
+
+    # 1. Test local_opportunities lookup
+    delhi_food = local_opportunities.get_local_opportunities("Delhi", "food_processing")
+    assert len(delhi_food) >= 1
+    assert "title" in delhi_food[0]
+    assert "employer_type" in delhi_food[0]
+    assert "distance" in delhi_food[0]
+    assert "wage_range" in delhi_food[0]
+    assert delhi_food[0]["is_verified"] is False
+    assert "illustrative" in delhi_food[0]["source_note"].lower() or "not sourced" in delhi_food[0]["source_note"].lower()
+
+    # 2. Test recommendation endpoint returns nearby_opportunities
+    profile = {
+        "name": "Sunita Verma",
+        "education_level": "8th Standard",
+        "skills": ["Basic Stitching & Fabric Cutting"],
+        "interests": ["Tailoring & Garment Making"],
+        "location": "Delhi",
+        "state": "Delhi"
+    }
+    rec_res = client.post("/recommendation", json={"profile": profile}).json()
+    assert "nearby_opportunities" in rec_res
+    assert len(rec_res["nearby_opportunities"]) >= 1
+    assert any("garment" in o["title"].lower() or "tailor" in o["title"].lower() for o in rec_res["nearby_opportunities"])
+    print(f"Verified nearby opportunities returned in recommendation: {len(rec_res['nearby_opportunities'])} opportunities.")
+
+    # 3. Test GET /dashboard route serves HTML
+    dash_res = client.get("/dashboard")
+    assert dash_res.status_code == 200
+    assert "text/html" in dash_res.headers.get("content-type", "")
+    assert "Nivara" in dash_res.text
+    print("Verified GET /dashboard route serves dashboard page.")
+
 if __name__ == "__main__":
     test_full_pipeline()
     test_regional_schemes_static_data_and_lookup()
@@ -650,5 +686,6 @@ if __name__ == "__main__":
     test_regional_demand_capacity_gap()
     test_broad_skill_profile_validation_and_tiers()
     test_graceful_fallbacks_and_completeness_gating()
-    print("\nAll 13 test suites passed successfully!")
+    test_local_opportunities_and_dashboard()
+    print("\nAll 12 test suites passed successfully!")
 
