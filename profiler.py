@@ -393,3 +393,57 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     }
     return prompts.get(language, prompts["en"])
 
+
+def generate_story_summary(profile: Dict[str, Any], history: List[Dict[str, str]] = None) -> str:
+    """
+    Synthesizes a coherent, human-readable narrative summary of the beneficiary's life story,
+    education, family background, and trade aspirations based on accumulated dialogue turns.
+    """
+    parts = []
+    name = profile.get("name")
+    loc = profile.get("location") or profile.get("state")
+    edu = profile.get("education_level") or profile.get("education")
+    occ = profile.get("family_occupation")
+    interests = profile.get("interests", [])
+    skills = profile.get("skills", [])
+    mobility = profile.get("mobility_constraint") or profile.get("mobility")
+    pref = profile.get("employment_preference")
+
+    if name and loc and loc != "Your Local District":
+        parts.append(f"{name} is an aspiring candidate from {loc}.")
+    elif name:
+        parts.append(f"{name} is an aspiring vocational candidate.")
+    elif loc and loc != "Your Local District":
+        parts.append(f"Candidate resides in {loc}.")
+    else:
+        parts.append("Candidate is seeking vocational guidance under PM-AJAY.")
+
+    if edu:
+        parts.append(f"They have completed {edu}.")
+
+    if occ and occ != "None" and occ != "Informal / None":
+        parts.append(f"Their household background is rooted in {occ}.")
+
+    if skills:
+        s_text = ", ".join(skills[:3])
+        parts.append(f"They possess practical capabilities in {s_text}.")
+
+    if interests:
+        i_text = ", ".join(interests)
+        pref_str = "launching an independent micro-enterprise" if pref == "self_employment" else "securing skilled wage employment"
+        parts.append(f"Their core interest lies in {i_text}, aiming at {pref_str}.")
+    elif pref == "self_employment":
+        parts.append("They wish to establish an independent local micro-enterprise.")
+    elif pref == "wage_employment":
+        parts.append("They are seeking salaried placement in an accredited enterprise.")
+
+    if mobility:
+        if "restricted" in mobility.lower() or "cannot travel" in mobility.lower() or "village" in mobility.lower():
+            parts.append("Training and employment must remain local within their village or cluster.")
+        elif "commute" in mobility.lower():
+            parts.append("They are able and willing to commute to the district/taluka center for training.")
+        elif "relocate" in mobility.lower():
+            parts.append("They are willing to relocate for high-value wage placement.")
+
+    return " ".join(parts)
+

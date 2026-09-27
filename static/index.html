@@ -288,15 +288,83 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[18px] text-secondary">record_voice_over</span>
-            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Beneficiary Spoken Intake (सजीव संवाद)</span>
+            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Live Speech Recognition (सजीव संवाद)</span>
           </div>
           <span id="confidenceTag" class="text-xs text-secondary bg-surface-container px-2 py-0.5 rounded-full font-semibold">Live Stream</span>
         </div>
-        <div class="bg-surface-container-low rounded-lg p-space-sm">
-          <p id="liveTranscriptText" class="text-sm text-on-surface font-medium leading-relaxed italic">
-            "Press the mic button or choose a sample prompt below to start..."
+        <div class="bg-surface-container-low rounded-lg p-space-sm flex items-center justify-between gap-2">
+          <p id="liveTranscriptText" class="text-sm text-on-surface font-medium leading-relaxed italic flex-1">
+            "Press the mic button and speak freely in your language..."
           </p>
+          <button id="btnManualSubmitUtterance" class="hidden px-3 py-1.5 bg-secondary text-on-secondary rounded-lg text-xs font-bold shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-1">
+            <span>Send</span>
+            <span class="material-symbols-outlined text-[14px]">send</span>
+          </button>
         </div>
+      </div>
+
+      <!-- Live Story Summary & Progress Card -->
+      <div class="w-full bg-gradient-to-r from-secondary/5 via-primary-container/10 to-surface-container-low border border-secondary/20 rounded-xl p-space-md shadow-sm space-y-2" id="storySummaryCard">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary text-[20px]">auto_stories</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-secondary">Beneficiary Story Summary (जीवन सारांश)</span>
+          </div>
+          <span id="turnCounterBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">Story in Progress</span>
+        </div>
+        <p id="liveStorySummaryText" class="text-xs text-on-surface leading-relaxed font-medium bg-surface-container-lowest/80 p-2.5 rounded-lg border border-secondary/10">
+          Listening to beneficiary's background and vocational story... Tap the microphone above to speak about your schooling, family work, or interests.
+        </p>
+      </div>
+
+      <!-- Conversational Chat Interface (Multi-turn dialogue) -->
+      <div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+        <div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary text-[20px]">forum</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-on-surface">Conversational Dialogue (बातचीत)</span>
+          </div>
+          <button id="btnClearConversation" class="text-[11px] text-on-surface-variant hover:text-error flex items-center gap-1 transition-colors">
+            <span class="material-symbols-outlined text-[14px]">refresh</span>
+            <span>Clear</span>
+          </button>
+        </div>
+
+        <!-- Chat Stream Bubbles -->
+        <div id="conversationThread" class="max-h-[340px] overflow-y-auto space-y-3 p-1 pr-2 flex flex-col scroll-smooth">
+          <!-- Assistant Opening Bubble -->
+          <div class="flex items-start gap-2.5 max-w-[88%] self-start assistant-bubble">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center flex-shrink-0 text-xs shadow-sm">
+              <span class="material-symbols-outlined text-[16px]">smart_toy</span>
+            </div>
+            <div class="bg-surface-container-low rounded-2xl rounded-tl-sm p-3 text-xs text-on-surface leading-relaxed shadow-sm space-y-1">
+              <p class="font-semibold text-secondary">Nivara Assistant</p>
+              <p id="chatGreetingText">नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?</p>
+              <button class="chat-bubble-tts text-[11px] text-secondary font-bold inline-flex items-center gap-1 pt-1 hover:underline cursor-pointer" data-text="नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?">
+                <span class="material-symbols-outlined text-[14px]">volume_up</span>
+                <span>Listen</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing / Analyzing Indicator (Hidden by default) -->
+        <div id="chatTypingIndicator" class="hidden flex items-center gap-2 text-xs text-secondary font-medium px-2 py-1">
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+          </span>
+          <span>Nivara is analyzing your story &amp; matching NSQF trades...</span>
+        </div>
+
+        <!-- Direct Text Input Bar for accessibility & quiet environments -->
+        <form id="chatTextForm" class="flex items-center gap-2 pt-1 border-t border-surface-container-high">
+          <input type="text" id="chatTextInput" placeholder="Speak with mic above, or type your answer here..." class="flex-1 bg-surface-container-low border border-secondary/15 rounded-xl px-3 py-2 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-secondary transition-all">
+          <button type="submit" id="btnSendTextMessage" class="bg-secondary text-on-secondary hover:bg-secondary/90 active:scale-95 px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1 flex-shrink-0">
+            <span>Send</span>
+            <span class="material-symbols-outlined text-[15px]">send</span>
+          </button>
+        </form>
       </div>
 
       <!-- 4 One-Tap Scenario Selector Chips -->

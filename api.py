@@ -250,8 +250,12 @@ async def voice_input(session_id: str, request: Request):
     except Exception:
         pass
 
+    story_summary = profiler.generate_story_summary(updated_profile, history)
+
     response_data = {
         "transcript": input_text,
+        "story_summary": story_summary,
+        "conversation_history": history,
         "extracted_fields": updated_profile,
         "next_prompt": next_prompt,
         "reply_audio_base64": reply_audio_base64,

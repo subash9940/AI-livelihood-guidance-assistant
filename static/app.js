@@ -228,9 +228,20 @@ function initElements() {
     micLabel: document.getElementById('micLabel'),
     waveformVisualizer: document.getElementById('waveformVisualizer'),
     liveTranscriptText: document.getElementById('liveTranscriptText'),
+    btnManualSubmitUtterance: document.getElementById('btnManualSubmitUtterance'),
     confidenceTag: document.getElementById('confidenceTag'),
     scenarioChips: document.querySelectorAll('.scenario-chip'),
     demoBeneficiaryBtns: document.querySelectorAll('.demo-beneficiary-btn'),
+
+    // Conversation Feed & Story Summary Elements
+    liveStorySummaryText: document.getElementById('liveStorySummaryText'),
+    turnCounterBadge: document.getElementById('turnCounterBadge'),
+    conversationThread: document.getElementById('conversationThread'),
+    chatGreetingText: document.getElementById('chatGreetingText'),
+    chatTypingIndicator: document.getElementById('chatTypingIndicator'),
+    chatTextForm: document.getElementById('chatTextForm'),
+    chatTextInput: document.getElementById('chatTextInput'),
+    btnClearConversation: document.getElementById('btnClearConversation'),
 
     // Signals
     sigEducation: document.getElementById('sigEducation'),
@@ -341,6 +352,14 @@ document.addEventListener('DOMContentLoaded', () => {
   startIvrTimer();
   updateClock();
   setInterval(updateClock, 1000);
+
+  // Pre-fetch browser speech synthesis voices so audio is instantly ready
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
 });
 
 // -------------------------------------------------------------
@@ -422,9 +441,17 @@ async function startNewSession(entryMode = null, language = null) {
     }
   }
 
-  state.profileComplete = false;
-  state.currentRecommendation = null;
-  resetSignalDisplay();
+  state.dialogueTurn = 0;
+  if (el.turnCounterBadge) {
+    el.turnCounterBadge.textContent = 'Story in Progress';
+    el.turnCounterBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20';
+  }
+  if (el.liveStorySummaryText) {
+    el.liveStorySummaryText.textContent = "Listening to beneficiary's background and vocational story... Tap the microphone above to speak about your schooling, family work, or interests.";
+  }
+  if (el.conversationThread) {
+    el.conversationThread.innerHTML = '';
+  }
 
   try {
     const res = await fetch('/session/start', {
@@ -440,10 +467,13 @@ async function startNewSession(entryMode = null, language = null) {
 
     const prompt = data.initial_prompt || INITIAL_PROMPTS[state.language] || INITIAL_PROMPTS.en;
     setAssistantSpeech(prompt);
+    addChatBubble(prompt, 'assistant');
   } catch (err) {
     console.warn('Session start fallback:', err);
     state.sessionId = 'local-' + Date.now();
-    setAssistantSpeech(INITIAL_PROMPTS[state.language] || INITIAL_PROMPTS.en);
+    const prompt = INITIAL_PROMPTS[state.language] || INITIAL_PROMPTS.en;
+    setAssistantSpeech(prompt);
+    addChatBubble(prompt, 'assistant');
   }
 }
 
@@ -458,22 +488,93 @@ function resetSignalDisplay() {
     el.signalsBadge.className = 'text-xs bg-surface-container px-2 py-0.5 rounded-full text-on-surface-variant font-semibold';
   }
   if (el.liveTranscriptText) {
-    el.liveTranscriptText.textContent = 'Press the mic button or choose a sample prompt below to start...';
+    el.liveTranscriptText.textContent = 'Press the mic button and speak freely in your language...';
+  }
+  if (el.btnManualSubmitUtterance) {
+    el.btnManualSubmitUtterance.classList.add('hidden');
   }
 }
 
-function setAssistantSpeech(text, autoSpeak = false) {
+function setAssistantSpeech(text, autoSpeak = false, audioBase64 = null) {
   if (el.assistantSpeechText) el.assistantSpeechText.textContent = `"${text}"`;
   if (el.assistantSpeechSub) el.assistantSpeechSub.textContent = INITIAL_PROMPTS_SUB[state.language] || INITIAL_PROMPTS_SUB.en;
+  if (el.chatGreetingText) el.chatGreetingText.textContent = text;
 
   if (autoSpeak) {
-    speakText(text, state.language);
+    speakText(text, state.language, audioBase64);
   }
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function addChatBubble(text, role = 'user', audioBase64 = null) {
+  if (!el.conversationThread || !text) return;
+
+  const isUser = role === 'user';
+  const bubbleDiv = document.createElement('div');
+  bubbleDiv.className = isUser
+    ? 'flex items-start gap-2 max-w-[88%] self-end user-bubble transition-all'
+    : 'flex items-start gap-2.5 max-w-[88%] self-start assistant-bubble transition-all';
+
+  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  if (isUser) {
+    bubbleDiv.innerHTML = `
+      <div class="bg-primary text-on-primary rounded-2xl rounded-tr-sm p-3 text-xs leading-relaxed shadow-sm">
+        <p class="font-medium text-white">${escapeHtml(text)}</p>
+        <span class="text-[10px] text-white/70 block text-right mt-1">${timeStr}</span>
+      </div>
+      <div class="w-7 h-7 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 text-xs shadow-sm">
+        <span class="material-symbols-outlined text-[16px]">person</span>
+      </div>
+    `;
+  } else {
+    const bubbleId = 'tts-btn-' + Math.random().toString(36).substring(2, 9);
+    bubbleDiv.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center flex-shrink-0 text-xs shadow-sm">
+        <span class="material-symbols-outlined text-[16px]">smart_toy</span>
+      </div>
+      <div class="bg-surface-container-low rounded-2xl rounded-tl-sm p-3 text-xs text-on-surface leading-relaxed shadow-sm space-y-1">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-semibold text-secondary">Nivara Assistant</span>
+          <span class="text-[10px] text-on-surface-variant">${timeStr}</span>
+        </div>
+        <p class="font-medium">${escapeHtml(text)}</p>
+        <button id="${bubbleId}" class="chat-bubble-tts text-[11px] text-secondary font-bold inline-flex items-center gap-1 pt-1 hover:underline cursor-pointer">
+          <span class="material-symbols-outlined text-[14px]">volume_up</span>
+          <span>Listen</span>
+        </button>
+      </div>
+    `;
+
+    setTimeout(() => {
+      const btn = document.getElementById(bubbleId);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          speakText(text, state.language, audioBase64);
+        });
+      }
+    }, 50);
+  }
+
+  el.conversationThread.appendChild(bubbleDiv);
+  el.conversationThread.scrollTop = el.conversationThread.scrollHeight;
+}
+
 // -------------------------------------------------------------
-// Voice Recognition Engine (Web Speech API)
+// Continuous Voice Recognition Engine (Web Speech API)
 // -------------------------------------------------------------
+let accumulatedTranscript = '';
+let interimTranscript = '';
+let silenceDebounceTimer = null;
+
 function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -482,37 +583,79 @@ function initSpeechRecognition() {
   }
 
   state.recognition = new SpeechRecognition();
-  state.recognition.continuous = false;
+  // Enable continuous recognition so speaking multiple sentences does NOT cut off automatically!
+  state.recognition.continuous = true;
   state.recognition.interimResults = true;
 
   state.recognition.onstart = () => {
     state.isRecording = true;
+    accumulatedTranscript = '';
+    interimTranscript = '';
     if (el.micRipple1) el.micRipple1.classList.remove('hidden');
     if (el.micRipple2) el.micRipple2.classList.remove('hidden');
-    if (el.micLabel) el.micLabel.textContent = 'Listening... / सुन रहे हैं...';
-    if (el.statusText) el.statusText.textContent = 'LISTENING • SPEAK FREELY IN YOUR DIALECT';
+    if (el.micLabel) el.micLabel.textContent = 'Listening... (Tap when done)';
+    if (el.statusText) el.statusText.textContent = 'LISTENING • SPEAK FREELY • TAP MIC OR PAUSE TO SUBMIT';
     if (el.micIcon) el.micIcon.textContent = 'graphic_eq';
+    if (el.btnManualSubmitUtterance) el.btnManualSubmitUtterance.classList.add('hidden');
   };
 
   state.recognition.onresult = (event) => {
-    let transcript = '';
+    interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
-      transcript += event.results[i][0].transcript;
+      const piece = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        accumulatedTranscript += piece + ' ';
+      } else {
+        interimTranscript += piece;
+      }
     }
-    if (el.liveTranscriptText) el.liveTranscriptText.textContent = `"${transcript}"`;
-    if (event.results[0].isFinal) {
-      handleUserVoiceUtterance(transcript);
+
+    const currentSpoken = (accumulatedTranscript + ' ' + interimTranscript).trim();
+    if (el.liveTranscriptText) el.liveTranscriptText.textContent = `"${currentSpoken}"`;
+    if (el.btnManualSubmitUtterance && currentSpoken.length > 0) {
+      el.btnManualSubmitUtterance.classList.remove('hidden');
+    }
+
+    // Reset silence timer on every spoken syllable
+    clearTimeout(silenceDebounceTimer);
+    if (currentSpoken.length > 8) {
+      // 3.8s natural silence window: gives beneficiary ample time to breathe and continue speaking
+      silenceDebounceTimer = setTimeout(() => {
+        if (state.isRecording && currentSpoken.length > 8) {
+          stopRecordingAndSubmit();
+        }
+      }, 3800);
     }
   };
 
   state.recognition.onerror = (event) => {
     console.warn('Speech recognition warning:', event.error);
-    stopRecording();
+    if (event.error !== 'no-speech') {
+      stopRecording();
+    }
   };
 
   state.recognition.onend = () => {
-    stopRecording();
+    if (state.isRecording) {
+      const finalSpoken = (accumulatedTranscript + ' ' + interimTranscript).trim();
+      if (finalSpoken.length > 5) {
+        stopRecordingAndSubmit();
+      } else {
+        stopRecording();
+      }
+    }
   };
+}
+
+function stopRecordingAndSubmit() {
+  clearTimeout(silenceDebounceTimer);
+  const textToSubmit = (accumulatedTranscript + ' ' + interimTranscript).trim();
+  stopRecording();
+  if (textToSubmit.length > 0) {
+    handleUserVoiceUtterance(textToSubmit);
+    accumulatedTranscript = '';
+    interimTranscript = '';
+  }
 }
 
 function toggleRecording() {
@@ -523,7 +666,8 @@ function toggleRecording() {
   }
 
   if (state.isRecording) {
-    state.recognition.stop();
+    // User tapped mic button to finish speaking
+    stopRecordingAndSubmit();
   } else {
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     state.recognition.lang = LANG_LOCALES[state.language] || 'en-IN';
@@ -531,12 +675,16 @@ function toggleRecording() {
       state.recognition.start();
     } catch (e) {
       state.recognition.stop();
+      setTimeout(() => {
+        try { state.recognition.start(); } catch (err) {}
+      }, 150);
     }
   }
 }
 
 function stopRecording() {
   state.isRecording = false;
+  clearTimeout(silenceDebounceTimer);
   if (el.micRipple1) el.micRipple1.classList.add('hidden');
   if (el.micRipple2) el.micRipple2.classList.add('hidden');
   if (el.micLabel) el.micLabel.textContent = 'Tap & Speak / बोलिए';
@@ -550,12 +698,39 @@ function bindVoiceEvents() {
     el.dominantMicBtn.addEventListener('click', toggleRecording);
   }
 
+  // Manual Send Button next to live transcript
+  if (el.btnManualSubmitUtterance) {
+    el.btnManualSubmitUtterance.addEventListener('click', () => {
+      stopRecordingAndSubmit();
+    });
+  }
+
+  // Text Input Form for typing stories
+  if (el.chatTextForm) {
+    el.chatTextForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = el.chatTextInput ? el.chatTextInput.value.trim() : '';
+      if (val) {
+        el.chatTextInput.value = '';
+        handleUserVoiceUtterance(val);
+      }
+    });
+  }
+
+  // Clear Conversation Button
+  if (el.btnClearConversation) {
+    el.btnClearConversation.addEventListener('click', () => {
+      startNewSession(state.entryMode, state.language);
+      showToast('Conversation reset. Ready for new voice intake.', 'restart_alt');
+    });
+  }
+
   // TTS Replay Button
   if (el.btnReplayAudio) {
     el.btnReplayAudio.addEventListener('click', () => {
       const prompt = el.assistantSpeechText ? el.assistantSpeechText.textContent.replace(/"/g, '') : '';
       if (el.ttsIcon) el.ttsIcon.textContent = 'pause';
-      speakText(prompt, state.language, () => {
+      speakText(prompt, state.language, null, () => {
         if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
       });
     });
@@ -566,7 +741,6 @@ function bindVoiceEvents() {
     chip.addEventListener('click', () => {
       const text = chip.getAttribute('data-text');
       if (text) {
-        // Visual feedback
         chip.classList.add('bg-surface-container-high');
         setTimeout(() => chip.classList.remove('bg-surface-container-high'), 300);
         handleUserVoiceUtterance(text);
@@ -684,8 +858,17 @@ async function triggerDemoBeneficiary(demoId) {
 async function handleUserVoiceUtterance(utteranceText) {
   if (!utteranceText || !utteranceText.trim()) return;
 
+  // 1. Add User Bubble to Conversation Thread
+  addChatBubble(utteranceText, 'user');
+
+  state.dialogueTurn = (state.dialogueTurn || 0) + 1;
+  if (el.turnCounterBadge) {
+    el.turnCounterBadge.textContent = `Dialogue Turn ${state.dialogueTurn}`;
+  }
+
   if (el.liveTranscriptText) el.liveTranscriptText.textContent = `"${utteranceText}"`;
-  if (el.statusText) el.statusText.textContent = 'ANALYZING SIGNALS & LOCAL OPPORTUNITIES...';
+  if (el.statusText) el.statusText.textContent = 'ANALYZING STORY WITH LLM & EXTRACTING SIGNALS...';
+  if (el.chatTypingIndicator) el.chatTypingIndicator.classList.remove('hidden');
 
   try {
     const res = await fetch(`/session/${state.sessionId}/voice-input`, {
@@ -698,30 +881,43 @@ async function handleUserVoiceUtterance(utteranceText) {
     });
 
     const data = await res.json();
+    if (el.chatTypingIndicator) el.chatTypingIndicator.classList.add('hidden');
 
-    // 1. Update Signals Display
+    // 2. Add Assistant Response Bubble to Conversation Thread
+    addChatBubble(data.next_prompt, 'assistant', data.reply_audio_base64);
+
+    // 3. Update Story Summary
+    if (data.story_summary && el.liveStorySummaryText) {
+      el.liveStorySummaryText.textContent = data.story_summary;
+    }
+
+    // 4. Update Signals Display
     updateSignalsView(data.extracted_fields);
 
-    // 2. Play Next Prompt
-    setAssistantSpeech(data.next_prompt, true);
+    // 5. Play Next Prompt with audio
+    setAssistantSpeech(data.next_prompt, true, data.reply_audio_base64);
 
-    // 3. If Complete, fetch Recommendation and transition to Pathways Tab
+    // 6. If Complete, fetch Recommendation and transition to Pathways Tab
     if (data.profile_complete) {
       state.profileComplete = true;
       if (el.signalsBadge) {
         el.signalsBadge.textContent = '✅ Profile Complete';
         el.signalsBadge.className = 'text-xs bg-[#ecfdf5] text-[#065f46] px-2.5 py-0.5 rounded-full font-bold shadow-sm';
       }
+      if (el.turnCounterBadge) {
+        el.turnCounterBadge.textContent = '✅ Profile Ready';
+        el.turnCounterBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0]';
+      }
       showToast('Profile Complete! Generating NSQF Livelihood Pathway...', 'verified');
 
       setTimeout(async () => {
         await loadRoadmapRecommendation();
-        // Seamlessly switch to Pathways tab
         switchTab('viewRoadmap', 'Roadmap & Skills');
-      }, 1400);
+      }, 1600);
     }
 
   } catch (err) {
+    if (el.chatTypingIndicator) el.chatTypingIndicator.classList.add('hidden');
     console.error('Error submitting voice input:', err);
     showToast('Voice processing note: Please try speaking again.');
   }
@@ -1589,22 +1785,109 @@ function bindAdminEvents() {
 }
 
 // -------------------------------------------------------------
-// Speech Synthesis (TTS) Helper
+// Speech Synthesis (TTS) & Audio Player Helper
 // -------------------------------------------------------------
-function speakText(text, lang = 'hi', onEnd = null) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
+let activeAudioElement = null;
+let activeUtterance = null;
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = LANG_LOCALES[lang] || 'hi-IN';
-  utterance.rate = 0.95;
+function speakText(text, lang = 'hi', audioBase64 = null, onEnd = null) {
+  if (!text && !audioBase64) return;
 
-  if (onEnd) {
-    utterance.onend = onEnd;
-    utterance.onerror = onEnd;
+  // 1. If base64 WAV audio is provided from Bhashini / backend, play it directly!
+  if (audioBase64) {
+    try {
+      if (activeAudioElement) {
+        activeAudioElement.pause();
+        activeAudioElement = null;
+      }
+      activeAudioElement = new Audio('data:audio/wav;base64,' + audioBase64);
+      activeAudioElement.volume = 1.0;
+      activeAudioElement.onended = () => {
+        activeAudioElement = null;
+        if (onEnd) onEnd();
+      };
+      activeAudioElement.onerror = () => {
+        activeAudioElement = null;
+        fallbackToBrowserTTS(text, lang, onEnd);
+      };
+      activeAudioElement.play().catch(e => {
+        console.warn('Audio element play blocked by browser autoplay:', e);
+        fallbackToBrowserTTS(text, lang, onEnd);
+      });
+      return;
+    } catch (err) {
+      console.warn('Audio element init error:', err);
+    }
   }
 
-  window.speechSynthesis.speak(utterance);
+  // 2. Otherwise, use browser SpeechSynthesis with robust voice detection
+  fallbackToBrowserTTS(text, lang, onEnd);
+}
+
+function fallbackToBrowserTTS(text, lang = 'hi', onEnd = null) {
+  if (!('speechSynthesis' in window)) return;
+
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
+
+  setTimeout(() => {
+    let cleanText = text.replace(/[*_#]/g, '').trim();
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.volume = 1.0;
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices() || [];
+    const targetLocale = LANG_LOCALES[lang] || 'en-IN';
+
+    // A. Native locale match
+    let voice = voices.find(v => v.lang === targetLocale || v.lang.replace('_', '-').toLowerCase() === targetLocale.toLowerCase());
+
+    // B. Regional Indian voice match (e.g. Google Hindi, Microsoft Heera/Ravi)
+    if (!voice) {
+      voice = voices.find(v => v.lang.includes('IN') || v.name.includes('India') || v.name.includes('Hindi') || v.name.includes('Heera') || v.name.includes('Ravi'));
+    }
+
+    // C. Any English voice fallback
+    if (!voice) {
+      voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+    }
+
+    // If text contains Devanagari/Gurmukhi but ONLY an English voice is installed on Windows,
+    // reading non-Latin characters will produce total silence in SAPI5. In that case, speak English translation.
+    const hasDevanagari = /[\u0900-\u097F\u0A00-\u0A7F\u0B80-\u0BFF]/.test(cleanText);
+    if (hasDevanagari && voice && !voice.lang.includes('hi') && !voice.lang.includes('IN') && !voice.name.includes('Hindi')) {
+      const fallbackEnglish = INITIAL_PROMPTS_SUB[lang] || "Thank you. Your profile information has been captured by Nivara AI.";
+      utterance.text = fallbackEnglish;
+      utterance.lang = 'en-US';
+    } else {
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      } else {
+        utterance.lang = targetLocale;
+      }
+    }
+
+    utterance.onend = () => {
+      activeUtterance = null;
+      if (onEnd) onEnd();
+    };
+    utterance.onerror = (e) => {
+      console.warn('Speech synthesis playback note:', e);
+      activeUtterance = null;
+      if (onEnd) onEnd();
+    };
+
+    activeUtterance = utterance;
+    window.speechSynthesis.speak(utterance);
+
+    // Chrome bugfix: resume if engine enters paused state
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+  }, 75);
 }
 
 // -------------------------------------------------------------
