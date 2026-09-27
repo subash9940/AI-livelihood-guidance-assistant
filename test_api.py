@@ -11,6 +11,8 @@ Validates all core endpoints and the static regional schemes feature:
 from fastapi.testclient import TestClient
 from api import app
 import region_schemes
+import profiler
+import nsqf_rules
 import json
 import sys
 
@@ -80,12 +82,17 @@ def test_regional_schemes_static_data_and_lookup():
     expected_states = ["Delhi", "Maharashtra", "Tamil Nadu", "Karnataka", "Uttar Pradesh"]
     required_keys = {"name", "provider", "benefit", "eligibility", "how_to_apply"}
 
-    # Verify dictionary has exact 5 states each with 2 schemes and exact keys
+    # Verify dictionary has exact 5 states each with 2 schemes and exact keys + transparency metadata
+    transparency_keys = {"is_verified", "last_checked", "source_note"}
     for state in expected_states:
         schemes = region_schemes.get_regional_schemes(state)
         assert len(schemes) == 2, f"State {state} should have exactly 2 schemes, got {len(schemes)}"
         for s in schemes:
             assert required_keys.issubset(s.keys()), f"Scheme missing required keys: {s}"
+            assert transparency_keys.issubset(s.keys()), f"Scheme missing transparency metadata keys: {s}"
+            assert s["is_verified"] is False, f"Expected is_verified=False, got {s['is_verified']}"
+            assert isinstance(s["last_checked"], str) and len(s["last_checked"]) > 0
+            assert isinstance(s["source_note"], str) and len(s["source_note"]) > 0
             assert len(s["name"]) > 0
             assert len(s["provider"]) > 0
             assert len(s["benefit"]) > 0
@@ -189,9 +196,10 @@ def test_readiness_score_calculation():
     assert "readiness_score" in rec, "readiness_score must be present in recommendation"
     assert rec["readiness_score"] == 20, f"Expected 20% readiness score for 1/5 skills, got {rec['readiness_score']}"
     assert rec["readiness_score"] < 40, "Should fall in RED threshold (< 40)"
-    print(f"Low readiness profile score: {rec['readiness_score']}/100 (RED)")
+    assert rec.get("readiness_tier") == "Possible Match — consider exploring alternatives", f"Expected 'Possible Match — consider exploring alternatives', got {rec.get('readiness_tier')}"
+    print(f"Low readiness profile score: {rec['readiness_score']}/100 — {rec.get('readiness_tier')} (RED)")
 
-    # Test 2: Moderate readiness (40-70) - 3 of 5 skills
+    # Test 2: Moderate readiness (40-69) - 3 of 5 skills
     s_res2 = client.post("/session/start", json={"entry_mode": "app", "language": "en"})
     session_id2 = s_res2.json()["session_id"]
     client.post(
@@ -217,10 +225,11 @@ def test_readiness_score_calculation():
     )
     rec2 = client.get(f"/session/{session_id2}/recommendation").json()
     assert rec2["readiness_score"] == 60, f"Expected 60% readiness score for 3/5 skills, got {rec2['readiness_score']}"
-    assert 40 <= rec2["readiness_score"] <= 70, "Should fall in YELLOW threshold (40-70)"
-    print(f"Moderate readiness profile score: {rec2['readiness_score']}/100 (YELLOW)")
+    assert 40 <= rec2["readiness_score"] <= 69, "Should fall in YELLOW threshold (40-69)"
+    assert rec2.get("readiness_tier") == "Good Match", f"Expected 'Good Match', got {rec2.get('readiness_tier')}"
+    print(f"Moderate readiness profile score: {rec2['readiness_score']}/100 — {rec2.get('readiness_tier')} (YELLOW)")
 
-    # Test 3: High readiness (> 70) - 4 of 5 skills
+    # Test 3: High readiness (>= 70) - 4 of 5 skills
     s_res3 = client.post("/session/start", json={"entry_mode": "app", "language": "en"})
     session_id3 = s_res3.json()["session_id"]
     client.post(
@@ -247,8 +256,9 @@ def test_readiness_score_calculation():
     )
     rec3 = client.get(f"/session/{session_id3}/recommendation").json()
     assert rec3["readiness_score"] == 80, f"Expected 80% readiness score for 4/5 skills, got {rec3['readiness_score']}"
-    assert rec3["readiness_score"] > 70, "Should fall in GREEN threshold (> 70)"
-    print(f"High readiness profile score: {rec3['readiness_score']}/100 (GREEN)")
+    assert rec3["readiness_score"] >= 70, "Should fall in GREEN threshold (>= 70)"
+    assert rec3.get("readiness_tier") == "Highly Recommended", f"Expected 'Highly Recommended', got {rec3.get('readiness_tier')}"
+    print(f"High readiness profile score: {rec3['readiness_score']}/100 — {rec3.get('readiness_tier')} (GREEN)")
 
 def test_demo_beneficiary_pipeline_profiles():
     print("\n--- 9. Testing Demo Beneficiary Pipeline for all 4 Sample Profiles ---")
@@ -503,6 +513,46 @@ def test_regional_demand_capacity_gap():
     print(f"Verified Capacity Gap Report for Delhi: Demand={delhi_data['total_demand']}, Est. Capacity={delhi_data['total_estimated_capacity']} ({delhi_data['overall_gap']['short_label']})")
     print(f"Verified Real Demand Accumulation: Apparel demand incremented from {apparel_initial} to {apparel_updated}")
 
+def test_broad_skill_profile_validation_and_tiers():
+    print("\n--- 12. Testing Broad Skill Profile Validation & Qualitative Tiers ---")
+    
+    # 1. Soft / Interpersonal Skill Validation
+    p1, comp1 = profiler.extract_profile_from_text("I am good with people, patient, and hardworking")
+    assert comp1 is True, f"Beneficiary with soft skills should be complete, got {comp1}"
+    assert len(p1["skills"]) >= 2, f"Should extract soft skills, got {p1['skills']}"
+    assert any("people" in s.lower() for s in p1["skills"])
+    assert any("patient" in s.lower() for s in p1["skills"])
+    assert any("hardworking" in s.lower() for s in p1["skills"])
+
+    # 2. Traditional / Family Occupation Skill Validation
+    p2, comp2 = profiler.extract_profile_from_text("My family does traditional pottery and craft")
+    assert comp2 is True, f"Beneficiary with traditional skills should be complete, got {comp2}"
+    assert len(p2["skills"]) >= 1, f"Should extract traditional skills, got {p2['skills']}"
+
+    # 3. Incomplete Profile Validation (No skills of any kind)
+    p3, comp3 = profiler.extract_profile_from_text("I studied 8th class")
+    assert comp3 is False, f"Beneficiary with only education and no skills/interests should be incomplete, got {comp3}"
+    prompt3 = profiler.generate_next_prompt(p3, language="en")
+    # Verify the follow-up prompt explicitly asks about traditional or interpersonal strengths, not just technical skills
+    assert any(term in prompt3.lower() for term in ["traditional", "family", "interpersonal", "good with people", "patient", "hardworking"]), f"Follow-up prompt must explicitly ask about traditional or interpersonal strengths: '{prompt3}'"
+
+    # 4. Multilingual Follow-Up Prompts
+    prompt_hi = profiler.generate_next_prompt(p3, language="hi")
+    assert any(term in prompt_hi for term in ["पारंपरिक", "खूबियां", "व्यक्तिगत", "धैर्य", "मेहनत", "हुनर"]), f"Hindi prompt missing traditional/soft skill keywords: '{prompt_hi}'"
+
+    # 5. Qualitative Tier Helper Validation
+    assert nsqf_rules.get_readiness_tier(100) == "Highly Recommended"
+    assert nsqf_rules.get_readiness_tier(75) == "Highly Recommended"
+    assert nsqf_rules.get_readiness_tier(70) == "Highly Recommended"
+    assert nsqf_rules.get_readiness_tier(69) == "Good Match"
+    assert nsqf_rules.get_readiness_tier(50) == "Good Match"
+    assert nsqf_rules.get_readiness_tier(40) == "Good Match"
+    assert nsqf_rules.get_readiness_tier(39) == "Possible Match — consider exploring alternatives"
+    assert nsqf_rules.get_readiness_tier(20) == "Possible Match — consider exploring alternatives"
+    assert nsqf_rules.get_readiness_tier(0) == "Possible Match — consider exploring alternatives"
+
+    print("Verified broad skill profile validation, soft & traditional skills extraction, follow-up prompt, and all 3 qualitative tiers!")
+
 if __name__ == "__main__":
     test_full_pipeline()
     test_regional_schemes_static_data_and_lookup()
@@ -513,5 +563,6 @@ if __name__ == "__main__":
     test_demo_beneficiary_pipeline_profiles()
     test_nsqf_qualification_pack_details()
     test_regional_demand_capacity_gap()
-    print("\nAll 11 test suites passed successfully!")
+    test_broad_skill_profile_validation_and_tiers()
+    print("\nAll 12 test suites passed successfully!")
 

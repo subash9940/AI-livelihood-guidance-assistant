@@ -262,6 +262,7 @@ def get_recommendation(session_id: str):
         "nsqf_alignment": skill_res["nsqf_alignment"],
         "gap_summary": skill_res["gap_summary"],
         "readiness_score": skill_res.get("readiness_score", 0),
+        "readiness_tier": skill_res.get("readiness_tier") or nsqf_rules.get_readiness_tier(skill_res.get("readiness_score", 0)),
         "readiness_relevant_count": skill_res.get("readiness_relevant_count", 0),
         "readiness_total_required": skill_res.get("readiness_total_required", 5),
         "skill_gap_breakdown": skill_res.get("skill_gap_breakdown", []),
@@ -322,6 +323,7 @@ async def get_recommendation_direct(
             "nsqf_alignment": skill_res["nsqf_alignment"],
             "gap_summary": skill_res["gap_summary"],
             "readiness_score": skill_res.get("readiness_score", 0),
+            "readiness_tier": skill_res.get("readiness_tier") or nsqf_rules.get_readiness_tier(skill_res.get("readiness_score", 0)),
             "skill_gap_breakdown": skill_res.get("skill_gap_breakdown", []),
             "regional_schemes": reg_schemes,
             "training_programme": skill_res["training_programme"],
@@ -337,6 +339,7 @@ async def get_recommendation_direct(
     reg_schemes = region_schemes.get_regional_schemes(target_state) if target_state else []
     return {
         "readiness_score": 0,
+        "readiness_tier": nsqf_rules.get_readiness_tier(0),
         "regional_schemes": reg_schemes
     }
 

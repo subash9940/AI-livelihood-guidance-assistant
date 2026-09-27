@@ -33,6 +33,30 @@ INTEREST_SKILL_PATTERNS = [
     (r"\b(computer|computers|digital|digitally|data|phone|internet|online|csc)\b|(कंप्यूटर|इंटरनेट|संगणक|ਕੰਪਿਊਟਰ)", "Digital Services & CSC Operation")
 ]
 
+TRADITIONAL_SKILL_PATTERNS = [
+    (r"\b(farm|farming|agri|crop|crops|kheti|khet|cultivat|harvest|sow|sowing|plough)\b|(खेती|किसान|फसल|वावर|ਬਿਜਾਈ|ਵਾਢੀ)", "Traditional Farming & Crop Cultivation"),
+    (r"\b(sew|sewing|stitch|stitching|darji|silai|bunai|kadai|embroid|handloom|loom)\b|(सिलाई|बुनाई|कढ़ाई|विणकाम|कशीदा)", "Traditional Tailoring & Handloom Weaving"),
+    (r"\b(potter|pottery|clay|terracotta|mitti|matka|bartan|kumhar)\b|(कुम्हार|मिट्टी|भांडी|ਘੁਮਿਆਰ)", "Traditional Pottery & Clay Modeling"),
+    (r"\b(blacksmith|metal|iron|loha|lohar)\b|(लोहार|लोखंड|ਲੁਹਾਰ)", "Traditional Blacksmithing & Metal Craft"),
+    (r"\b(carpenter|carpentry|wood|woodwork|furniture|badhai)\b|(बढ़ई|सुतार|લાકડું|ਤਰਖਾਣ)", "Traditional Carpentry & Woodcraft"),
+    (r"\b(dairy|cattle|cow|buffalo|milking|milk|pashu|livestock|goat)\b|(पशुपालन|डेयरी|दूध|गोपालन|ਪਸ਼ੂ)", "Livestock Rearing & Dairy Management"),
+    (r"\b(artisan|craft|handicraft|handmade|zari|bamboo|cane)\b|(हस्तशिल्प|कारीगरी|हस्तकला|ਦਸਤਕਾਰੀ)", "Traditional Handicrafts & Artisan Work"),
+    (r"\b(retail|kirana|shopkeeping|counter\s*sales|dukan)\b|(किराना|दुकान|दुकानदारी|ਵਪਾਰ)", "Traditional Retail & Shopkeeping")
+]
+
+SOFT_SKILL_PATTERNS = [
+    (r"\b(good\s*with\s*people|people\s*person|friendly|social|interpersonal|loogon\s*se\s*baat|milansar)\b|(मिलनसार|लोगों\s*से\s*बात|लोकांशी\s*संभाषण|ਮਿਲਣਸਾਰ)", "Interpersonal Skills (Good with people)"),
+    (r"\b(patient|patience|calm|composed|peaceful|sabar|dhairya)\b|(धैर्य|शांत|धीरज|ਸਬਰ|ਸ਼ਾਂਤ)", "Patient & Attentive"),
+    (r"\b(hardworking|hard\s*working|diligent|dedicated|laborious|mehnat|mehnati|kamath)\b|(मेहनती|कष्ट|लगातार\s*काम|ਮਿਹਨਤੀ)", "Hardworking & Dedicated"),
+    (r"\b(communication|speaking|talk|explaining|bolchal|baat\s*karna)\b|(बातचीत|संवाद|बोलचाल|ਸੰਚਾਰ)", "Effective Communication"),
+    (r"\b(teamwork|team\s*player|collaborative|cooperative|saath\s*me\s*kaam)\b|(सहयोग|टीम\s*वर्क|एकत्र\s*काम)", "Team Player & Collaborative"),
+    (r"\b(quick\s*learner|fast\s*learner|learns\s*fast|adaptable|jaldi\s*seekh)\b|(जल्दी\s*सीखना|शिकण्याची\s*तयारी|ਚੁਸਤ)", "Quick Learner & Adaptable"),
+    (r"\b(punctual|punctuality|disciplined|timely|samay\s*par)\b|(समय\s*का\s*पाबंद|वेळेचे\s*पालन|ਨਿਯਮਿਤ)", "Punctual & Disciplined"),
+    (r"\b(honest|integrity|trustworthy|truthful|imandar|vishwasu)\b|(ईमानदार|विश्वसनीय|ਪ੍ਰਮਾਣਿਕ)", "Honest & Trustworthy"),
+    (r"\b(problem\s*solver|resourceful|practical|jugad|solution)\b|(जुगाड़|समस्या\s*समाधान|ਸਮੱਸਿਆ\s*ਹੱਲ)", "Practical Problem Solving & Resourcefulness")
+]
+
+
 MOBILITY_PATTERNS = [
     (r"\b(can\s*not\s*travel|cannot\s*travel|can\'t\s*travel|don\'t\s*want\s*to\s*go\s*far|stay\s*near|home\s*based|within\s*village|village\s*only|local\s*only)\b|(गाँव\s*में|गावातच|दूर\s*नहीं|जा\s*नहीं\s*सकते|लांब\s*जाऊ\s*शकत\s*नाही|ਨੇੜੇ|ਪਿੰਡ\s*ਵਿੱਚ)", "Cannot travel far (Restricted to village/cluster)"),
     (r"\b(can\s*travel|willing\s*to\s*travel|anywhere|district\s*center|town|commute)\b|(शहर\s*जा\s*सकते|शहर|तालुक्यात|तालुका|ਜਾ\s*ਸਕਦਾ)", "Willing to commute to District/Taluka center")
@@ -94,15 +118,45 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
             profile["family_occupation"] = val
             break
 
-    # 3. Interests & Skills
+    # 3. Interests & Skills (Broad definition: Technical, Vocational, Traditional, and Soft/Interpersonal)
     skills = list(profile.get("skills", []))
     interests = list(profile.get("interests", []))
+
+    # A. Vocational / Technical patterns
     for pattern, val in INTEREST_SKILL_PATTERNS:
         if re.search(pattern, lowered, re.IGNORECASE):
             if val not in interests:
                 interests.append(val)
             if val not in skills:
                 skills.append(val)
+
+    # B. Traditional / Family-occupation-based skills
+    for pattern, val in TRADITIONAL_SKILL_PATTERNS:
+        if re.search(pattern, lowered, re.IGNORECASE):
+            if val not in skills:
+                skills.append(val)
+
+    # C. Soft / Interpersonal strengths (good with people, patient, hardworking, etc.)
+    for pattern, val in SOFT_SKILL_PATTERNS:
+        if re.search(pattern, lowered, re.IGNORECASE):
+            if val not in skills:
+                skills.append(val)
+
+    # D. Inherit traditional skill from family occupation if present
+    fam_occ = profile.get("family_occupation")
+    if fam_occ:
+        fam_skill_map = {
+            "Agriculture & Farming": "Traditional Farming & Agriculture Knowledge",
+            "Tailoring / Weaving": "Traditional Tailoring & Handloom Weaving",
+            "Artisan / Handicrafts": "Traditional Handicrafts & Artisan Craft",
+            "Small Retail / Kirana": "Traditional Retail & Shopkeeping",
+            "Dairy & Animal Husbandry": "Livestock Rearing & Dairy Management",
+            "Daily Wage Labor": "Manual Labor & Field Execution"
+        }
+        mapped_skill = fam_skill_map.get(fam_occ, f"Traditional Experience in {fam_occ}")
+        if mapped_skill not in skills:
+            skills.append(mapped_skill)
+
     profile["skills"] = skills
     profile["interests"] = interests
 
@@ -141,28 +195,36 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
         profile["location"] = "Your Local District"
 
     # Profile Completeness Logic:
-    # A profile is complete when we have enough signals to recommend:
-    # At least education OR family occupation, AND at least one interest/skill or mobility signal
-    has_edu = bool(profile.get("education_level"))
+    # A beneficiary profile is considered complete/eligible for recommendation if it has
+    # at least one skill of ANY kind — technical, vocational, traditional/family-occupation-based,
+    # or soft/interpersonal (e.g. 'good with people', 'patient', 'hardworking') — not just formal technical skills.
+    has_skills = len(profile.get("skills", [])) > 0
+    has_interests = len(profile.get("interests", [])) > 0
     has_fam = bool(profile.get("family_occupation"))
-    has_interest = len(profile.get("interests", [])) > 0
+    has_edu = bool(profile.get("education_level"))
     has_mobility = bool(profile.get("mobility_constraint"))
 
-    is_complete = (has_interest and (has_edu or has_fam or has_mobility)) or ((has_edu or has_fam) and has_mobility) or (has_edu and has_fam)
+    has_any_skill = has_skills or has_interests or has_fam
+
+    is_complete = has_any_skill or (has_edu and has_mobility) or (has_edu and has_fam)
 
     return profile, is_complete
 
 def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     """
     Generates a natural, spoken follow-up prompt based on what is missing from the profile.
+    If the profile is incomplete, explicitly asks about traditional or interpersonal strengths, not just technical skills.
     """
+    has_skills = len(profile.get("skills", [])) > 0 or len(profile.get("interests", [])) > 0 or bool(profile.get("family_occupation"))
     missing_edu = not profile.get("education_level")
-    missing_interest = len(profile.get("interests", [])) == 0
+    missing_skills = not has_skills
     missing_mobility = not profile.get("mobility_constraint")
 
     if language == "hi":
-        if missing_interest and missing_edu:
-            return "नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?"
+        if missing_skills and missing_edu:
+            return "नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आपकी क्या खूबियां या हुनर हैं? यह कोई पारंपरिक काम (जैसे खेती, सिलाई), तकनीकी हुनर, या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा मेलजोल, धैर्य, या मेहनत) भी हो सकती है।"
+        elif missing_skills:
+            return "बहुत अच्छा! क्या आप अपने कौशल या खूबियों के बारे में बता सकते हैं? यह केवल तकनीकी काम ही नहीं, बल्कि पारंपरिक पारिवारिक काम (जैसे खेती, शिल्प) या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा व्यवहार, धैर्य, या लगन) भी हो सकती है।"
         elif missing_edu:
             return "बहुत अच्छा! क्या आप अपनी पढ़ाई के बारे में बता सकते हैं, जैसे 8वीं, 10वीं या 12वीं पास?"
         elif missing_mobility:
@@ -171,8 +233,10 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
             return "क्या आप खुद की दुकान या व्यवसाय शुरू करना चाहते हैं, या किसी कंपनी में नौकरी करना चाहते हैं?"
 
     elif language == "mr":
-        if missing_interest and missing_edu:
-            return "नमस्कार! तुमच्याबद्दल सांगा — तुमचे शिक्षण किती झाले आहे आणि तुम्हाला कोणत्या प्रकारचे काम शिकायला आवडेल?"
+        if missing_skills and missing_edu:
+            return "नमस्कार! तुमच्याबद्दल सांगा — तुमचे शिक्षण किती झाले आहे आणि तुमच्याकडे कोणती कौशल्ये किंवा गुण आहेत? हे कोणतेही कौटुंबिक काम (उदा. शेती, विणकाम), तांत्रिक काम, किंवा तुमचे व्यक्तिमत्त्व गुण (उदा. लोकांसोबत चांगले संबंध, संयम, कष्ट करण्याची तयारी) असू शकते."
+        elif missing_skills:
+            return "छान! तुमच्याकडे कोणती कौशल्ये किंवा ताकदीचे पैलू आहेत ते सांगू शकाल का? हे केवळ तांत्रिक काम नसून पारंपरिक कौटुंबिक काम किंवा लोकांसोबत चांगले वागणे, संयम व कष्टाळूपणा यासारखे वैयक्तिक गुणही असू शकतात."
         elif missing_edu:
             return "छान! तुमचे शिक्षण कितवीपर्यंत झाले आहे ते सांगू शकता का (उदा. ८वी, १०वी किंवा १२वी)?"
         elif missing_mobility:
@@ -181,8 +245,10 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
             return "तुम्हाला स्वतःचा व्यवसाय सुरू करायचा आहे की नोकरी करायची आहे?"
 
     elif language == "pa":
-        if missing_interest and missing_edu:
-            return "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਆਪਣੇ ਬਾਰੇ ਦੱਸੋ — ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ ਅਤੇ ਤੁਸੀਂ ਕਿਸ ਤਰ੍ਹਾਂ ਦਾ ਕੰਮ ਸਿੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?"
+        if missing_skills and missing_edu:
+            return "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਆਪਣੇ ਬਾਰੇ ਦੱਸੋ — ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ ਅਤੇ ਤੁਹਾਡਾ ਕੀ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਹੈ? ਇਹ ਕੋਈ ਪਰਿਵਾਰਕ ਕੰਮ (ਜਿਵੇਂ ਖੇਤੀ, ਸਿਲਾਈ), ਤਕਨੀਕੀ ਹੁਨਰ, ਜਾਂ ਤੁਹਾਡੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਚੰਗਾ ਰਾਬਤਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤ) ਵੀ ਹੋ ਸਕਦਾ ਹੈ।"
+        elif missing_skills:
+            return "ਬਹੁਤ ਵਧੀਆ! ਕੀ ਤੁਸੀਂ ਆਪਣੇ ਕਿਸੇ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ? ਇਹ ਕੋਈ ਰਵਾਇਤੀ ਜਾਂ ਪਰਿਵਾਰਕ ਕੰਮ ਹੋ ਸਕਦਾ ਹੈ ਜਾਂ ਨਿੱਜੀ ਖੂਬੀਆਂ ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਮਿਲਣਸਾਰ ਹੋਣਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤੀ ਸੁਭਾਅ ਵੀ ਹੋ ਸਕਦਾ ਹੈ।"
         elif missing_edu:
             return "ਬਹੁਤ ਵਧੀਆ! ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ, ਜਿਵੇਂ 8ਵੀਂ, 10ਵੀਂ ਜਾਂ 12ਵੀਂ?"
         elif missing_mobility:
@@ -191,8 +257,10 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
             return "ਕੀ ਤੁਸੀਂ ਆਪਣਾ ਕਾਰੋਬਾਰ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ ਜਾਂ ਨੌਕਰੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
 
     else:
-        if missing_interest and missing_edu:
-            return "Welcome! Please tell me about yourself — what is your education level, and what kind of work or skills interest you?"
+        if missing_skills and missing_edu:
+            return "Welcome! Please tell me about yourself — what is your education level, and what are your strengths or skills? This could be family or traditional work (like farming or tailoring), practical technical skills, or personal strengths like being good with people, patient, or hardworking."
+        elif missing_skills:
+            return "Great! Could you tell me about any skills or strengths you have? It doesn't have to be formal technical training — it could be traditional or family work (like farming or crafts), or personal strengths like being good with people, patient, or hardworking."
         elif missing_edu:
             return "Great! Could you tell me about your education level, such as 8th, 10th, or 12th standard?"
         elif missing_mobility:

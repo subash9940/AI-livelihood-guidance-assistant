@@ -765,22 +765,34 @@ async function loadRoadmapRecommendation() {
   }
 }
 
-function updateReadinessBadge(score) {
+function updateReadinessBadge(score, tier) {
   const container = el.readinessScoreContainer || document.getElementById('readinessScoreContainer');
   const badge = el.readinessScoreBadge || document.getElementById('readinessScoreBadge');
   const icon = el.readinessIcon || document.getElementById('readinessIcon');
   if (!badge) return;
 
   const validScore = (typeof score === 'number' && !isNaN(score)) ? Math.round(score) : 0;
-  badge.textContent = `Readiness: ${validScore}/100`;
+  
+  let tierLabel = tier;
+  if (!tierLabel) {
+    if (validScore >= 70) {
+      tierLabel = 'Highly Recommended';
+    } else if (validScore >= 40) {
+      tierLabel = 'Good Match';
+    } else {
+      tierLabel = 'Possible Match — consider exploring alternatives';
+    }
+  }
+
+  badge.textContent = `Readiness: ${validScore}/100 — ${tierLabel}`;
 
   if (!container) return;
 
-  // Transparent ratio badge styling: red under 40, yellow 40-70, green above 70
+  // Transparent ratio badge styling: red under 40, yellow 40-69, green 70+
   if (validScore < 40) {
     container.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm border transition-colors bg-[#fee2e2] text-[#991b1b] border-[#fecaca]';
     if (icon) icon.textContent = 'warning';
-  } else if (validScore <= 70) {
+  } else if (validScore < 70) {
     container.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm border transition-colors bg-[#fef3c7] text-[#92400e] border-[#fde68a]';
     if (icon) icon.textContent = 'speed';
   } else {
@@ -812,8 +824,8 @@ function renderRoadmap(rec) {
     el.recTradeIcon.textContent = TRADE_ICONS[tradeKey] || 'psychology';
   }
 
-  // Update Numeric Skill Readiness Score Badge (Feature 2)
-  updateReadinessBadge(rec.readiness_score);
+  // Update Numeric Skill Readiness Score Badge & Qualitative Tier (Feature 2)
+  updateReadinessBadge(rec.readiness_score, rec.readiness_tier);
 
   // 1. Render Structured Skill Gap Breakdown (Task 3 Feature)
   renderSkillGaps(rec.skill_gap_breakdown || []);
@@ -940,6 +952,18 @@ function renderRegionalSchemes(schemes = []) {
           <h3 class="font-display font-semibold text-sm text-on-surface mt-0.5">${s.name}</h3>
         </div>
         <span class="material-symbols-outlined text-on-surface-variant text-[20px] flex-shrink-0">${icon}</span>
+      </div>
+
+      <!-- Data Provenance & Verification Badge -->
+      <div class="flex flex-wrap items-center gap-2 my-1">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#fffbeb] text-[#92400e] border border-[#f59e0b]/50 shadow-xs" title="${s.source_note || 'Compiled from official state corporation portals, manually verified as of 2026-09-27'}">
+          <span class="material-symbols-outlined text-[14px] text-[#d97706]">verified_user</span>
+          Community-compiled — verify with local office
+        </span>
+        <span class="inline-flex items-center gap-1 text-[11px] text-on-surface-variant font-medium">
+          <span class="material-symbols-outlined text-[13px] text-on-surface-variant/70">calendar_today</span>
+          Checked: ${s.last_checked || '2026-09-27'}
+        </span>
       </div>
       
       <div class="flex flex-col gap-1 mt-1">

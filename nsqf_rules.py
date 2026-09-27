@@ -510,6 +510,20 @@ def compute_readiness_score(trade_key: str, profile_skills: List[str]) -> Tuple[
     score = round((capped_relevant / total_required) * 100)
     return score, capped_relevant, total_required
 
+def get_readiness_tier(score: int) -> str:
+    """
+    Derives qualitative tier label from numeric readiness score:
+    - score >= 70: 'Highly Recommended'
+    - 40 <= score <= 69: 'Good Match'
+    - score < 40: 'Possible Match — consider exploring alternatives'
+    """
+    if score >= 70:
+        return "Highly Recommended"
+    elif score >= 40:
+        return "Good Match"
+    else:
+        return "Possible Match — consider exploring alternatives"
+
 def _matches(text: str, keywords: List[str]) -> bool:
     """Returns True if any keyword in keywords hits text with word boundaries."""
     return any(_keyword_hit(text, k) for k in keywords)
@@ -608,6 +622,7 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
 
     # Transparent Numeric Skill Readiness Score: (relevant skills / total required) * 100
     readiness_score, relevant_count, total_required = compute_readiness_score(trade_key, profile.get("skills", []))
+    readiness_tier = get_readiness_tier(readiness_score)
 
     return {
         "recommended_trade": trade_display_name,
@@ -619,6 +634,7 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
         "nsqf_alignment": trade["nsqf_level"],
         "gap_summary": gap,
         "readiness_score": readiness_score,
+        "readiness_tier": readiness_tier,
         "readiness_relevant_count": relevant_count,
         "readiness_total_required": total_required,
         "skill_gap_breakdown": trade.get("skill_gaps", []),
