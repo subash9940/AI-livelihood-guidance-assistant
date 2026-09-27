@@ -29,7 +29,7 @@ INTEREST_SKILL_PATTERNS = [
     (r"\b(sew|sewing|tailor|tailoring|cloth|clothes|clothing|stitch|stitching|dress|apparel)\b|(सिलाई|कपड़े|शिलाई|कपडे|ਸਿਲਾਈ|ਕੱਪੜੇ)", "Tailoring & Garment Making"),
     (r"\b(solar|sun|electric|electrical|wire|wiring|bijli|panel|panels)\b|(सोलर|सौर|बिजली|वायरिंग|ਸੋਲਰ|ਬਿਜਲੀ)", "Solar PV & Electrical Installations"),
     (r"\b(mechanic|bike|bikes|motorcycle|motorcycles|car|cars|garage|repair|automotive|vehicle|vehicles|scooter|scooters|ev)\b|(गाड़ी|मोटर|दुरुस्ती|ਮਕੈਨਿਕ|ਗੱਡੀ)", "Two-Wheeler & EV Maintenance"),
-    (r"\b(healthcare|health|hospital|nurse|nursing|patient|patients|medical|clinic|care|caregiver|medicine)\b|(दवा|इलाज|रुग्ण|आरोग्य|ਸਿਹਤ|ਹਸਪਤਾਲ)", "Healthcare & Patient Support"),
+    (r"\b(healthcare|health|hospital|nurse|nursing|patient\s*care|patient\s*support|patients|medical|clinic|caregiver|medicine)\b|(दवा|इलाज|रुग्ण|आरोग्य|ਸਿਹਤ|ਹਸਪਤਾਲ)", "Healthcare & Patient Support"),
     (r"\b(computer|computers|digital|digitally|data|phone|internet|online|csc)\b|(कंप्यूटर|इंटरनेट|संगणक|ਕੰਪਿਊਟਰ)", "Digital Services & CSC Operation")
 ]
 
@@ -97,6 +97,46 @@ LOCATION_PATTERNS = [
     (r"\b(bhopal)\b|(भोपाल)", "Bhopal"),
     (r"\b(raipur)\b|(रायपुर)", "Raipur")
 ]
+
+SOFT_SKILLS_SET = {
+    "Interpersonal Skills (Good with people)",
+    "Patient & Attentive",
+    "Hardworking & Dedicated",
+    "Effective Communication",
+    "Team Player & Collaborative",
+    "Quick Learner & Adaptable",
+    "Punctual & Disciplined",
+    "Honest & Trustworthy",
+    "Practical Problem Solving & Resourcefulness"
+}
+
+def is_soft_skill(skill_name: str) -> bool:
+    """Checks whether a skill string represents a soft/interpersonal skill."""
+    s = skill_name.strip().lower()
+    for soft in SOFT_SKILLS_SET:
+        if s == soft.lower() or soft.lower() in s:
+            return True
+    return False
+
+def has_concrete_interest_or_technical_skill(profile: Dict[str, Any]) -> bool:
+    """
+    Checks if profile has at least one concrete trade interest OR technical skill.
+    Soft skills alone return False.
+    """
+    if len(profile.get("interests", [])) > 0:
+        return True
+    for sk in profile.get("skills", []):
+        if not is_soft_skill(sk):
+            return True
+    return False
+
+def is_profile_complete(profile: Dict[str, Any]) -> bool:
+    """
+    A beneficiary profile is considered complete and eligible for recommendation
+    ONLY IF it has at least one concrete interest OR technical skill.
+    Soft-skill phrases alone do not satisfy completeness.
+    """
+    return has_concrete_interest_or_technical_skill(profile)
 
 def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None) -> Tuple[Dict[str, Any], bool]:
     """
@@ -195,30 +235,35 @@ def extract_profile_from_text(text: str, current_profile: Dict[str, Any] = None)
         profile["location"] = "Your Local District"
 
     # Profile Completeness Logic:
-    # A beneficiary profile is considered complete/eligible for recommendation if it has
-    # at least one skill of ANY kind — technical, vocational, traditional/family-occupation-based,
-    # or soft/interpersonal (e.g. 'good with people', 'patient', 'hardworking') — not just formal technical skills.
-    has_skills = len(profile.get("skills", [])) > 0
-    has_interests = len(profile.get("interests", [])) > 0
-    has_fam = bool(profile.get("family_occupation"))
-    has_edu = bool(profile.get("education_level"))
-    has_mobility = bool(profile.get("mobility_constraint"))
-
-    has_any_skill = has_skills or has_interests or has_fam
-
-    is_complete = has_any_skill or (has_edu and has_mobility) or (has_edu and has_fam)
+    # Require at least one concrete interest OR technical skill before generating any recommendation.
+    # If the user has only provided soft skills, is_complete MUST be False.
+    is_complete = is_profile_complete(profile)
 
     return profile, is_complete
 
 def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     """
     Generates a natural, spoken follow-up prompt based on what is missing from the profile.
-    If the profile is incomplete, explicitly asks about traditional or interpersonal strengths, not just technical skills.
+    If the user has provided soft skills but no concrete interest or technical skill,
+    returns a clarifying follow-up question asking for a concrete interest or technical skill.
     """
-    has_skills = len(profile.get("skills", [])) > 0 or len(profile.get("interests", [])) > 0 or bool(profile.get("family_occupation"))
+    has_concrete = has_concrete_interest_or_technical_skill(profile)
+    has_soft = any(is_soft_skill(s) for s in profile.get("skills", []))
     missing_edu = not profile.get("education_level")
-    missing_skills = not has_skills
-    missing_mobility = not profile.get("mobility_constraint")
+
+    # If the beneficiary only provided soft skills with no concrete interest or technical skill:
+    if has_soft and not has_concrete:
+        if language == "hi":
+            return "अपनी व्यक्तिगत खूबियों (जैसे मेहनत, धैर्य, या व्यवहार) को साझा करने के लिए धन्यवाद! सही ट्रेड का सुझाव देने के लिए, क्या आप किसी व्यावहारिक हुनर, रुचि या कार्यक्षेत्र (जैसे सिलाई, बिजली/वायरिंग, वाहन मरम्मत, खाद्य प्रसंस्करण, कंप्यूटर, या खेती) के बारे में बता सकते हैं?"
+        elif language == "mr":
+            return "तुमचे वैयक्तिक गुण (उदा. कष्टाळूपणा, संयम किंवा संवाद) सांगितल्याबद्दल धन्यवाद! योग्य उपजीविकेची शिफारस करण्यासाठी, तुम्हाला कोणत्या विशिष्ट कामात किंवा कौशल्यात रस आहे (उदा. सिलाई, इलेक्ट्रिकल काम, वाहन दुरुस्ती, अन्न प्रक्रिया, संगणक किंवा शेती) ते सांगू शकाल का?"
+        elif language == "pa":
+            return "ਆਪਣੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਮਿਹਨਤ, ਸਬਰ ਜਾਂ ਮਿਲਣਸਾਰ ਹੋਣਾ) ਸਾਂਝੀਆਂ ਕਰਨ ਲਈ ਧੰਨਵਾਦ! ਸਹੀ ਰੋਜ਼ਗਾਰ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕਰਨ ਲਈ, ਕੀ ਤੁਸੀਂ ਕਿਸੇ ਖਾਸ ਕੰਮ, ਹੁਨਰ ਜਾਂ ਖੇਤਰ (ਜਿਵੇਂ ਸਿਲਾਈ, ਬਿਜਲੀ ਦਾ ਕੰਮ, ਗੱਡੀਆਂ ਦੀ ਮੁਰੰਮਤ, ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ, ਕੰਪਿਊਟਰ ਜਾਂ ਖੇਤੀਬਾੜੀ) ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ?"
+        else:
+            return "Thank you for sharing your personal strengths! To recommend the right trade, could you tell me about a specific practical skill, trade interest, or work area you'd like to pursue (for example: electrical wiring, tailoring, two-wheeler repair, food processing, computers, or agriculture)?"
+
+    # If no skills at all:
+    missing_skills = not has_concrete and not has_soft
 
     if language == "hi":
         if missing_skills and missing_edu:
@@ -227,8 +272,6 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
             return "बहुत अच्छा! क्या आप अपने कौशल या खूबियों के बारे में बता सकते हैं? यह केवल तकनीकी काम ही नहीं, बल्कि पारंपरिक पारिवारिक काम (जैसे खेती, शिल्प) या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा व्यवहार, धैर्य, या लगन) भी हो सकती है।"
         elif missing_edu:
             return "बहुत अच्छा! क्या आप अपनी पढ़ाई के बारे में बता सकते हैं, जैसे 8वीं, 10वीं या 12वीं पास?"
-        elif missing_mobility:
-            return "क्या आप काम या ट्रेनिंग के लिए गाँव से बाहर जा सकते हैं, या गाँव के पास ही काम करना चाहते हैं?"
         else:
             return "क्या आप खुद की दुकान या व्यवसाय शुरू करना चाहते हैं, या किसी कंपनी में नौकरी करना चाहते हैं?"
 
@@ -239,8 +282,6 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
             return "छान! तुमच्याकडे कोणती कौशल्ये किंवा ताकदीचे पैलू आहेत ते सांगू शकाल का? हे केवळ तांत्रिक काम नसून पारंपरिक कौटुंबिक काम किंवा लोकांसोबत चांगले वागणे, संयम व कष्टाळूपणा यासारखे वैयक्तिक गुणही असू शकतात."
         elif missing_edu:
             return "छान! तुमचे शिक्षण कितवीपर्यंत झाले आहे ते सांगू शकता का (उदा. ८वी, १०वी किंवा १२वी)?"
-        elif missing_mobility:
-            return "तुम्ही प्रशिक्षणासाठी बाहेर तालुक्यात जाऊ शकता का, की गावाजवळच काम हवे आहे?"
         else:
             return "तुम्हाला स्वतःचा व्यवसाय सुरू करायचा आहे की नोकरी करायची आहे?"
 
@@ -251,8 +292,6 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
             return "ਬਹੁਤ ਵਧੀਆ! ਕੀ ਤੁਸੀਂ ਆਪਣੇ ਕਿਸੇ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ? ਇਹ ਕੋਈ ਰਵਾਇਤੀ ਜਾਂ ਪਰਿਵਾਰਕ ਕੰਮ ਹੋ ਸਕਦਾ ਹੈ ਜਾਂ ਨਿੱਜੀ ਖੂਬੀਆਂ ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਮਿਲਣਸਾਰ ਹੋਣਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤੀ ਸੁਭਾਅ ਵੀ ਹੋ ਸਕਦਾ ਹੈ।"
         elif missing_edu:
             return "ਬਹੁਤ ਵਧੀਆ! ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ, ਜਿਵੇਂ 8ਵੀਂ, 10ਵੀਂ ਜਾਂ 12ਵੀਂ?"
-        elif missing_mobility:
-            return "ਕੀ ਤੁਸੀਂ ਸਿਖਲਾਈ ਲਈ ਬਾਹਰ ਜਾ ਸਕਦੇ ਹੋ ਜਾਂ ਪਿੰਡ ਵਿੱਚ ਹੀ ਕੰਮ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
         else:
             return "ਕੀ ਤੁਸੀਂ ਆਪਣਾ ਕਾਰੋਬਾਰ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ ਜਾਂ ਨੌਕਰੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
 
@@ -263,7 +302,6 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
             return "Great! Could you tell me about any skills or strengths you have? It doesn't have to be formal technical training — it could be traditional or family work (like farming or crafts), or personal strengths like being good with people, patient, or hardworking."
         elif missing_edu:
             return "Great! Could you tell me about your education level, such as 8th, 10th, or 12th standard?"
-        elif missing_mobility:
-            return "Can you travel to the district training center, or do you need opportunities close to your village?"
         else:
             return "Would you prefer self-employment (your own small enterprise) or wage employment with a monthly salary?"
+

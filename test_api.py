@@ -30,7 +30,7 @@ def test_full_pipeline():
     print(f"Session started: {session_id}")
 
     print("\n--- 2. Testing POST /session/{id}/voice-input with Demo Script Utterance ---")
-    utterance = "I finished 10th, my family does farming, I want something food-related, I can't travel far"
+    utterance = "I am from Delhi, I finished 10th, my family does farming, I want something food-related, I can't travel far"
     res = client.post(f"/session/{session_id}/voice-input", json={"text": utterance, "language": "en"})
     assert res.status_code == 200, f"Error: {res.text}"
     voice_res = res.json()
@@ -196,7 +196,7 @@ def test_readiness_score_calculation():
     assert "readiness_score" in rec, "readiness_score must be present in recommendation"
     assert rec["readiness_score"] == 20, f"Expected 20% readiness score for 1/5 skills, got {rec['readiness_score']}"
     assert rec["readiness_score"] < 40, "Should fall in RED threshold (< 40)"
-    assert rec.get("readiness_tier") == "Possible Match — consider exploring alternatives", f"Expected 'Possible Match — consider exploring alternatives', got {rec.get('readiness_tier')}"
+    assert rec.get("readiness_tier") == "Exploratory Track — Review Options", f"Expected 'Exploratory Track — Review Options', got {rec.get('readiness_tier')}"
     print(f"Low readiness profile score: {rec['readiness_score']}/100 — {rec.get('readiness_tier')} (RED)")
 
     # Test 2: Moderate readiness (40-69) - 3 of 5 skills
@@ -226,7 +226,7 @@ def test_readiness_score_calculation():
     rec2 = client.get(f"/session/{session_id2}/recommendation").json()
     assert rec2["readiness_score"] == 60, f"Expected 60% readiness score for 3/5 skills, got {rec2['readiness_score']}"
     assert 40 <= rec2["readiness_score"] <= 69, "Should fall in YELLOW threshold (40-69)"
-    assert rec2.get("readiness_tier") == "Good Match", f"Expected 'Good Match', got {rec2.get('readiness_tier')}"
+    assert rec2.get("readiness_tier") == "Skill Bridge Track", f"Expected 'Skill Bridge Track', got {rec2.get('readiness_tier')}"
     print(f"Moderate readiness profile score: {rec2['readiness_score']}/100 — {rec2.get('readiness_tier')} (YELLOW)")
 
     # Test 3: High readiness (>= 70) - 4 of 5 skills
@@ -257,7 +257,7 @@ def test_readiness_score_calculation():
     rec3 = client.get(f"/session/{session_id3}/recommendation").json()
     assert rec3["readiness_score"] == 80, f"Expected 80% readiness score for 4/5 skills, got {rec3['readiness_score']}"
     assert rec3["readiness_score"] >= 70, "Should fall in GREEN threshold (>= 70)"
-    assert rec3.get("readiness_tier") == "Highly Recommended", f"Expected 'Highly Recommended', got {rec3.get('readiness_tier')}"
+    assert rec3.get("readiness_tier") == "Direct Pathway Ready", f"Expected 'Direct Pathway Ready', got {rec3.get('readiness_tier')}"
     print(f"High readiness profile score: {rec3['readiness_score']}/100 — {rec3.get('readiness_tier')} (GREEN)")
 
 def test_demo_beneficiary_pipeline_profiles():
@@ -516,15 +516,18 @@ def test_regional_demand_capacity_gap():
 def test_broad_skill_profile_validation_and_tiers():
     print("\n--- 12. Testing Broad Skill Profile Validation & Qualitative Tiers ---")
     
-    # 1. Soft / Interpersonal Skill Validation
+    # 1. Soft / Interpersonal Skill Validation: Must extract soft skills BUT profile must be incomplete (gated)
     p1, comp1 = profiler.extract_profile_from_text("I am good with people, patient, and hardworking")
-    assert comp1 is True, f"Beneficiary with soft skills should be complete, got {comp1}"
+    assert comp1 is False, f"Beneficiary with only soft skills must be incomplete (gated), got {comp1}"
     assert len(p1["skills"]) >= 2, f"Should extract soft skills, got {p1['skills']}"
     assert any("people" in s.lower() for s in p1["skills"])
     assert any("patient" in s.lower() for s in p1["skills"])
     assert any("hardworking" in s.lower() for s in p1["skills"])
+    # Follow-up prompt must ask for concrete trade or technical skill
+    prompt1 = profiler.generate_next_prompt(p1, language="en")
+    assert any(term in prompt1.lower() for term in ["practical", "trade", "technical", "work area", "strengths"])
 
-    # 2. Traditional / Family Occupation Skill Validation
+    # 2. Traditional / Family Occupation Skill Validation: Has concrete skill -> complete
     p2, comp2 = profiler.extract_profile_from_text("My family does traditional pottery and craft")
     assert comp2 is True, f"Beneficiary with traditional skills should be complete, got {comp2}"
     assert len(p2["skills"]) >= 1, f"Should extract traditional skills, got {p2['skills']}"
@@ -540,18 +543,100 @@ def test_broad_skill_profile_validation_and_tiers():
     prompt_hi = profiler.generate_next_prompt(p3, language="hi")
     assert any(term in prompt_hi for term in ["पारंपरिक", "खूबियां", "व्यक्तिगत", "धैर्य", "मेहनत", "हुनर"]), f"Hindi prompt missing traditional/soft skill keywords: '{prompt_hi}'"
 
-    # 5. Qualitative Tier Helper Validation
-    assert nsqf_rules.get_readiness_tier(100) == "Highly Recommended"
-    assert nsqf_rules.get_readiness_tier(75) == "Highly Recommended"
-    assert nsqf_rules.get_readiness_tier(70) == "Highly Recommended"
-    assert nsqf_rules.get_readiness_tier(69) == "Good Match"
-    assert nsqf_rules.get_readiness_tier(50) == "Good Match"
-    assert nsqf_rules.get_readiness_tier(40) == "Good Match"
-    assert nsqf_rules.get_readiness_tier(39) == "Possible Match — consider exploring alternatives"
-    assert nsqf_rules.get_readiness_tier(20) == "Possible Match — consider exploring alternatives"
-    assert nsqf_rules.get_readiness_tier(0) == "Possible Match — consider exploring alternatives"
+    # 5. Qualitative Tier Helper Validation (Original Distinct Names)
+    assert nsqf_rules.get_readiness_tier(100) == "Direct Pathway Ready"
+    assert nsqf_rules.get_readiness_tier(75) == "Direct Pathway Ready"
+    assert nsqf_rules.get_readiness_tier(70) == "Direct Pathway Ready"
+    assert nsqf_rules.get_readiness_tier(69) == "Skill Bridge Track"
+    assert nsqf_rules.get_readiness_tier(50) == "Skill Bridge Track"
+    assert nsqf_rules.get_readiness_tier(40) == "Skill Bridge Track"
+    assert nsqf_rules.get_readiness_tier(39) == "Exploratory Track — Review Options"
+    assert nsqf_rules.get_readiness_tier(20) == "Exploratory Track — Review Options"
+    assert nsqf_rules.get_readiness_tier(0) == "Exploratory Track — Review Options"
 
     print("Verified broad skill profile validation, soft & traditional skills extraction, follow-up prompt, and all 3 qualitative tiers!")
+
+def test_graceful_fallbacks_and_completeness_gating():
+    print("\n--- 13. Testing Completeness Gating & Graceful Fallbacks (No Guessing) ---")
+
+    # A. Completeness Gating: Only soft skills provided -> No recommendation generated, clarifying question returned
+    s_res = client.post("/session/start", json={"entry_mode": "app", "language": "en"})
+    session_id = s_res.json()["session_id"]
+    v_res = client.post(
+        f"/session/{session_id}/voice-input",
+        json={"text": "I am 10th pass, very hardworking, patient, and good with people"}
+    )
+    assert v_res.status_code == 200
+    v_data = v_res.json()
+    assert v_data["profile_complete"] is False, "Profile with only soft skills must not be complete"
+    assert v_data.get("beneficiary_id") is None, "Beneficiary must not be created when profile is incomplete"
+    assert any(term in v_data["next_prompt"].lower() for term in ["practical", "trade", "technical", "work area"])
+    
+    rec_res = client.get(f"/session/{session_id}/recommendation")
+    assert rec_res.status_code == 409, "Must return 409 Conflict when requesting recommendation for incomplete profile"
+    print("Verified completeness gating: soft-skill only profile blocked from recommendation generation.")
+
+    # B. Graceful Fallback 1: No matching region -> explicit 'I need more information to recommend confidently', missing_piece: 'region'
+    profile_no_region = {
+        "name": "Arun Kumar",
+        "education_level": "10th Standard",
+        "interests": ["Tailoring & Garment Making"],
+        "skills": ["Basic Stitching & Fabric Cutting"],
+        "location": "Patna",  # Bihar is not among the 5 supported regions
+        "state": "Bihar"
+    }
+    skill_res_no_reg = nsqf_rules.analyze_skill_gap(profile_no_region)
+    assert skill_res_no_reg.get("needs_more_info") is True
+    assert skill_res_no_reg.get("missing_piece") == "region"
+    assert "I need more information to recommend confidently" in skill_res_no_reg.get("message")
+    assert "region" in skill_res_no_reg.get("detail").lower()
+
+    # Via direct recommendation endpoint
+    rec_api_no_reg = client.post("/recommendation", json={"profile": profile_no_region}).json()
+    assert rec_api_no_reg.get("needs_more_info") is True
+    assert rec_api_no_reg.get("missing_piece") == "region"
+    assert "I need more information to recommend confidently" in rec_api_no_reg.get("message")
+    print("Verified graceful fallback for unmapped region (no guessing): missing piece = region.")
+
+    # C. Graceful Fallback 2: No matching skill category -> missing_piece: 'skill'
+    profile_no_skill = {
+        "name": "Deepak Sharma",
+        "education_level": "10th Standard",
+        "skills": ["Traditional Pottery & Clay Modeling"],  # Not in the 6 catalog trades
+        "interests": [],
+        "location": "Delhi",
+        "state": "Delhi"
+    }
+    skill_res_no_skill = nsqf_rules.analyze_skill_gap(profile_no_skill)
+    assert skill_res_no_skill.get("needs_more_info") is True
+    assert skill_res_no_skill.get("missing_piece") == "skill"
+    assert "I need more information to recommend confidently" in skill_res_no_skill.get("message")
+
+    rec_api_no_skill = client.post("/recommendation", json={"profile": profile_no_skill}).json()
+    assert rec_api_no_skill.get("needs_more_info") is True
+    assert rec_api_no_skill.get("missing_piece") == "skill"
+    assert "I need more information to recommend confidently" in rec_api_no_skill.get("message")
+    print("Verified graceful fallback for unmatched skill category (no guessing): missing piece = skill.")
+
+    # D. Graceful Fallback 3: Tied confidence score -> missing_piece: 'clarity of intent'
+    profile_tied = {
+        "name": "Ravi Kumar",
+        "education_level": "12th Standard",
+        "interests": ["Two-Wheeler & EV Maintenance", "Solar PV & Electrical Installations"],
+        "skills": ["Hand Tools & Mechanical Maintenance", "Basic Electrical Wiring & Circuit Safety"],
+        "location": "Madurai",
+        "state": "Tamil Nadu"
+    }
+    skill_res_tied = nsqf_rules.analyze_skill_gap(profile_tied)
+    assert skill_res_tied.get("needs_more_info") is True
+    assert skill_res_tied.get("missing_piece") == "clarity of intent"
+    assert "I need more information to recommend confidently" in skill_res_tied.get("message")
+
+    rec_api_tied = client.post("/recommendation", json={"profile": profile_tied}).json()
+    assert rec_api_tied.get("needs_more_info") is True
+    assert rec_api_tied.get("missing_piece") == "clarity of intent"
+    assert "I need more information to recommend confidently" in rec_api_tied.get("message")
+    print("Verified graceful fallback for tied confidence score (no guessing): missing piece = clarity of intent.")
 
 if __name__ == "__main__":
     test_full_pipeline()
@@ -564,5 +649,6 @@ if __name__ == "__main__":
     test_nsqf_qualification_pack_details()
     test_regional_demand_capacity_gap()
     test_broad_skill_profile_validation_and_tiers()
-    print("\nAll 12 test suites passed successfully!")
+    test_graceful_fallbacks_and_completeness_gating()
+    print("\nAll 13 test suites passed successfully!")
 

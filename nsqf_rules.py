@@ -5,6 +5,7 @@ against NSQF-aligned job roles and PM-AJAY skill training schemes.
 """
 import re
 from typing import Dict, Any, List, Tuple
+import region_schemes
 
 # NSQF Eligible Trades Catalog with PM-AJAY Alignment & Concrete Skill Gaps
 TRADES_CATALOG = {
@@ -386,8 +387,8 @@ TRADE_KEYWORDS = {
         "गाड़ी", "मोटर", "दुरुस्ती", "ਮਕੈਨਿਕ", "ਗੱਡੀ"
     ],
     "healthcare_assistant": [
-        "healthcare", "health", "nurse", "nursing", "hospital", "hospitals", "patient",
-        "patients", "medical", "clinic", "clinics", "care", "caregiver", "medicine", "dawa",
+        "healthcare", "health", "nurse", "nursing", "hospital", "hospitals", "patient care", "patient support",
+        "patients", "medical", "clinic", "clinics", "caregiver", "medicine", "dawa",
         "ilaj", "दवा", "इलाज", "रुग्ण", "आरोग्य", "ਸਿਹਤ", "ਹਸਪਤਾਲ"
     ],
     "digital_csc": [
@@ -513,16 +514,16 @@ def compute_readiness_score(trade_key: str, profile_skills: List[str]) -> Tuple[
 def get_readiness_tier(score: int) -> str:
     """
     Derives qualitative tier label from numeric readiness score:
-    - score >= 70: 'Highly Recommended'
-    - 40 <= score <= 69: 'Good Match'
-    - score < 40: 'Possible Match — consider exploring alternatives'
+    - score >= 70: 'Direct Pathway Ready'
+    - 40 <= score <= 69: 'Skill Bridge Track'
+    - score < 40: 'Exploratory Track — Review Options'
     """
     if score >= 70:
-        return "Highly Recommended"
+        return "Direct Pathway Ready"
     elif score >= 40:
-        return "Good Match"
+        return "Skill Bridge Track"
     else:
-        return "Possible Match — consider exploring alternatives"
+        return "Exploratory Track — Review Options"
 
 def _matches(text: str, keywords: List[str]) -> bool:
     """Returns True if any keyword in keywords hits text with word boundaries."""
@@ -532,14 +533,56 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
     """
     Evaluates beneficiary profile against trade criteria using a scoring engine.
     Determines recommended trade, skill gap summary, concrete gap breakdown, and NSQF alignment.
+    Falls back gracefully without guessing if region is missing, no skill category matches, or scores tie.
     """
+    lang = profile.get("language", "en")
+
+    # 1. Region Gating: Profile must map to a recognized canonical region
+    raw_loc = profile.get("state") or profile.get("location")
+    canonical_state = region_schemes.get_canonical_state(raw_loc)
+    if not canonical_state:
+        clarifying_questions = {
+            "en": "I need more information to recommend confidently. Which state or district are you located in? (We currently support Delhi, Maharashtra, Tamil Nadu, Karnataka, and Uttar Pradesh).",
+            "hi": "मुझे आत्मविश्वास से सिफारिश करने के लिए और जानकारी चाहिए। आप किस राज्य या जिले में स्थित हैं? (वर्तमान में दिल्ली, महाराष्ट्र, तमिलनाडु, कर्नाटक और उत्तर प्रदेश समर्थित हैं)।",
+            "mr": "आत्मविश्वासाने शिफारस करण्यासाठी मला आणखी माहिती हवी आहे. तुम्ही कोणत्या राज्यात किंवा जिल्ह्यात राहता? (सध्या दिल्ली, महाराष्ट्र, तामिळनाडू, कर्नाटक आणि उत्तर प्रदेश उपलब्ध आहेत).",
+            "pa": "ਭਰੋਸੇ ਨਾਲ ਸਿਫ਼ਾਰਸ਼ ਕਰਨ ਲਈ ਮੈਨੂੰ ਹੋਰ ਜਾਣਕਾਰੀ ਚਾਹੀਦੀ ਹੈ। ਤੁਸੀਂ ਕਿਸ ਰਾਜ ਜਾਂ ਜ਼ਿਲ੍ਹੇ ਵਿੱਚ ਰਹਿੰਦੇ ਹੋ? (ਇਸ ਵੇਲੇ ਦਿੱਲੀ, ਮਹਾਰਾਸ਼ਟਰ, ਤਾਮਿਲਨਾਡੂ, ਕਰਨਾਟਕ ਅਤੇ ਉੱਤਰ ਪ੍ਰਦੇਸ਼ ਉਪਲਬਧ ਹਨ)।"
+        }
+        clarifying_q = clarifying_questions.get(lang, clarifying_questions["en"])
+        return {
+            "needs_more_info": True,
+            "missing_piece": "region",
+            "message": "I need more information to recommend confidently",
+            "detail": "Profile has no matching region. Nivara currently supports Delhi, Maharashtra, Tamil Nadu, Karnataka, and Uttar Pradesh.",
+            "clarifying_question": clarifying_q,
+            "recommended_trade": "Clarification Required",
+            "trade_key": None,
+            "qp_name": None,
+            "qp_code": None,
+            "nsqf_level": None,
+            "ssc_name": None,
+            "nsqf_alignment": "Clarification Required",
+            "gap_summary": "I need more information to recommend confidently: missing region.",
+            "readiness_score": 0,
+            "readiness_tier": get_readiness_tier(0),
+            "readiness_relevant_count": 0,
+            "readiness_total_required": 5,
+            "skill_gap_breakdown": [],
+            "training_programme": "Pending Region Clarification",
+            "training_centre": "Pending Region Clarification",
+            "local_opportunity": "Pending Region Clarification",
+            "roadmap_steps": [],
+            "spoken_summary": clarifying_q,
+            "duration_hours": None,
+            "sector": None
+        }
+
     edu = (profile.get("education_level") or "").lower()
     interests = [str(i).lower() for i in profile.get("interests", [])]
     skills = [str(s).lower() for s in profile.get("skills", [])]
     family_occ = (profile.get("family_occupation") or "").lower()
     mobility = (profile.get("mobility_constraint") or "").lower()
     emp_pref = (profile.get("employment_preference") or "undecided").lower()
-    location = profile.get("location") or "Your Local District"
+    location = profile.get("location") or canonical_state
 
     combined_text = " ".join(interests + skills + [family_occ, edu, mobility, emp_pref])
 
@@ -551,39 +594,87 @@ def analyze_skill_gap(profile: Dict[str, Any]) -> Dict[str, Any]:
 
     max_score = max(scores.values())
 
-    # Check mobility restriction with word boundary helper
-    RESTRICTED_KEYWORDS = [
-        "cannot", "restricted", "home", "near", "village", "village only",
-        "local only", "low", "गाँव में", "गावातच", "दूर नहीं", "जा नहीं सकते",
-        "लांब जाऊ शकत नाही", "ਨੇੜੇ", "ਪਿੰਡ ਵਿੱਚ"
-    ]
-    is_restricted = _matches(mobility, RESTRICTED_KEYWORDS)
+    # 2. Skill Category Gating: If no trade keywords hit, do NOT guess
+    if max_score == 0:
+        clarifying_questions = {
+            "en": "I need more information to recommend confidently. Could you share more about your technical skills or trade interests? (For example: tailoring, electrical work, two-wheeler repair, food processing, digital services, or healthcare).",
+            "hi": "मुझे आत्मविश्वास से सिफारिश करने के लिए और जानकारी चाहिए। क्या आप अपने किसी तकनीकी हुनर या ट्रेड में रुचि के बारे में बता सकते हैं? (जैसे सिलाई, बिजली/वायरिंग, वाहन मरम्मत, खाद्य प्रसंस्करण, कंप्यूटर/डिजिटल सेवा, या स्वास्थ्य सहायता)।",
+            "mr": "आत्मविश्वासाने शिफारस करण्यासाठी मला आणखी माहिती हवी आहे. तुम्ही तुमच्या तांत्रिक कौशल्यांबद्दल किंवा आवडीबद्दल सांगू शकाल का? (उदा. सिलाई, इलेक्ट्रिकल काम, वाहन दुरुस्ती, अन्न प्रक्रिया, संगणक सेवा किंवा आरोग्य सेवा).",
+            "pa": "ਭਰੋਸੇ ਨਾਲ ਸਿਫ਼ਾਰਸ਼ ਕਰਨ ਲਈ ਮੈਨੂੰ ਹੋਰ ਜਾਣਕਾਰੀ ਚਾਹੀਦੀ ਹੈ। ਕੀ ਤੁਸੀਂ ਆਪਣੇ ਤਕਨੀਕੀ ਹੁਨਰ ਜਾਂ ਕੰਮ ਦੀ ਰੁਚੀ ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ? (ਜਿਵੇਂ ਸਿਲਾਈ, ਬਿਜਲੀ ਦਾ ਕੰਮ, ਗੱਡੀਆਂ ਦੀ ਮੁਰੰਮਤ, ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ, ਕੰਪਿਊਟਰ ਜਾਂ ਸਿਹਤ ਸੇਵਾਵਾਂ)।"
+        }
+        clarifying_q = clarifying_questions.get(lang, clarifying_questions["en"])
+        return {
+            "needs_more_info": True,
+            "missing_piece": "skill",
+            "message": "I need more information to recommend confidently",
+            "detail": "Profile has no matching skill category. No trade in the PM-AJAY catalog aligned with the provided input.",
+            "clarifying_question": clarifying_q,
+            "recommended_trade": "Clarification Required",
+            "trade_key": None,
+            "qp_name": None,
+            "qp_code": None,
+            "nsqf_level": None,
+            "ssc_name": None,
+            "nsqf_alignment": "Clarification Required",
+            "gap_summary": "I need more information to recommend confidently: missing skill category.",
+            "readiness_score": 0,
+            "readiness_tier": get_readiness_tier(0),
+            "readiness_relevant_count": 0,
+            "readiness_total_required": 5,
+            "skill_gap_breakdown": [],
+            "training_programme": "Pending Skill Clarification",
+            "training_centre": "Pending Skill Clarification",
+            "local_opportunity": "Pending Skill Clarification",
+            "roadmap_steps": [],
+            "spoken_summary": clarifying_q,
+            "duration_hours": None,
+            "sector": None
+        }
 
-    if max_score > 0:
-        top_candidates = [t_key for t_key in ORDERED_TRADE_KEYS if scores[t_key] == max_score]
-        if len(top_candidates) == 1:
-            trade_key = top_candidates[0]
-        else:
-            # Tiebreak: prefer trade whose mobility_requirement matches profile restriction
-            if is_restricted:
-                low_mob_candidates = [t for t in top_candidates if TRADES_CATALOG[t]["mobility_requirement"] == "low"]
-                trade_key = low_mob_candidates[0] if low_mob_candidates else top_candidates[0]
-            else:
-                trade_key = top_candidates[0]
-        gap = TRADE_GAP_SUMMARIES[trade_key]
-    else:
-        # Default fallback based on mobility and education
-        if is_restricted:
-            trade_key = "food_processing"
-            gap = "Beneficiary needs low-mobility, local village cluster livelihood. Skill gap exists in value-added processing and certified hygiene packaging under PM-AJAY."
-        else:
-            trade_key = "digital_csc" if ("10th" in edu or "12th" in edu or "graduate" in edu) else "food_processing"
-            gap = "Requires formal vocational certification to bridge gap from informal labor to structured PM-AJAY livelihood pathway."
+    # 3. Tied Confidence Score Gating: If multiple trades share top score, do NOT guess
+    top_candidates = [t_key for t_key in ORDERED_TRADE_KEYS if scores[t_key] == max_score]
+    if len(top_candidates) > 1:
+        tied_names = [TRADES_CATALOG[t]["trade_name"] for t in top_candidates]
+        joined_names = " and ".join(tied_names)
+        clarifying_questions = {
+            "en": f"I need more information to recommend confidently. Your profile shows an equal match between: {joined_names}. Which of these paths do you prefer to focus on?",
+            "hi": f"मुझे आत्मविश्वास से सिफारिश करने के लिए और जानकारी चाहिए। आपका प्रोफाइल {joined_names} दोनों में समान रूप से मेल खाता है। आप किस क्षेत्र को प्राथमिकता देना चाहेंगे?",
+            "mr": f"आत्मविश्वासाने शिफारस करण्यासाठी मला आणखी माहिती हवी आहे. तुमचे प्रोफाइल {joined_names} या दोन्ही पर्यायांमध्ये समान बसते. तुम्हाला कोणत्या क्षेत्रात काम करायला जास्त आवडेल?",
+            "pa": f"ਭਰੋਸੇ ਨਾਲ ਸਿਫ਼ਾਰਸ਼ ਕਰਨ ਲਈ ਮੈਨੂੰ ਹੋਰ ਜਾਣਕਾਰੀ ਚਾਹੀਦੀ ਹੈ। ਤੁਹਾਡਾ ਪ੍ਰੋਫਾਈਲ {joined_names} ਦੋਵਾਂ ਨਾਲ ਬਰਾਬਰ ਮੇਲ ਖਾਂਦਾ ਹੈ। ਤੁਸੀਂ ਕਿਹੜਾ ਖੇਤਰ ਚੁਣਨਾ ਪਸੰਦ ਕਰੋਗੇ?"
+        }
+        clarifying_q = clarifying_questions.get(lang, clarifying_questions["en"])
+        return {
+            "needs_more_info": True,
+            "missing_piece": "clarity of intent",
+            "message": "I need more information to recommend confidently",
+            "detail": f"Tied confidence score between recommendations: {joined_names}. Specific direction required.",
+            "clarifying_question": clarifying_q,
+            "tied_trades": tied_names,
+            "recommended_trade": "Clarification Required",
+            "trade_key": None,
+            "qp_name": None,
+            "qp_code": None,
+            "nsqf_level": None,
+            "ssc_name": None,
+            "nsqf_alignment": "Clarification Required",
+            "gap_summary": f"I need more information to recommend confidently: tied match between {joined_names}.",
+            "readiness_score": 0,
+            "readiness_tier": get_readiness_tier(0),
+            "readiness_relevant_count": 0,
+            "readiness_total_required": 5,
+            "skill_gap_breakdown": [],
+            "training_programme": "Pending Intent Clarification",
+            "training_centre": "Pending Intent Clarification",
+            "local_opportunity": "Pending Intent Clarification",
+            "roadmap_steps": [],
+            "spoken_summary": clarifying_q,
+            "duration_hours": None,
+            "sector": None
+        }
 
-    # If mobility is strictly low and selected trade has medium mobility, fall back to low mobility trade
-    if is_restricted and TRADES_CATALOG[trade_key]["mobility_requirement"] == "medium":
-        trade_key = "food_processing"
-        gap = f"Adapted for restricted mobility: Selected home/cluster-based Food Processing over travel-intensive trades. {gap}"
+    # Exactly one top trade candidate matched
+    trade_key = top_candidates[0]
+    gap = TRADE_GAP_SUMMARIES[trade_key]
 
     trade = TRADES_CATALOG[trade_key]
     lang = profile.get("language", "en")

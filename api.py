@@ -143,35 +143,41 @@ async def voice_input(session_id: str, request: Request):
             updated_profile["education_level"] = updated_profile["education"]
         if "mobility" in updated_profile and "mobility_constraint" not in updated_profile:
             updated_profile["mobility_constraint"] = updated_profile["mobility"]
-        if updated_profile.get("education_level") or updated_profile.get("education"):
-            is_complete = True
 
-    # 3. Next prompt generation
+    # Re-evaluate completeness strictly: require at least one concrete interest or technical skill
+    is_complete = profiler.is_profile_complete(updated_profile)
+
+    skill_res = None
     if is_complete:
-        if lang == "hi":
-            next_prompt = "धन्यवाद! आपकी जानकारी दर्ज कर ली गई है। आपके लिए उपयुक्त पीएम-अजय कौशल योजना तैयार की जा रही है।"
-        elif lang == "mr":
-            next_prompt = "धन्यवाद! तुमची सर्व माहिती नोंदवली गेली आहे. तुमच्यासाठी योग्य कौशल्य प्रशिक्षण आराखडा तयार केला जात आहे."
-        elif lang == "pa":
-            next_prompt = "ਧੰਨਵਾਦ! ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰ ਲਈ ਗਈ ਹੈ। ਤੁਹਾਡੇ ਲਈ ਢੁਕਵਾਂ ਰੋਜ਼ਗਾਰ ਰੋਡਮੈਪ ਤਿਆਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
+        skill_res = nsqf_rules.analyze_skill_gap(updated_profile)
+        if skill_res.get("needs_more_info"):
+            is_complete = False
+            next_prompt = skill_res["clarifying_question"]
         else:
-            next_prompt = "Thank you! We have captured your profile. Generating your customized PM-AJAY NSQF livelihood roadmap."
+            if lang == "hi":
+                next_prompt = "धन्यवाद! आपकी जानकारी दर्ज कर ली गई है। आपके लिए उपयुक्त पीएम-अजय कौशल योजना तैयार की जा रही है।"
+            elif lang == "mr":
+                next_prompt = "धन्यवाद! तुमची सर्व माहिती नोंदवली गेली आहे. तुमच्यासाठी योग्य कौशल्य प्रशिक्षण आराखडा तयार केला जात आहे."
+            elif lang == "pa":
+                next_prompt = "ਧੰਨਵਾਦ! ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਦਰਜ ਕਰ ਲਈ ਗਈ ਹੈ। ਤੁਹਾਡੇ ਲਈ ਢੁਕਵਾਂ ਰੋਜ਼ਗਾਰ ਰੋਡਮੈਪ ਤਿਆਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
+            else:
+                next_prompt = "Thank you! We have captured your profile. Generating your customized PM-AJAY NSQF livelihood roadmap."
     else:
         next_prompt = profiler.generate_next_prompt(updated_profile, language=lang)
 
     history.append({"role": "assistant", "content": next_prompt})
 
-    # 4. If complete, generate and persist Beneficiary, SkillGapResult, Recommendation, FollowUp
+    # 4. If complete and no fallback needed, generate and persist Beneficiary, SkillGapResult, Recommendation, FollowUp
     beneficiary_id = session.get("beneficiary_id")
-    if is_complete:
+    if is_complete and skill_res and not skill_res.get("needs_more_info"):
         if not beneficiary_id:
-            raw_loc = updated_profile.get("state") or updated_profile.get("location") or "Delhi"
+            raw_loc = updated_profile.get("state") or updated_profile.get("location")
             c_state = region_schemes.get_canonical_state(raw_loc) or "Delhi"
             # Save Beneficiary with name
             beneficiary_id = database.save_beneficiary({
                 "name": updated_profile.get("name"),
                 "language": lang,
-                "location": updated_profile.get("location", "Your Local District"),
+                "location": updated_profile.get("location", c_state),
                 "state": c_state,
                 "mobility_constraint": updated_profile.get("mobility_constraint") or updated_profile.get("mobility"),
                 "education_level": updated_profile.get("education_level") or updated_profile.get("education", "10th Standard"),
@@ -184,9 +190,6 @@ async def voice_input(session_id: str, request: Request):
                 "facilitator_id": None
             })
 
-            # Run Skill Gap Analysis & Recommendation
-            skill_res = nsqf_rules.analyze_skill_gap(updated_profile)
-            
             # Save SkillGapResult
             database.save_skill_gap(
                 beneficiary_id=beneficiary_id,
@@ -226,7 +229,7 @@ async def voice_input(session_id: str, request: Request):
         beneficiary_id=beneficiary_id
     )
 
-    return {
+    response_data = {
         "transcript": input_text,
         "extracted_fields": updated_profile,
         "next_prompt": next_prompt,
@@ -234,6 +237,12 @@ async def voice_input(session_id: str, request: Request):
         "session_id": session_id,
         "beneficiary_id": beneficiary_id
     }
+    if skill_res and skill_res.get("needs_more_info"):
+        response_data["needs_more_info"] = True
+        response_data["missing_piece"] = skill_res["missing_piece"]
+        response_data["message"] = skill_res["message"]
+        response_data["detail"] = skill_res["detail"]
+    return response_data
 
 # --- 3. GET /session/{id}/recommendation ---
 @app.get("/session/{session_id}/recommendation")
@@ -251,6 +260,38 @@ def get_recommendation(session_id: str):
     profile = session.get("profile_data", {})
     skill_res = nsqf_rules.analyze_skill_gap(profile)
     reg_schemes = region_schemes.get_schemes_for_profile(profile)
+
+    if skill_res.get("needs_more_info"):
+        return {
+            "needs_more_info": True,
+            "missing_piece": skill_res["missing_piece"],
+            "message": skill_res["message"],
+            "detail": skill_res["detail"],
+            "clarifying_question": skill_res["clarifying_question"],
+            "recommended_trade": "Clarification Required",
+            "trade_key": None,
+            "qp_name": None,
+            "qp_code": None,
+            "nsqf_level": None,
+            "ssc_name": None,
+            "nsqf_alignment": "Clarification Required",
+            "gap_summary": skill_res["detail"],
+            "readiness_score": 0,
+            "readiness_tier": nsqf_rules.get_readiness_tier(0),
+            "readiness_relevant_count": 0,
+            "readiness_total_required": 5,
+            "skill_gap_breakdown": [],
+            "regional_schemes": reg_schemes,
+            "training_programme": "Pending Clarification",
+            "training_centre": "Pending Clarification",
+            "local_opportunity": "Pending Clarification",
+            "roadmap_steps": [],
+            "spoken_summary": skill_res["clarifying_question"],
+            "duration_hours": None,
+            "sector": None,
+            "beneficiary_id": session.get("beneficiary_id"),
+            "profile": profile
+        }
 
     return {
         "recommended_trade": skill_res["recommended_trade"],
@@ -303,10 +344,60 @@ async def get_recommendation_direct(
     # Extract target state for schemes
     target_state = state or location or profile_data.get("state") or profile_data.get("location")
 
-    # If full profile with trade/interests/skills was provided, compute full NSQF recommendation
+    # If full profile was provided, check completeness first
     if profile_data and (profile_data.get("interests") or profile_data.get("skills") or profile_data.get("education") or profile_data.get("education_level")):
+        if not profiler.is_profile_complete(profile_data):
+            clarifying_q = profiler.generate_next_prompt(profile_data, language=profile_data.get("language", "en"))
+            return {
+                "needs_more_info": True,
+                "missing_piece": "skill",
+                "message": "I need more information to recommend confidently",
+                "detail": "Profile requires at least one concrete interest or technical skill before generating a recommendation.",
+                "clarifying_question": clarifying_q,
+                "recommended_trade": "Clarification Required",
+                "trade_key": None,
+                "qp_name": None,
+                "qp_code": None,
+                "nsqf_level": None,
+                "ssc_name": None,
+                "nsqf_alignment": "Clarification Required",
+                "gap_summary": "Profile requires at least one concrete interest or technical skill.",
+                "readiness_score": 0,
+                "readiness_tier": nsqf_rules.get_readiness_tier(0),
+                "regional_schemes": region_schemes.get_schemes_for_profile(profile_data),
+                "spoken_summary": clarifying_q,
+                "roadmap_steps": [],
+                "skill_gap_breakdown": [],
+                "profile": profile_data
+            }
+
         skill_res = nsqf_rules.analyze_skill_gap(profile_data)
         reg_schemes = region_schemes.get_schemes_for_profile(profile_data)
+
+        if skill_res.get("needs_more_info"):
+            return {
+                "needs_more_info": True,
+                "missing_piece": skill_res["missing_piece"],
+                "message": skill_res["message"],
+                "detail": skill_res["detail"],
+                "clarifying_question": skill_res["clarifying_question"],
+                "recommended_trade": "Clarification Required",
+                "trade_key": None,
+                "qp_name": None,
+                "qp_code": None,
+                "nsqf_level": None,
+                "ssc_name": None,
+                "nsqf_alignment": "Clarification Required",
+                "gap_summary": skill_res["detail"],
+                "readiness_score": 0,
+                "readiness_tier": nsqf_rules.get_readiness_tier(0),
+                "regional_schemes": reg_schemes,
+                "spoken_summary": skill_res["clarifying_question"],
+                "roadmap_steps": [],
+                "skill_gap_breakdown": [],
+                "profile": profile_data
+            }
+
         state_val = region_schemes.get_canonical_state(target_state) or "Delhi"
         database.record_recommendation_demand(
             state=state_val,

@@ -776,11 +776,11 @@ function updateReadinessBadge(score, tier) {
   let tierLabel = tier;
   if (!tierLabel) {
     if (validScore >= 70) {
-      tierLabel = 'Highly Recommended';
+      tierLabel = 'Direct Pathway Ready';
     } else if (validScore >= 40) {
-      tierLabel = 'Good Match';
+      tierLabel = 'Skill Bridge Track';
     } else {
-      tierLabel = 'Possible Match — consider exploring alternatives';
+      tierLabel = 'Exploratory Track — Review Options';
     }
   }
 
@@ -802,6 +802,45 @@ function updateReadinessBadge(score, tier) {
 }
 
 function renderRoadmap(rec) {
+  if (rec.needs_more_info) {
+    if (el.recTradeTitle) el.recTradeTitle.textContent = 'I need more information to recommend confidently';
+    if (el.recNsqfBadge) el.recNsqfBadge.textContent = `Clarification: ${rec.missing_piece || 'Information'}`;
+    if (el.recQpName) el.recQpName.textContent = 'Additional Information Required';
+    if (el.recQpNsqfLevel) el.recQpNsqfLevel.textContent = 'Gated Evaluation';
+    if (el.recQpCode) el.recQpCode.textContent = `Missing Piece: ${rec.missing_piece || 'Details'}`;
+    if (el.recSscName) el.recSscName.textContent = 'PM-AJAY Guidance';
+
+    const missingLabelMap = {
+      'region': 'Location / State Not Recognized',
+      'skill': 'Trade Skill Category Not Matched',
+      'clarity of intent': 'Multiple Trade Paths Tied'
+    };
+    const friendlyMissing = missingLabelMap[rec.missing_piece] || rec.missing_piece || 'Information';
+
+    if (el.recGapSummary) {
+      el.recGapSummary.innerHTML = `
+        <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-950 font-medium text-xs flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-700 text-lg">help</span>
+            <span class="font-bold text-sm text-amber-900">I need more information to recommend confidently</span>
+          </div>
+          <div class="text-amber-800">${rec.detail || rec.gap_summary || 'Please provide more details.'}</div>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="text-[11px] text-amber-700 font-semibold">Missing Piece:</span>
+            <span class="px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[11px] font-bold uppercase tracking-wider">${rec.missing_piece} (${friendlyMissing})</span>
+          </div>
+        </div>
+      `;
+    }
+    if (el.recSpokenSummaryText) {
+      el.recSpokenSummaryText.textContent = `"${rec.clarifying_question || rec.spoken_summary}"`;
+    }
+    updateReadinessBadge(0, 'Exploratory Track — Review Options');
+    renderSkillGaps([]);
+    renderRegionalSchemes(rec.regional_schemes || []);
+    return;
+  }
+
   // Title & Badges
   if (el.recTradeTitle) el.recTradeTitle.textContent = rec.recommended_trade;
   const nsqfLvl = rec.nsqf_level || rec.nsqf_alignment || 'NSQF Level 4';
