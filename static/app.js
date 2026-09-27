@@ -8,7 +8,7 @@
 const state = {
   sessionId: null,
   entryMode: 'app', // 'app', 'facilitator', 'call'
-  language: 'hi',
+  language: 'en', // Default to English for intuitive demo testing & reliable browser speech
   isRecording: false,
   recognition: null,
   profileComplete: false,
@@ -26,12 +26,62 @@ const state = {
 
 // Regional Language Locales Map for Web Speech API
 const LANG_LOCALES = {
+  en: 'en-IN',
   hi: 'hi-IN',
   mr: 'mr-IN',
   pa: 'pa-IN',
-  ta: 'ta-IN',
-  en: 'en-IN'
+  ta: 'ta-IN'
 };
+
+// -------------------------------------------------------------
+// Voice Cache & User-Gesture Unlocking Subsystem
+// -------------------------------------------------------------
+let cachedVoices = [];
+let isAudioUnlocked = false;
+
+function refreshVoices() {
+  if (!('speechSynthesis' in window)) return;
+  const v = window.speechSynthesis.getVoices();
+  if (v && v.length) cachedVoices = v;
+}
+
+if ('speechSynthesis' in window) {
+  refreshVoices();
+  window.speechSynthesis.onvoiceschanged = refreshVoices;
+}
+
+/**
+ * Prime & unlock browser speech synthesis & HTML5 Audio synchronously
+ * off an active user gesture (tap/click/touch) to bypass Chrome autoplay blocks.
+ */
+function unlockSpeechAndAudio() {
+  if (isAudioUnlocked) return;
+  isAudioUnlocked = true;
+
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.resume();
+      // Synchronous silent primer utterance inside user gesture chain
+      const primer = new SpeechSynthesisUtterance('');
+      primer.volume = 0;
+      primer.rate = 10;
+      window.speechSynthesis.speak(primer);
+    } catch (e) {
+      console.warn('SpeechSynthesis unlock note:', e);
+    }
+  }
+
+  try {
+    const silentAudio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAP8A');
+    silentAudio.volume = 0;
+    silentAudio.play().then(() => silentAudio.pause()).catch(() => {});
+  } catch (e) {}
+}
+
+// Global passive unlock on first user interaction
+['click', 'touchstart', 'keydown'].forEach(evt => {
+  document.addEventListener(evt, unlockSpeechAndAudio, { passive: true, once: true });
+});
 
 // Initial Greeting Prompts by Language
 const INITIAL_PROMPTS = {
@@ -210,6 +260,7 @@ function initElements() {
     views: document.querySelectorAll('.view-panel'),
     headerTitle: document.getElementById('headerActiveViewTitle'),
     langSelect: document.getElementById('langSelect'),
+    langPills: document.querySelectorAll('.lang-pill'),
 
     // Voice AI Intake Elements
     facilitatorBanner: document.getElementById('facilitatorBanner'),
@@ -238,6 +289,7 @@ function initElements() {
     turnCounterBadge: document.getElementById('turnCounterBadge'),
     conversationThread: document.getElementById('conversationThread'),
     chatGreetingText: document.getElementById('chatGreetingText'),
+    initialBubbleListenBtn: document.getElementById('initialBubbleListenBtn'),
     chatTypingIndicator: document.getElementById('chatTypingIndicator'),
     chatTextForm: document.getElementById('chatTextForm'),
     chatTextInput: document.getElementById('chatTextInput'),
@@ -374,14 +426,48 @@ function bindNavigation() {
     });
   });
 
-  // Language Dropdown
+  // Language Dropdown & Interactive Pills
   if (el.langSelect) {
     el.langSelect.addEventListener('change', (e) => {
-      state.language = e.target.value;
-      showToast(`Language set to ${e.target.options[e.target.selectedIndex].text}`);
-      startNewSession(state.entryMode, state.language);
+      setAppLanguage(e.target.value);
     });
   }
+
+  if (el.langPills) {
+    el.langPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        const lang = pill.getAttribute('data-lang');
+        if (lang) setAppLanguage(lang);
+      });
+    });
+  }
+}
+
+function setAppLanguage(lang) {
+  unlockSpeechAndAudio();
+  state.language = lang;
+
+  if (el.langSelect) {
+    el.langSelect.value = lang;
+  }
+
+  if (el.langPills) {
+    el.langPills.forEach(p => {
+      if (p.getAttribute('data-lang') === lang) {
+        p.className = 'lang-pill active text-xs font-bold px-3 py-1 rounded-full bg-secondary text-on-secondary shadow-sm transition-all cursor-pointer';
+      } else {
+        p.className = 'lang-pill text-xs font-semibold px-3 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-all cursor-pointer';
+      }
+    });
+  }
+
+  if (state.recognition) {
+    state.recognition.lang = LANG_LOCALES[lang] || 'en-IN';
+  }
+
+  const langNames = { en: 'English', hi: 'हिन्दी', mr: 'मराठी', pa: 'ਪੰਜਾਬੀ', ta: 'தமிழ்' };
+  showToast(`Language set to ${langNames[lang] || lang}`, 'translate');
+  startNewSession(state.entryMode, state.language);
 }
 
 function switchTab(viewId, title) {
@@ -501,7 +587,7 @@ function setAssistantSpeech(text, autoSpeak = false, audioBase64 = null) {
   if (el.chatGreetingText) el.chatGreetingText.textContent = text;
 
   if (autoSpeak) {
-    speakText(text, state.language, audioBase64);
+    speak(text, audioBase64);
   }
 }
 
@@ -547,9 +633,9 @@ function addChatBubble(text, role = 'user', audioBase64 = null) {
           <span class="text-[10px] text-on-surface-variant">${timeStr}</span>
         </div>
         <p class="font-medium">${escapeHtml(text)}</p>
-        <button id="${bubbleId}" class="chat-bubble-tts text-[11px] text-secondary font-bold inline-flex items-center gap-1 pt-1 hover:underline cursor-pointer">
-          <span class="material-symbols-outlined text-[14px]">volume_up</span>
-          <span>Listen</span>
+        <button id="${bubbleId}" class="chat-bubble-tts text-[11px] text-secondary font-bold inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/10 hover:bg-secondary/20 transition-all cursor-pointer mt-1">
+          <span class="material-symbols-outlined text-[15px]">volume_up</span>
+          <span>Listen / सुनें</span>
         </button>
       </div>
     `;
@@ -558,7 +644,8 @@ function addChatBubble(text, role = 'user', audioBase64 = null) {
       const btn = document.getElementById(bubbleId);
       if (btn) {
         btn.addEventListener('click', () => {
-          speakText(text, state.language, audioBase64);
+          unlockSpeechAndAudio();
+          speak(text, audioBase64);
         });
       }
     }, 50);
@@ -659,6 +746,8 @@ function stopRecordingAndSubmit() {
 }
 
 function toggleRecording() {
+  unlockSpeechAndAudio();
+
   if (!state.recognition) {
     showToast('Simulating mic input: 10th Pass + Farming');
     handleUserVoiceUtterance("I finished 10th, my family does farming, I want something food-related, I can't travel far");
@@ -701,6 +790,7 @@ function bindVoiceEvents() {
   // Manual Send Button next to live transcript
   if (el.btnManualSubmitUtterance) {
     el.btnManualSubmitUtterance.addEventListener('click', () => {
+      unlockSpeechAndAudio();
       stopRecordingAndSubmit();
     });
   }
@@ -709,6 +799,7 @@ function bindVoiceEvents() {
   if (el.chatTextForm) {
     el.chatTextForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      unlockSpeechAndAudio();
       const val = el.chatTextInput ? el.chatTextInput.value.trim() : '';
       if (val) {
         el.chatTextInput.value = '';
@@ -728,17 +819,30 @@ function bindVoiceEvents() {
   // TTS Replay Button
   if (el.btnReplayAudio) {
     el.btnReplayAudio.addEventListener('click', () => {
-      const prompt = el.assistantSpeechText ? el.assistantSpeechText.textContent.replace(/"/g, '') : '';
-      if (el.ttsIcon) el.ttsIcon.textContent = 'pause';
-      speakText(prompt, state.language, null, () => {
+      unlockSpeechAndAudio();
+      const prompt = el.assistantSpeechText ? el.assistantSpeechText.textContent.replace(/^"+|"+$/g, '') : '';
+      if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
+      speak(prompt, null, () => {
         if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
       });
+    });
+  }
+
+  // Initial Opening Chat Bubble Listen Button
+  if (el.initialBubbleListenBtn) {
+    el.initialBubbleListenBtn.addEventListener('click', () => {
+      unlockSpeechAndAudio();
+      const text = el.chatGreetingText ? el.chatGreetingText.textContent.trim() : '';
+      if (text) {
+        speak(text);
+      }
     });
   }
 
   // Scenario Chips
   el.scenarioChips.forEach(chip => {
     chip.addEventListener('click', () => {
+      unlockSpeechAndAudio();
       const text = chip.getAttribute('data-text');
       if (text) {
         chip.classList.add('bg-surface-container-high');
@@ -1790,10 +1894,15 @@ function bindAdminEvents() {
 let activeAudioElement = null;
 let activeUtterance = null;
 
-function speakText(text, lang = 'hi', audioBase64 = null, onEnd = null) {
-  if (!text && !audioBase64) return;
+function speak(text, audioBase64 = null, onEnd = null) {
+  if (!text && !audioBase64) {
+    if (onEnd) onEnd();
+    return;
+  }
 
-  // 1. If base64 WAV audio is provided from Bhashini / backend, play it directly!
+  unlockSpeechAndAudio();
+
+  // 1. If base64 audio is provided from backend (Bhashini WAV), play it directly
   if (audioBase64) {
     try {
       if (activeAudioElement) {
@@ -1804,90 +1913,144 @@ function speakText(text, lang = 'hi', audioBase64 = null, onEnd = null) {
       activeAudioElement.volume = 1.0;
       activeAudioElement.onended = () => {
         activeAudioElement = null;
+        if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
         if (onEnd) onEnd();
       };
-      activeAudioElement.onerror = () => {
+      activeAudioElement.onerror = (e) => {
+        console.warn('Audio playback error, falling back to browser speechSynthesis:', e);
         activeAudioElement = null;
-        fallbackToBrowserTTS(text, lang, onEnd);
+        speakViaBrowserTTS(text, onEnd);
       };
-      activeAudioElement.play().catch(e => {
-        console.warn('Audio element play blocked by browser autoplay:', e);
-        fallbackToBrowserTTS(text, lang, onEnd);
-      });
+      if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
+      const playPromise = activeAudioElement.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.warn('Audio play() blocked by autoplay policy, falling back to speechSynthesis:', err);
+          speakViaBrowserTTS(text, onEnd);
+        });
+      }
       return;
     } catch (err) {
-      console.warn('Audio element init error:', err);
+      console.warn('Audio instantiation failed, using speechSynthesis:', err);
     }
   }
 
-  // 2. Otherwise, use browser SpeechSynthesis with robust voice detection
-  fallbackToBrowserTTS(text, lang, onEnd);
+  // 2. Fallback to browser's native SpeechSynthesis (Free, runs offline without API keys!)
+  speakViaBrowserTTS(text, onEnd);
 }
 
-function fallbackToBrowserTTS(text, lang = 'hi', onEnd = null) {
-  if (!('speechSynthesis' in window)) return;
+// Backward-compatible alias for speakText
+function speakText(text, lang = null, audioBase64 = null, onEnd = null) {
+  speak(text, audioBase64, onEnd);
+}
+
+function speakViaBrowserTTS(text, onEnd = null) {
+  if (!('speechSynthesis' in window)) {
+    console.warn('SpeechSynthesis is not supported in this browser.');
+    if (onEnd) onEnd();
+    return;
+  }
 
   try {
     window.speechSynthesis.cancel();
-  } catch (e) {}
-
-  setTimeout(() => {
-    let cleanText = text.replace(/[*_#]/g, '').trim();
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.volume = 1.0;
-    utterance.rate = 0.95;
-    utterance.pitch = 1.0;
-
-    const voices = window.speechSynthesis.getVoices() || [];
-    const targetLocale = LANG_LOCALES[lang] || 'en-IN';
-
-    // A. Native locale match
-    let voice = voices.find(v => v.lang === targetLocale || v.lang.replace('_', '-').toLowerCase() === targetLocale.toLowerCase());
-
-    // B. Regional Indian voice match (e.g. Google Hindi, Microsoft Heera/Ravi)
-    if (!voice) {
-      voice = voices.find(v => v.lang.includes('IN') || v.name.includes('India') || v.name.includes('Hindi') || v.name.includes('Heera') || v.name.includes('Ravi'));
-    }
-
-    // C. Any English voice fallback
-    if (!voice) {
-      voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
-    }
-
-    // If text contains Devanagari/Gurmukhi but ONLY an English voice is installed on Windows,
-    // reading non-Latin characters will produce total silence in SAPI5. In that case, speak English translation.
-    const hasDevanagari = /[\u0900-\u097F\u0A00-\u0A7F\u0B80-\u0BFF]/.test(cleanText);
-    if (hasDevanagari && voice && !voice.lang.includes('hi') && !voice.lang.includes('IN') && !voice.name.includes('Hindi')) {
-      const fallbackEnglish = INITIAL_PROMPTS_SUB[lang] || "Thank you. Your profile information has been captured by Nivara AI.";
-      utterance.text = fallbackEnglish;
-      utterance.lang = 'en-US';
-    } else {
-      if (voice) {
-        utterance.voice = voice;
-        utterance.lang = voice.lang;
-      } else {
-        utterance.lang = targetLocale;
-      }
-    }
-
-    utterance.onend = () => {
-      activeUtterance = null;
-      if (onEnd) onEnd();
-    };
-    utterance.onerror = (e) => {
-      console.warn('Speech synthesis playback note:', e);
-      activeUtterance = null;
-      if (onEnd) onEnd();
-    };
-
-    activeUtterance = utterance;
-    window.speechSynthesis.speak(utterance);
-
-    // Chrome bugfix: resume if engine enters paused state
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
-  }, 75);
+  } catch (e) {}
+
+  const cleanText = (text || '')
+    .replace(/[*_#`~]/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^"+|"+$/g, '')
+    .trim();
+
+  if (!cleanText) {
+    if (onEnd) onEnd();
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.volume = 1.0;
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+
+  if (!cachedVoices.length) {
+    refreshVoices();
+  }
+
+  const currentLang = state.language || 'en';
+  const targetLocale = LANG_LOCALES[currentLang] || 'en-IN';
+
+  let voice = null;
+  if (cachedVoices.length) {
+    if (currentLang === 'hi') {
+      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('hi') || v.name.toLowerCase().includes('hindi')) ||
+              cachedVoices.find(v => v.lang.includes('IN') || v.name.includes('India'));
+    } else if (currentLang === 'mr') {
+      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('mr') || v.name.toLowerCase().includes('marathi')) ||
+              cachedVoices.find(v => v.lang.toLowerCase().startsWith('hi'));
+    } else if (currentLang === 'pa') {
+      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('pa') || v.name.toLowerCase().includes('punjabi'));
+    } else if (currentLang === 'ta') {
+      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('ta') || v.name.toLowerCase().includes('tamil'));
+    } else {
+      // English default
+      voice = cachedVoices.find(v => v.lang === 'en-IN' || v.lang.replace('_', '-').toLowerCase() === 'en-in') ||
+              cachedVoices.find(v => v.lang.startsWith('en') && (v.name.includes('India') || v.name.includes('Heera') || v.name.includes('Ravi'))) ||
+              cachedVoices.find(v => v.lang.startsWith('en')) ||
+              cachedVoices[0];
+    }
+  }
+
+  // Windows SAPI5 safeguard: if non-Latin text is to be read but ONLY English voice exists
+  const hasIndicScript = /[\u0900-\u097F\u0A00-\u0A7F\u0B80-\u0BFF]/.test(cleanText);
+  if (hasIndicScript && voice && !voice.lang.includes('hi') && !voice.lang.includes('IN') && !voice.name.toLowerCase().includes('hindi')) {
+    const fallbackEnglish = INITIAL_PROMPTS_SUB[currentLang] || "Your voice information has been captured by Nivara AI.";
+    utterance.text = fallbackEnglish;
+    utterance.lang = 'en-US';
+  } else if (voice) {
+    utterance.voice = voice;
+    utterance.lang = voice.lang;
+  } else {
+    utterance.lang = targetLocale;
+  }
+
+  utterance.onstart = () => {
+    if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
+  };
+
+  utterance.onend = () => {
+    activeUtterance = null;
+    if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
+    if (onEnd) onEnd();
+  };
+
+  utterance.onerror = (e) => {
+    console.warn('SpeechSynthesis playback note:', e);
+    activeUtterance = null;
+    if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
+    if (onEnd) onEnd();
+  };
+
+  activeUtterance = utterance;
+
+  try {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+    window.speechSynthesis.speak(utterance);
+  } catch (err) {
+    console.warn('speechSynthesis.speak execution error:', err);
+  }
+
+  // Periodic resume guard against Chrome 15-second background speech pause bug
+  const keepAliveTimer = setInterval(() => {
+    if (!window.speechSynthesis.speaking) {
+      clearInterval(keepAliveTimer);
+    } else if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+  }, 3000);
 }
 
 // -------------------------------------------------------------

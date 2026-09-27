@@ -114,8 +114,8 @@
         <div class="relative flex items-center bg-surface-container rounded-full px-2 py-1 shadow-sm border border-secondary/15">
           <span class="material-symbols-outlined text-[18px] text-secondary ml-1">translate</span>
           <select id="langSelect" aria-label="Select Regional Language" class="appearance-none bg-transparent text-xs font-semibold text-on-surface pl-1.5 pr-6 py-0.5 focus:outline-none cursor-pointer">
-            <option value="en">English</option>
-            <option value="hi" selected>हिन्दी</option>
+            <option value="en" selected>English</option>
+            <option value="hi">हिन्दी</option>
             <option value="mr">मराठी</option>
             <option value="pa">ਪੰਜਾਬੀ</option>
             <option value="ta">தமிழ்</option>
@@ -163,6 +163,21 @@
         </div>
       </div>
 
+      <!-- Interactive Spoken Language Switcher Bar -->
+      <div class="w-full flex flex-wrap items-center justify-between gap-2 bg-surface-container-low px-space-md py-2 rounded-xl shadow-xs border border-secondary/15">
+        <div class="flex items-center gap-1.5 text-xs font-bold text-on-surface">
+          <span class="material-symbols-outlined text-[18px] text-secondary">translate</span>
+          <span>Spoken Language / भाषा:</span>
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap" id="langPills">
+          <button type="button" data-lang="en" class="lang-pill active text-xs font-bold px-3 py-1 rounded-full bg-secondary text-on-secondary shadow-sm transition-all cursor-pointer">English</button>
+          <button type="button" data-lang="hi" class="lang-pill text-xs font-semibold px-3 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-all cursor-pointer">हिन्दी</button>
+          <button type="button" data-lang="mr" class="lang-pill text-xs font-semibold px-3 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-all cursor-pointer">मराठी</button>
+          <button type="button" data-lang="pa" class="lang-pill text-xs font-semibold px-3 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-all cursor-pointer">ਪੰਜਾਬੀ</button>
+          <button type="button" data-lang="ta" class="lang-pill text-xs font-semibold px-3 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-all cursor-pointer">தமிழ்</button>
+        </div>
+      </div>
+
       <!-- Spoken Prompt Civic Card -->
       <div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden">
         <div class="absolute top-0 left-0 bottom-0 w-1.5 bg-secondary rounded-l-xl"></div>
@@ -173,10 +188,10 @@
               <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Nivara AI • Livelihood Guide</span>
             </div>
             <p id="assistantSpeechText" class="font-display font-semibold text-lg text-on-surface leading-snug">
-              "नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?"
+              "Welcome! Please tell me about yourself — what is your education level, and what kind of work interests you?"
             </p>
             <p id="assistantSpeechSub" class="text-xs text-on-surface-variant pt-0.5">
-              Hello! Please share about yourself — your education, skills, and what kind of livelihood or trade you wish to pursue.
+              नमस्ते! अपनी पढ़ाई, कौशल और आप किस तरह का काम सीखना चाहते हैं, उसके बारे में बताएं।
             </p>
           </div>
           <button id="btnReplayAudio" aria-label="Play Spoken Audio" class="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-surface-container hover:bg-secondary-container hover:text-on-secondary-container text-secondary transition-all active:scale-95 shadow-sm" title="Listen to prompt">
@@ -339,10 +354,10 @@
             </div>
             <div class="bg-surface-container-low rounded-2xl rounded-tl-sm p-3 text-xs text-on-surface leading-relaxed shadow-sm space-y-1">
               <p class="font-semibold text-secondary">Nivara Assistant</p>
-              <p id="chatGreetingText">नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?</p>
-              <button class="chat-bubble-tts text-[11px] text-secondary font-bold inline-flex items-center gap-1 pt-1 hover:underline cursor-pointer" data-text="नमस्ते! आप अपने बारे में बताएं — आपकी पढ़ाई कितनी हुई है, और आप किस तरह का काम सीखना या करना चाहते हैं?">
-                <span class="material-symbols-outlined text-[14px]">volume_up</span>
-                <span>Listen</span>
+              <p id="chatGreetingText">Welcome! Please tell me about yourself — what is your education level, and what kind of work interests you?</p>
+              <button id="initialBubbleListenBtn" class="chat-bubble-tts text-[11px] text-secondary font-bold inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/10 hover:bg-secondary/20 transition-all cursor-pointer mt-1">
+                <span class="material-symbols-outlined text-[15px]">volume_up</span>
+                <span>Listen / सुनें</span>
               </button>
             </div>
           </div>
