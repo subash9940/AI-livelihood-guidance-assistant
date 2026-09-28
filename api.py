@@ -22,6 +22,7 @@ import nsqf_rules
 import region_schemes
 import training_capacity
 import bhashini
+import spoken
 from voice_router import router as voice_router
 
 from contextlib import asynccontextmanager
@@ -42,8 +43,6 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
-
-app.include_router(voice_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -101,12 +100,18 @@ def api_tts(req: TTSApiRequest):
     if not req.text or not req.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
     lang = req.language or "en"
-    audio = bhashini.text_to_speech(req.text, lang)
+    audio = None
+    try:
+        audio = bhashini.text_to_speech(req.text, lang)
+    except Exception:
+        audio = None
     return {
         "audio_base64": audio,
         "language": lang,
         "format": "audio/mpeg"
     }
+
+app.include_router(voice_router)
 
 # --- 2. POST /session/{id}/voice-input ---
 @app.post("/session/{session_id}/voice-input")
@@ -298,7 +303,7 @@ async def voice_input(session_id: str, request: Request):
 
 # --- 3. GET /session/{id}/recommendation ---
 @app.get("/session/{session_id}/recommendation")
-def get_recommendation(session_id: str):
+def get_recommendation(session_id: str, language: Optional[str] = None):
     session = database.get_session(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -310,6 +315,15 @@ def get_recommendation(session_id: str):
         )
 
     profile = session.get("profile_data", {})
+    if language:
+        profile["language"] = language
+        session["language"] = language
+        try:
+            database.update_session(session_id, language=language)
+        except Exception:
+            pass
+
+    lang = language or profile.get("language") or session.get("language", "en")
     skill_res = nsqf_rules.analyze_skill_gap(profile)
     reg_schemes = region_schemes.get_schemes_for_profile(profile)
 
@@ -339,11 +353,19 @@ def get_recommendation(session_id: str):
             "local_opportunity": "Pending Clarification",
             "roadmap_steps": [],
             "spoken_summary": skill_res["clarifying_question"],
+            "spoken_explanation": skill_res["clarifying_question"],
             "duration_hours": None,
             "sector": None,
             "beneficiary_id": session.get("beneficiary_id"),
             "profile": profile
         }
+
+    spoken_explanation = spoken.build_spoken_explanation(
+        profile,
+        skill_res,
+        lang=lang,
+        session_id=session_id
+    )
 
     return {
         "recommended_trade": skill_res["recommended_trade"],
@@ -365,6 +387,7 @@ def get_recommendation(session_id: str):
         "local_opportunity": skill_res["local_opportunity"],
         "roadmap_steps": skill_res["roadmap_steps"],
         "spoken_summary": skill_res["spoken_summary"],
+        "spoken_explanation": spoken_explanation,
         "duration_hours": skill_res.get("duration_hours"),
         "sector": skill_res.get("ssc_name") or skill_res.get("sector"),
         "nearby_opportunities": skill_res.get("nearby_opportunities", []),
@@ -378,10 +401,11 @@ async def get_recommendation_direct(
     request: Request,
     session_id: Optional[str] = None,
     state: Optional[str] = None,
-    location: Optional[str] = None
+    location: Optional[str] = None,
+    language: Optional[str] = None
 ):
     if session_id:
-        return get_recommendation(session_id)
+        return get_recommendation(session_id, language=language)
 
     profile_data: Dict[str, Any] = {}
     if request.method == "POST":
@@ -389,18 +413,22 @@ async def get_recommendation_direct(
             body = await request.json()
             if isinstance(body, dict):
                 if "session_id" in body and body["session_id"]:
-                    return get_recommendation(body["session_id"])
+                    return get_recommendation(body["session_id"], language=language or body.get("language"))
                 profile_data = body.get("profile") or body.get("profile_data") or body
         except Exception:
             pass
 
+    if language:
+        profile_data["language"] = language
+    lang = profile_data.get("language", "en")
+
     # Extract target state for schemes
     target_state = state or location or profile_data.get("state") or profile_data.get("location")
 
-    # If full profile was provided, check completeness first
-    if profile_data and (profile_data.get("interests") or profile_data.get("skills") or profile_data.get("education") or profile_data.get("education_level")):
+    # If profile was provided, check completeness first
+    if profile_data:
         if not profiler.is_profile_complete(profile_data):
-            clarifying_q = profiler.generate_next_prompt(profile_data, language=profile_data.get("language", "en"))
+            clarifying_q = profiler.generate_next_prompt(profile_data, language=lang)
             return {
                 "needs_more_info": True,
                 "missing_piece": "skill",
@@ -419,6 +447,7 @@ async def get_recommendation_direct(
                 "readiness_tier": nsqf_rules.get_readiness_tier(0),
                 "regional_schemes": region_schemes.get_schemes_for_profile(profile_data),
                 "spoken_summary": clarifying_q,
+                "spoken_explanation": clarifying_q,
                 "roadmap_steps": [],
                 "skill_gap_breakdown": [],
                 "profile": profile_data
@@ -446,10 +475,17 @@ async def get_recommendation_direct(
                 "readiness_tier": nsqf_rules.get_readiness_tier(0),
                 "regional_schemes": reg_schemes,
                 "spoken_summary": skill_res["clarifying_question"],
+                "spoken_explanation": skill_res["clarifying_question"],
                 "roadmap_steps": [],
                 "skill_gap_breakdown": [],
                 "profile": profile_data
             }
+
+        spoken_explanation = spoken.build_spoken_explanation(
+            profile_data,
+            skill_res,
+            lang=lang
+        )
 
         state_val = region_schemes.get_canonical_state(target_state) or "Delhi"
         database.record_recommendation_demand(
@@ -475,6 +511,7 @@ async def get_recommendation_direct(
             "local_opportunity": skill_res["local_opportunity"],
             "roadmap_steps": skill_res["roadmap_steps"],
             "spoken_summary": skill_res["spoken_summary"],
+            "spoken_explanation": spoken_explanation,
             "duration_hours": skill_res.get("duration_hours"),
             "sector": skill_res.get("ssc_name") or skill_res.get("sector"),
             "nearby_opportunities": skill_res.get("nearby_opportunities", []),

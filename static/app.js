@@ -180,7 +180,9 @@ const UI_STRINGS = {
       viewIvr: "IVR Line",
       viewAdmin: "District Admin"
     },
-    testSoundSpokenText: "Welcome! Nivara PM-AJAY Livelihood Guide voice output is active and working clearly."
+    testSoundSpokenText: "Welcome! Nivara PM-AJAY Livelihood Guide voice output is active and working clearly.",
+    btnReplayAudio: "Replay explanation",
+    audioPlayerTitle: "Listen to Spoken Guidance (English)"
   },
   ta: {
     ministryHeaderTitle: "சமூக நீதி மற்றும் அதிகாரமளித்தல் அமைச்சகம்",
@@ -234,7 +236,9 @@ const UI_STRINGS = {
       viewIvr: "IVR உதவி எண்",
       viewAdmin: "மாவட்ட நிர்வாகம்"
     },
-    testSoundSpokenText: "வணக்கம்! நிவாரா PM-AJAY குரல் வழிகாட்டி இயங்குகிறது. உங்கள் ஒலிபெருக்கி சரியாக வேலை செய்கிறது."
+    testSoundSpokenText: "வணக்கம்! நிவாரா PM-AJAY குரல் வழிகாட்டி இயங்குகிறது. உங்கள் ஒலிபெருக்கி சரியாக வேலை செய்கிறது.",
+    btnReplayAudio: "விளக்கத்தை மீண்டும் கேளுங்கள்",
+    audioPlayerTitle: "குரல் சுருக்கத்தைக் கேளுங்கள் (தமிழ்)"
   },
   hi: {
     ministryHeaderTitle: "सामाजिक न्याय एवं अधिकारिता मंत्रालय",
@@ -288,7 +292,9 @@ const UI_STRINGS = {
       viewIvr: "आईवीआर हेल्पलाइन",
       viewAdmin: "ज़िला प्रशासन"
     },
-    testSoundSpokenText: "नमस्ते! निवारा पीएम-अजय आजीविका मार्गदर्शक सक्रिय है। आपकी आवाज़ प्रणाली ठीक से काम कर रही है।"
+    testSoundSpokenText: "नमस्ते! निवारा पीएम-अजय आजीविका मार्गदर्शक सक्रिय है। आपकी आवाज़ प्रणाली ठीक से काम कर रही है।",
+    btnReplayAudio: "स्पष्टीकरण पुनः सुनें",
+    audioPlayerTitle: "ऑडियो सारांश सुनें (हिन्दी)"
   },
   mr: {
     ministryHeaderTitle: "सामाजिक न्याय आणि सक्षमीकरण मंत्रालय",
@@ -342,7 +348,9 @@ const UI_STRINGS = {
       viewIvr: "आयव्हीआर हेल्पलाइन",
       viewAdmin: "जिल्हा प्रशासन"
     },
-    testSoundSpokenText: "नमस्कार! निवारा उपजीविका मार्गदर्शक सक्रिय आहे. तुमची आवाज प्रणाली व्यवस्थित सुरू आहे."
+    testSoundSpokenText: "नमस्कार! निवारा उपजीविका मार्गदर्शक सक्रिय आहे. तुमची आवाज प्रणाली व्यवस्थित सुरू आहे.",
+    btnReplayAudio: "स्पष्टीकरण पुन्हा ऐका",
+    audioPlayerTitle: "ऑडिओ सारांश ऐका (मराठी)"
   },
   pa: {
     ministryHeaderTitle: "ਸਮਾਜਿਕ ਨਿਆਂ ਅਤੇ ਸਸ਼ਕਤੀਕਰਨ ਮੰਤਰਾਲਾ",
@@ -396,7 +404,9 @@ const UI_STRINGS = {
       viewIvr: "ਆਈਵੀਆਰ ਹੈਲਪਲਾਈਨ",
       viewAdmin: "ਜ਼ਿਲ੍ਹਾ ਪ੍ਰਸ਼ਾਸਨ"
     },
-    testSoundSpokenText: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਨਿਵਾਰਾ ਰੋਜ਼ਗਾਰ ਮਾਰਗਦਰਸ਼ਕ ਸਰਗਰਮ ਹੈ। ਤੁਹਾਡੀ ਆਵਾਜ਼ ਪ੍ਰਣਾਲੀ ਬਿਲਕੁਲ ਠੀਕ ਕੰਮ ਕਰ ਰਹੀ ਹੈ।"
+    testSoundSpokenText: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਨਿਵਾਰਾ ਰੋਜ਼ਗਾਰ ਮਾਰਗਦਰਸ਼ਕ ਸਰਗਰਮ ਹੈ। ਤੁਹਾਡੀ ਆਵਾਜ਼ ਪ੍ਰਣਾਲੀ ਬਿਲਕੁਲ ਠੀਕ ਕੰਮ ਕਰ ਰਹੀ ਹੈ।",
+    btnReplayAudio: "ਸਪੱਸ਼ਟੀਕਰਨ ਦੁਬਾਰਾ ਸੁਣੋ",
+    audioPlayerTitle: "ਆਡੀਓ ਸਾਰ ਸੁਣੋ (ਪੰਜਾਬੀ)"
   }
 };
 
@@ -745,6 +755,7 @@ function initElements() {
     readinessScoreBadge: document.getElementById('readinessScoreBadge'),
     readinessIcon: document.getElementById('readinessIcon'),
     audioPlayerContainer: document.getElementById('audioPlayerContainer'),
+    audioPlayerTitle: document.getElementById('audioPlayerTitle'),
     btnPlayRoadmapAudio: document.getElementById('btnPlayRoadmapAudio'),
     playPauseIcon: document.getElementById('playPauseIcon'),
     scrubberTrack: document.getElementById('scrubberTrack'),
@@ -872,6 +883,7 @@ function bindNavigation() {
 
 function setAppLanguage(lang, autoSpeak = true) {
   unlockSpeechAndAudio();
+  stopSpeaking();
   state.language = lang;
 
   if (el.langSelect) {
@@ -896,11 +908,36 @@ function setAppLanguage(lang, autoSpeak = true) {
 
   const langNames = { en: 'English', hi: 'हिन्दी', mr: 'मराठी', pa: 'ਪੰਜਾਬੀ', ta: 'தமிழ்' };
   showToast(`Language set to ${langNames[lang] || lang}`, 'translate');
+
+  // If user is currently on the roadmap tab, re-fetch recommendation in new language
+  if (state.activeTab === 'viewRoadmap' && state.sessionId) {
+    fetch(`/session/${state.sessionId}/recommendation?language=${encodeURIComponent(lang)}`)
+      .then(r => {
+        if (!r.ok) throw new Error('Recommendation re-fetch failed');
+        return r.json();
+      })
+      .then(data => {
+        state.currentRecommendation = data;
+        renderRoadmap(data);
+        showToast('Roadmap updated for new language. Tap Replay to listen.', 'translate');
+      })
+      .catch(err => {
+        console.warn('Language update re-fetch error:', err);
+      });
+    return;
+  }
+
   startNewSession(state.entryMode, state.language, autoSpeak);
 }
 
 function switchTab(viewId, title) {
+  const previousTab = state.activeTab;
   state.activeTab = viewId;
+
+  // Stop active speech when switching away from Roadmap
+  if (previousTab === 'viewRoadmap' && viewId !== 'viewRoadmap') {
+    stopSpeaking();
+  }
 
   // Toggle active class on views
   el.views.forEach(v => {
@@ -938,6 +975,7 @@ function switchTab(viewId, title) {
 // Session Management: POST /session/start
 // -------------------------------------------------------------
 async function startNewSession(entryMode = null, language = null, autoSpeak = false) {
+  stopSpeaking();
   if (entryMode) state.entryMode = entryMode;
   if (language) state.language = language;
 
@@ -1188,7 +1226,7 @@ function toggleRecording() {
     // User tapped mic button to finish speaking
     stopRecordingAndSubmit();
   } else {
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    stopSpeaking();
     state.recognition.lang = LANG_LOCALES[state.language] || 'en-IN';
     try {
       state.recognition.start();
@@ -1392,6 +1430,7 @@ async function triggerDemoBeneficiary(demoId) {
 
       await loadRoadmapRecommendation();
       switchTab('viewRoadmap', 'Roadmap & Skills');
+      speakRecommendation();
       showToast(`Roadmap generated for ${profile.name}!`, 'verified');
     }
   } catch (err) {
@@ -1442,10 +1481,7 @@ async function handleUserVoiceUtterance(utteranceText) {
     // 4. Update Signals Display
     updateSignalsView(data.extracted_fields);
 
-    // 5. Play Next Prompt with audio
-    setAssistantSpeech(data.next_prompt, true, data.reply_audio_base64);
-
-    // 6. If Complete, fetch Recommendation and transition to Pathways Tab
+    // 5. Sequence on completion: if complete, load roadmap and speak explanation; else speak next prompt
     if (data.profile_complete) {
       state.profileComplete = true;
       if (el.signalsBadge) {
@@ -1456,12 +1492,14 @@ async function handleUserVoiceUtterance(utteranceText) {
         el.turnCounterBadge.textContent = '✅ Profile Ready';
         el.turnCounterBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0]';
       }
+      setAssistantSpeech(data.next_prompt, false);
       showToast('Profile Complete! Generating NSQF Livelihood Pathway...', 'verified');
 
-      setTimeout(async () => {
-        await loadRoadmapRecommendation();
-        switchTab('viewRoadmap', 'Roadmap & Skills');
-      }, 1600);
+      await loadRoadmapRecommendation();
+      switchTab('viewRoadmap', 'Roadmap & Skills');
+      speakRecommendation();
+    } else {
+      setAssistantSpeech(data.next_prompt, true, data.reply_audio_base64);
     }
 
   } catch (err) {
@@ -1579,7 +1617,15 @@ function renderRoadmap(rec) {
       `;
     }
     if (el.recSpokenSummaryText) {
-      el.recSpokenSummaryText.textContent = `"${rec.clarifying_question || rec.spoken_summary}"`;
+      el.recSpokenSummaryText.textContent = `"${rec.clarifying_question || rec.spoken_explanation || rec.spoken_summary}"`;
+    }
+    const strings = UI_STRINGS[state.language] || UI_STRINGS.en;
+    if (el.btnPlayRoadmapAudio) {
+      el.btnPlayRoadmapAudio.setAttribute('aria-label', strings.btnReplayAudio || 'Replay explanation');
+      el.btnPlayRoadmapAudio.title = strings.btnReplayAudio || 'Replay explanation';
+    }
+    if (el.audioPlayerTitle) {
+      el.audioPlayerTitle.textContent = strings.audioPlayerTitle || strings.btnReplayAudio || 'Voice Guidance Brief';
     }
     updateReadinessBadge(0, 'Exploratory Track — Review Options');
     renderSkillGaps([]);
@@ -1601,7 +1647,16 @@ function renderRoadmap(rec) {
   if (el.recGapSummary) {
     el.recGapSummary.innerHTML = `<span class="font-semibold text-secondary">AI Diagnostic Summary:</span> ${rec.gap_summary}`;
   }
-  if (el.recSpokenSummaryText) el.recSpokenSummaryText.textContent = `"${rec.spoken_summary}"`;
+  if (el.recSpokenSummaryText) el.recSpokenSummaryText.textContent = `"${rec.spoken_explanation || rec.spoken_summary}"`;
+
+  const strings = UI_STRINGS[state.language] || UI_STRINGS.en;
+  if (el.btnPlayRoadmapAudio) {
+    el.btnPlayRoadmapAudio.setAttribute('aria-label', strings.btnReplayAudio || 'Replay explanation');
+    el.btnPlayRoadmapAudio.title = strings.btnReplayAudio || 'Replay explanation';
+  }
+  if (el.audioPlayerTitle) {
+    el.audioPlayerTitle.textContent = strings.audioPlayerTitle || strings.btnReplayAudio || 'Voice Guidance Brief';
+  }
 
   // Dynamic Sector Icon
   const tradeKey = rec.trade_key || 'food_processing';
@@ -1888,40 +1943,50 @@ function bindRoadmapEvents() {
   }
 }
 
-function toggleRoadmapAudio() {
-  state.audioPlaying = !state.audioPlaying;
+function speakRecommendation(rec = null) {
+  const currentRec = rec || state.currentRecommendation;
+  if (!currentRec) return;
 
-  if (state.audioPlaying) {
-    if (el.playPauseIcon) el.playPauseIcon.textContent = 'pause';
-    let progress = 10;
-    if (el.audioProgressBar) el.audioProgressBar.style.width = progress + '%';
+  const textToSpeak = currentRec.needs_more_info
+    ? (currentRec.clarifying_question || currentRec.spoken_explanation || currentRec.spoken_summary)
+    : (currentRec.spoken_explanation || currentRec.spoken_summary);
 
-    if (state.currentRecommendation && state.currentRecommendation.spoken_summary) {
-      speakText(state.currentRecommendation.spoken_summary, state.language, () => {
-        state.audioPlaying = false;
-        if (el.playPauseIcon) el.playPauseIcon.textContent = 'play_arrow';
-        clearInterval(state.audioInterval);
-      });
+  if (!textToSpeak) return;
+
+  state.audioPlaying = true;
+  if (el.playPauseIcon) el.playPauseIcon.textContent = 'pause';
+
+  let progress = 10;
+  if (el.audioProgressBar) el.audioProgressBar.style.width = `${progress}%`;
+  if (state.audioInterval) clearInterval(state.audioInterval);
+  state.audioInterval = setInterval(() => {
+    if (!state.audioPlaying) {
+      clearInterval(state.audioInterval);
+      state.audioInterval = null;
+      return;
     }
+    progress = (progress >= 95) ? 95 : progress + 2;
+    if (el.audioProgressBar) el.audioProgressBar.style.width = `${progress}%`;
+  }, 400);
 
-    state.audioInterval = setInterval(() => {
-      if (progress >= 100) {
-        progress = 0;
-        state.audioPlaying = false;
-        if (el.playPauseIcon) el.playPauseIcon.textContent = 'play_arrow';
-        clearInterval(state.audioInterval);
-      } else {
-        progress += 4;
-      }
-      if (el.audioProgressBar) el.audioProgressBar.style.width = progress + '%';
-      const sec = Math.floor((progress / 100) * 60);
-      if (el.currentTimeLabel) el.currentTimeLabel.textContent = `0:${sec < 10 ? '0' : ''}${sec}`;
-    }, 500);
-
-  } else {
+  speak(textToSpeak, null, () => {
+    state.audioPlaying = false;
+    if (state.audioInterval) {
+      clearInterval(state.audioInterval);
+      state.audioInterval = null;
+    }
     if (el.playPauseIcon) el.playPauseIcon.textContent = 'play_arrow';
-    clearInterval(state.audioInterval);
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    if (el.audioProgressBar) el.audioProgressBar.style.width = '0%';
+  });
+}
+
+function toggleRoadmapAudio() {
+  if (state.audioPlaying) {
+    stopSpeaking();
+  } else {
+    if (state.currentRecommendation) {
+      speakRecommendation(state.currentRecommendation);
+    }
   }
 }
 
@@ -2335,48 +2400,103 @@ function bindAdminEvents() {
 // -------------------------------------------------------------
 // Speech Synthesis (TTS) & Audio Player Helper
 // -------------------------------------------------------------
+let speechToken = 0;
 let activeAudioElement = null;
 let activeUtterance = null;
 
+function stopSpeaking() {
+  speechToken++;
+  if (activeAudioElement) {
+    try {
+      activeAudioElement.pause();
+      activeAudioElement.currentTime = 0;
+    } catch (e) {}
+    activeAudioElement = null;
+  }
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+  window._activeUtterance = null;
+  if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
+  if (el.playPauseIcon) el.playPauseIcon.textContent = 'play_arrow';
+  state.audioPlaying = false;
+  if (state.audioInterval) {
+    clearInterval(state.audioInterval);
+    state.audioInterval = null;
+  }
+  if (el.audioProgressBar) el.audioProgressBar.style.width = '0%';
+}
+
 function speak(text, audioBase64 = null, onEnd = null) {
-  if (!text && !audioBase64) {
+  if (typeof audioBase64 === 'function') {
+    onEnd = audioBase64;
+    audioBase64 = null;
+  }
+
+  stopSpeaking();
+  const myToken = speechToken;
+
+  let callbackCalled = false;
+  const safeOnEnd = () => {
+    if (callbackCalled) return;
+    callbackCalled = true;
+    if (myToken !== speechToken) return;
     if (onEnd) onEnd();
+  };
+
+  const cleanText = (text || '')
+    .replace(/[*_#`~]/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^"+|"+$/g, '')
+    .trim();
+
+  if (!cleanText && !audioBase64) {
+    safeOnEnd();
     return;
   }
 
   unlockSpeechAndAudio();
 
   const playBase64 = (b64) => {
+    if (myToken !== speechToken) return;
     try {
       if (activeAudioElement) {
-        activeAudioElement.pause();
+        try { activeAudioElement.pause(); } catch(e) {}
         activeAudioElement = null;
       }
-      const mime = b64.startsWith('UklGR') ? 'audio/wav' : 'audio/mpeg';
-      activeAudioElement = new Audio(`data:${mime};base64,` + b64);
-      activeAudioElement.volume = 1.0;
-      activeAudioElement.onended = () => {
+      const mime = (typeof b64 === 'string' && b64.startsWith('UklGR')) ? 'audio/wav' : 'audio/mpeg';
+      const audio = new Audio(`data:${mime};base64,` + b64);
+      activeAudioElement = audio;
+      audio.volume = 1.0;
+      audio.onended = () => {
+        if (myToken !== speechToken) return;
         activeAudioElement = null;
         if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
-        if (onEnd) onEnd();
+        safeOnEnd();
       };
-      activeAudioElement.onerror = (e) => {
+      audio.onerror = (e) => {
+        if (myToken !== speechToken) return;
         console.warn('Audio playback error, falling back to browser speechSynthesis:', e);
         activeAudioElement = null;
-        speakViaBrowserTTS(text, onEnd);
+        speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
       };
       if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
-      const playPromise = activeAudioElement.play();
+      const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(err => {
+          if (myToken !== speechToken) return;
           console.warn('Audio play() blocked by autoplay policy, falling back to speechSynthesis:', err);
-          speakViaBrowserTTS(text, onEnd);
+          activeAudioElement = null;
+          speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
         });
       }
-      return true;
     } catch (err) {
+      if (myToken !== speechToken) return;
       console.warn('Audio instantiation failed, using speechSynthesis:', err);
-      return false;
+      activeAudioElement = null;
+      speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
     }
   };
 
@@ -2387,41 +2507,53 @@ function speak(text, audioBase64 = null, onEnd = null) {
   }
 
   // 2. If no base64 audio provided, dynamically fetch high-fidelity regional neural TTS from backend
-  if (text && text.trim()) {
+  if (cleanText) {
     if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
     fetch('/api/tts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        text: text.trim(),
+        text: cleanText,
         language: state.language || 'en'
       })
     })
     .then(r => r.json())
     .then(data => {
+      if (myToken !== speechToken) return;
       if (data && data.audio_base64) {
         playBase64(data.audio_base64);
       } else {
-        speakViaBrowserTTS(text, onEnd);
+        speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
       }
     })
     .catch(err => {
+      if (myToken !== speechToken) return;
       console.warn('Backend TTS fetch failed, using browser speech:', err);
-      speakViaBrowserTTS(text, onEnd);
+      speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
     });
     return;
   }
 
   // 3. Fallback to browser's native SpeechSynthesis
-  speakViaBrowserTTS(text, onEnd);
+  speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
 }
 
 // Backward-compatible alias for speakText
-function speakText(text, lang = null, audioBase64 = null, onEnd = null) {
-  speak(text, audioBase64, onEnd);
+function speakText(text, langOrAudio = null, audioBase64OrOnEnd = null, onEnd = null) {
+  if (typeof langOrAudio === 'function') {
+    onEnd = langOrAudio;
+    langOrAudio = null;
+    audioBase64OrOnEnd = null;
+  } else if (typeof audioBase64OrOnEnd === 'function') {
+    onEnd = audioBase64OrOnEnd;
+    audioBase64OrOnEnd = null;
+  }
+  speak(text, audioBase64OrOnEnd, onEnd);
 }
 
-function speakViaBrowserTTS(text, onEnd = null) {
+function speakViaBrowserTTS(text, onEnd = null, token = null) {
+  if (token !== null && token !== speechToken) return;
+
   if (!('speechSynthesis' in window)) {
     console.warn('SpeechSynthesis is not supported in this browser.');
     if (onEnd) onEnd();
@@ -2492,12 +2624,14 @@ function speakViaBrowserTTS(text, onEnd = null) {
   }
 
   utterance.onstart = () => {
+    if (token !== null && token !== speechToken) return;
     if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
     playChime(659.25, 0.12);
   };
 
   utterance.onend = () => {
     window._activeUtterance = null;
+    if (token !== null && token !== speechToken) return;
     if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
     if (onEnd) onEnd();
   };
@@ -2505,6 +2639,7 @@ function speakViaBrowserTTS(text, onEnd = null) {
   utterance.onerror = (e) => {
     console.warn('SpeechSynthesis playback note:', e);
     window._activeUtterance = null;
+    if (token !== null && token !== speechToken) return;
     if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
     if (onEnd) onEnd();
   };
@@ -2519,6 +2654,7 @@ function speakViaBrowserTTS(text, onEnd = null) {
     window.speechSynthesis.speak(utterance);
   } catch (err) {
     console.warn('speechSynthesis.speak execution error:', err);
+    if (onEnd) onEnd();
   }
 
   // Periodic resume guard against Chrome 15-second background speech pause bug
