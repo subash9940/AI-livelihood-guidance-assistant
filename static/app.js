@@ -124,6 +124,373 @@ const INITIAL_PROMPTS_SUB = {
   en: "Nivara Free Vocational Training & Direct Placement Linkage Assistant."
 };
 
+// -------------------------------------------------------------
+// Comprehensive UI Multi-Language Localizations (EN, TA, HI, MR, PA)
+// -------------------------------------------------------------
+const UI_STRINGS = {
+  en: {
+    ministryHeaderTitle: "Ministry of Social Justice & Empowerment",
+    nivaraSubtitle: "PM-AJAY Livelihood Guide",
+    giaDashboardLinkText: "GIA Dashboard",
+    statusText: "VOICE ENGINE ACTIVE • 14 DIALECTS READY",
+    spokenLangLabel: "Spoken Language / भाषा:",
+    testSoundBtnText: "Test Sound / Listen",
+    assistantGuideBadge: "Nivara AI • Livelihood Guide",
+    assistantSpeechSub: "Hello! Share your education level and what vocational trade interests you.",
+    demoBeneficiaryHeading: "Try a sample beneficiary",
+    demoBeneficiarySubheading: "1-Click Pipeline Simulation",
+    micLabel: "Tap & Speak / बोलिए",
+    micSubtext: "Bilingual Automatic Speech Recognition (Hindi / English / Regional)",
+    liveTranscriptHeading: "Live Speech Recognition (सजीव संवाद)",
+    confidenceTag: "Live Stream",
+    liveTranscriptPlaceholder: "Press the mic button and speak freely in your language...",
+    btnManualSubmitUtteranceText: "Send",
+    storySummaryHeading: "Beneficiary Story Summary (जीवन सारांश)",
+    storyInProgressBadge: "Story in Progress",
+    dialogueTurnBadge: (n) => `Dialogue Turn ${n}`,
+    storyDefaultPlaceholder: "Listening to beneficiary's background and vocational story... Tap the microphone above to speak about your schooling, family work, or interests.",
+    dialogueSectionHeading: "Conversational Dialogue (बातचीत)",
+    btnClearConversationText: "Clear",
+    assistantSenderName: "Nivara Assistant",
+    listenBtnText: "Listen / सुनें",
+    chatTypingText: "Nivara is analyzing your story & matching NSQF trades...",
+    chatInputPlaceholder: "Speak with mic above, or type your answer here...",
+    btnSendTextMessageText: "Send",
+    quickScenariosHeading: "Quick Test Scenarios / पूर्व-निर्धारित प्रोफाइल",
+    quickScenariosSubheading: "Tap to simulate",
+    profileSignalsHeading: "Extracted Profile Signals",
+    sigIntakeBadge: "Intake In Progress",
+    sigCompleteBadge: "✓ Profile Complete",
+    sigLabelEdu: "Education Level",
+    sigLabelFamily: "Family Occupation",
+    sigLabelSkills: "Skills / Interests",
+    sigLabelMobility: "Mobility Constraint",
+    sigLabelPref: "Livelihood Type",
+    sigLabelChannel: "Access Channel",
+    skillRegisterStripText: "Mapped against PM-AJAY Skill Qualification Register",
+    btnStartFacilitatorText: "Facilitator Mode",
+    btnResetSessionText: "Reset Voice",
+    navLabelVoice: "Voice AI",
+    navLabelRoadmap: "Pathways",
+    navLabelIvr: "IVR Line",
+    navLabelAdmin: "District",
+    navTitles: {
+      viewVoiceApp: "Voice Assistant",
+      viewRoadmap: "Roadmap & Skills",
+      viewIvr: "IVR Line",
+      viewAdmin: "District Admin"
+    },
+    testSoundSpokenText: "Welcome! Nivara PM-AJAY Livelihood Guide voice output is active and working clearly."
+  },
+  ta: {
+    ministryHeaderTitle: "சமூக நீதி மற்றும் அதிகாரமளித்தல் அமைச்சகம்",
+    nivaraSubtitle: "PM-AJAY வாழ்வாதார வழிகாட்டி • நிவாரா",
+    giaDashboardLinkText: "GIA டாஷ்போர்டு",
+    statusText: "குரல் இயந்திரம் இயங்குகிறது • 14 வட்டார வழக்குகள் தயார்",
+    spokenLangLabel: "பேசும் மொழி / Spoken Language:",
+    testSoundBtnText: "ஒலியை சோதிக்கவும்",
+    assistantGuideBadge: "நிவாரா AI • வாழ்வாதார வழிகாட்டி",
+    assistantSpeechSub: "வணக்கம்! உங்கள் படிப்பு மற்றும் PM-AJAY வாழ்வாதார விருப்பங்களைப் பகிருங்கள்.",
+    demoBeneficiaryHeading: "மாதிரி பயனாளியை முயற்சிக்கவும்",
+    demoBeneficiarySubheading: "1-கிளிக் தானியங்கி செயல்விளக்கம்",
+    micLabel: "அழுத்திப் பேசுங்கள் / Tap & Speak",
+    micSubtext: "தானியங்கி பேச்சு அறிதல் (தமிழ் / இந்தி / ஆங்கிலம்)",
+    liveTranscriptHeading: "நேரடி பேச்சு அறிதல் (Live Speech)",
+    confidenceTag: "நேரடி",
+    liveTranscriptPlaceholder: "மைக் பொத்தானை அழுத்தி உங்கள் தாய்மொழியில் சுதந்திரமாகப் பேசுங்கள்...",
+    btnManualSubmitUtteranceText: "அனுப்பு",
+    storySummaryHeading: "பயனாளி வாழ்க்கை சுருக்கம் (Story Summary)",
+    storyInProgressBadge: "விவரங்கள் பதிவாகின்றன",
+    dialogueTurnBadge: (n) => `உரையாடல் திருப்பம் ${n}`,
+    storyDefaultPlaceholder: "பயனாளியின் பின்னணி மற்றும் பணி விருப்பங்களைக் கேட்கிறது... உங்கள் பள்ளிப்படிப்பு, குடும்ப தொழில் அல்லது ஆர்வங்களைப் பற்றி பேச மேலே உள்ள மைக்கை அழுத்தவும்.",
+    dialogueSectionHeading: "நேரடி உரையாடல் (Dialogue)",
+    btnClearConversationText: "அழிக்க",
+    assistantSenderName: "நிவாரா உதவியாளர்",
+    listenBtnText: "கேளுங்கள்",
+    chatTypingText: "நிவாரா உங்கள் உரையாடலை பகுப்பாய்வு செய்து NSQF பயிற்சிகளைப் பொருத்துகிறது...",
+    chatInputPlaceholder: "மேலே உள்ள மைக்கில் பேசவும், அல்லது உங்கள் பதிலை தட்டச்சு செய்யவும்...",
+    btnSendTextMessageText: "அனுப்பு",
+    quickScenariosHeading: "விரைவு சோதனை சுயவிவரங்கள்",
+    quickScenariosSubheading: "பயிற்சி செய்ய தட்டவும்",
+    profileSignalsHeading: "பிரித்தெடுக்கப்பட்ட விவரங்கள் (Profile Signals)",
+    sigIntakeBadge: "பதிவு நடப்பில் உள்ளது",
+    sigCompleteBadge: "✓ முழு விவரங்கள் நிறைவடைந்தன",
+    sigLabelEdu: "கல்வித்தகுதி",
+    sigLabelFamily: "குடும்ப பாரம்பரிய தொழில்",
+    sigLabelSkills: "திறன்கள் & ஆர்வங்கள்",
+    sigLabelMobility: "பயண வசதி",
+    sigLabelPref: "வேலை விருப்பம்",
+    sigLabelChannel: "அணுகல் முறை",
+    skillRegisterStripText: "PM-AJAY திறன் தகுதிப் பதிவேட்டின் கீழ் சரிபார்க்கப்பட்டது",
+    btnStartFacilitatorText: "வழிகாட்டுனர் முறை",
+    btnResetSessionText: "மீட்டமை",
+    navLabelVoice: "குரல் AI",
+    navLabelRoadmap: "பயிற்சிகள்",
+    navLabelIvr: "IVR அழைப்பு",
+    navLabelAdmin: "மாவட்டம்",
+    navTitles: {
+      viewVoiceApp: "குரல் உதவியாளர்",
+      viewRoadmap: "பயிற்சி வரைபடம்",
+      viewIvr: "IVR உதவி எண்",
+      viewAdmin: "மாவட்ட நிர்வாகம்"
+    },
+    testSoundSpokenText: "வணக்கம்! நிவாரா PM-AJAY குரல் வழிகாட்டி இயங்குகிறது. உங்கள் ஒலிபெருக்கி சரியாக வேலை செய்கிறது."
+  },
+  hi: {
+    ministryHeaderTitle: "सामाजिक न्याय एवं अधिकारिता मंत्रालय",
+    nivaraSubtitle: "पीएम-अजय आजीविका मार्गदर्शक • निवारा",
+    giaDashboardLinkText: "GIA डैशबोर्ड",
+    statusText: "वॉइस इंजन सक्रिय • 14 बोलियां तैयार",
+    spokenLangLabel: "बोली जाने वाली भाषा / भाषा:",
+    testSoundBtnText: "आवाज़ जांचें / Test Sound",
+    assistantGuideBadge: "निवारा एआई • आजीविका मार्गदर्शक",
+    assistantSpeechSub: "नमस्ते! अपनी पढ़ाई, कौशल और आप किस तरह का काम सीखना चाहते हैं, बताएं।",
+    demoBeneficiaryHeading: "नमूना लाभार्थी चुनें",
+    demoBeneficiarySubheading: "1-क्लिक पाइपलाइन सिमुलेशन",
+    micLabel: "दबाएं और बोलें / Tap & Speak",
+    micSubtext: "द्विभाषी स्वचालित वाणी पहचान (हिन्दी / अंग्रेजी / क्षेत्रीय)",
+    liveTranscriptHeading: "सजीव संवाद (Live Speech Recognition)",
+    confidenceTag: "लाइव स्ट्रीम",
+    liveTranscriptPlaceholder: "माइक बटन दबाएं और अपनी भाषा में खुलकर बोलें...",
+    btnManualSubmitUtteranceText: "भेजें",
+    storySummaryHeading: "लाभार्थी जीवन सारांश (Story Summary)",
+    storyInProgressBadge: "विवरण जारी है",
+    dialogueTurnBadge: (n) => `संवाद चरण ${n}`,
+    storyDefaultPlaceholder: "लाभार्थी की पृष्ठभूमि और आजीविका की कहानी सुनी जा रही है... अपनी पढ़ाई, पारिवारिक काम या रुचि बताने के लिए ऊपर माइक दबाएं।",
+    dialogueSectionHeading: "बातचीत (Conversational Dialogue)",
+    btnClearConversationText: "साफ़ करें",
+    assistantSenderName: "निवारा सहायक",
+    listenBtnText: "सुनें",
+    chatTypingText: "निवारा आपकी कहानी का विश्लेषण कर पीएम-अजय ट्रेड का मिलान कर रहा है...",
+    chatInputPlaceholder: "ऊपर माइक से बोलें, या यहाँ अपना उत्तर टाइप करें...",
+    btnSendTextMessageText: "भेजें",
+    quickScenariosHeading: "पूर्व-निर्धारित प्रोफाइल (शीघ्र परीक्षण)",
+    quickScenariosSubheading: "परीक्षण के लिए क्लिक करें",
+    profileSignalsHeading: "निकाले गए प्रोफाइल संकेत (Profile Signals)",
+    sigIntakeBadge: "पंजीकरण जारी है",
+    sigCompleteBadge: "✓ प्रोफाइल पूर्ण",
+    sigLabelEdu: "शिक्षा स्तर",
+    sigLabelFamily: "पारिवारिक व्यवसाय",
+    sigLabelSkills: "कौशल व खूबियां",
+    sigLabelMobility: "सफर की सीमा",
+    sigLabelPref: "रोजगार प्रकार",
+    sigLabelChannel: "माध्यम",
+    skillRegisterStripText: "पीएम-अजय कौशल योग्यता रजिस्टर से सत्यापित",
+    btnStartFacilitatorText: "सुविधाकर्ता मोड",
+    btnResetSessionText: "रीसेट करें",
+    navLabelVoice: "आवाज़ AI",
+    navLabelRoadmap: "मार्गदर्शन",
+    navLabelIvr: "आईवीआर फ़ोन",
+    navLabelAdmin: "ज़िला प्रशासन",
+    navTitles: {
+      viewVoiceApp: "आवाज़ सहायक",
+      viewRoadmap: "प्रशिक्षण रोडमैप",
+      viewIvr: "आईवीआर हेल्पलाइन",
+      viewAdmin: "ज़िला प्रशासन"
+    },
+    testSoundSpokenText: "नमस्ते! निवारा पीएम-अजय आजीविका मार्गदर्शक सक्रिय है। आपकी आवाज़ प्रणाली ठीक से काम कर रही है।"
+  },
+  mr: {
+    ministryHeaderTitle: "सामाजिक न्याय आणि सक्षमीकरण मंत्रालय",
+    nivaraSubtitle: "पीएम-अजय उपजीविका मार्गदर्शक • निवारा",
+    giaDashboardLinkText: "जीआयए डॅशबोर्ड",
+    statusText: "व्हॉइस इंजिन सक्रिय • 14 बोलीभाषा सज्ज",
+    spokenLangLabel: "संभाषणाची भाषा / Language:",
+    testSoundBtnText: "आवाज तपासा / Test Sound",
+    assistantGuideBadge: "निवारा एआय • उपजीविका मार्गदर्शक",
+    assistantSpeechSub: "नमस्कार! तुमचे शिक्षण आणि आवडत्या कौशल्य प्रशिक्षणाबद्दल माहिती द्या.",
+    demoBeneficiaryHeading: "नमुना लाभार्थी निवडा",
+    demoBeneficiarySubheading: "१-क्लिक स्वयंचलित चाचणी",
+    micLabel: "दाबा आणि बोला / Tap & Speak",
+    micSubtext: "स्वयंचलित वाणी ओळख (मराठी / हिन्दी / इंग्रजी)",
+    liveTranscriptHeading: "थेट संवाद (Live Speech Recognition)",
+    confidenceTag: "थेट प्रवाह",
+    liveTranscriptPlaceholder: "माइक बटण दाबा आणि तुमच्या भाषेत मोकळेपणाने बोला...",
+    btnManualSubmitUtteranceText: "पाठवा",
+    storySummaryHeading: "लाभार्थी जीवन सारांश (Story Summary)",
+    storyInProgressBadge: "माहिती नोंदणी सुरू",
+    dialogueTurnBadge: (n) => `संभाषण टप्पा ${n}`,
+    storyDefaultPlaceholder: "लाभार्थ्याची पार्श्वभूमी आणि कौशल्य माहिती ऐकली जात आहे... तुमचे शिक्षण किंवा आवडी सांगण्यासाठी वरील माइक दाबा.",
+    dialogueSectionHeading: "संभाषण व चर्चा (Dialogue)",
+    btnClearConversationText: "साफ करा",
+    assistantSenderName: "निवारा सहाय्यक",
+    listenBtnText: "ऐका",
+    chatTypingText: "निवारा तुमच्या माहितीचे विश्लेषण करून योग्य ट्रेड शोधत आहे...",
+    chatInputPlaceholder: "वरील माइकने बोला, किंवा तुमचे उत्तर येथे टाइप करा...",
+    btnSendTextMessageText: "पाठवा",
+    quickScenariosHeading: "पूर्वनिर्धारित प्रोफाइल (जलद चाचणी)",
+    quickScenariosSubheading: "चाचणीसाठी टॅप करा",
+    profileSignalsHeading: "नोंदवलेली प्रोफाइल माहिती",
+    sigIntakeBadge: "नोंदणी सुरू",
+    sigCompleteBadge: "✓ माहिती पूर्ण",
+    sigLabelEdu: "शिक्षण स्तर",
+    sigLabelFamily: "कौटुंबिक व्यवसाय",
+    sigLabelSkills: "कौशल्ये व ताकद",
+    sigLabelMobility: "प्रवासाची तयारी",
+    sigLabelPref: "कामाचे प्राधान्य",
+    sigLabelChannel: "प्रवेश माध्यम",
+    skillRegisterStripText: "पीएम-अजय कौशल्य नोंदणी पुस्तिकेशी जोडलेले",
+    btnStartFacilitatorText: "मार्गदर्शक मोड",
+    btnResetSessionText: "रीसेट करा",
+    navLabelVoice: "व्हॉइस AI",
+    navLabelRoadmap: "प्रशिक्षण",
+    navLabelIvr: "आयव्हीआर",
+    navLabelAdmin: "जिल्हा",
+    navTitles: {
+      viewVoiceApp: "आवाज सहाय्यक",
+      viewRoadmap: "प्रशिक्षण आराखडा",
+      viewIvr: "आयव्हीआर हेल्पलाइन",
+      viewAdmin: "जिल्हा प्रशासन"
+    },
+    testSoundSpokenText: "नमस्कार! निवारा उपजीविका मार्गदर्शक सक्रिय आहे. तुमची आवाज प्रणाली व्यवस्थित सुरू आहे."
+  },
+  pa: {
+    ministryHeaderTitle: "ਸਮਾਜਿਕ ਨਿਆਂ ਅਤੇ ਸਸ਼ਕਤੀਕਰਨ ਮੰਤਰਾਲਾ",
+    nivaraSubtitle: "ਪੀਐਮ-ਅਜੇ ਰੋਜ਼ਗਾਰ ਮਾਰਗਦਰਸ਼ਕ • ਨਿਵਾਰਾ",
+    giaDashboardLinkText: "ਜੀਆਈਏ ਡੈਸ਼ਬੋਰਡ",
+    statusText: "ਵਾਇਸ ਇੰਜਣ ਸਰਗਰਮ • 14 ਉਪ-ਬੋਲੀਆਂ ਤਿਆਰ",
+    spokenLangLabel: "ਬੋਲਣ ਵਾਲੀ ਭਾਸ਼ਾ / Language:",
+    testSoundBtnText: "ਆਵਾਜ਼ ਚੈੱਕ ਕਰੋ / Test Sound",
+    assistantGuideBadge: "ਨਿਵਾਰਾ ਏਆਈ • ਰੋਜ਼ਗਾਰ ਮਾਰਗਦਰਸ਼ਕ",
+    assistantSpeechSub: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਆਪਣੀ ਪੜ੍ਹਾਈ ਅਤੇ ਰੋਜ਼ਗਾਰ ਦੀਆਂ ਇੱਛਾਵਾਂ ਬਾਰੇ ਦੱਸੋ।",
+    demoBeneficiaryHeading: "ਨਮੂਨਾ ਲਾਭਪਾਤਰੀ ਚੁਣੋ",
+    demoBeneficiarySubheading: "1-ਕਲਿੱਕ ਸਿਮੂਲੇਸ਼ਨ",
+    micLabel: "ਦਬਾਓ ਅਤੇ ਬੋਲੋ / Tap & Speak",
+    micSubtext: "ਆਟੋਮੈਟਿਕ ਬੋਲੀ ਪਛਾਣ (ਪੰਜਾਬੀ / ਹਿੰਦੀ / ਅੰਗਰੇਜ਼ੀ)",
+    liveTranscriptHeading: "ਲਾਈਵ ਬੋਲੀ ਪਛਾਣ (Live Speech)",
+    confidenceTag: "ਲਾਈਵ",
+    liveTranscriptPlaceholder: "ਮਾਈਕ ਬਟਨ ਦਬਾਓ ਅਤੇ ਆਪਣੀ ਬੋਲੀ ਵਿੱਚ ਖੁੱਲ੍ਹ ਕੇ ਬੋਲੋ...",
+    btnManualSubmitUtteranceText: "ਭੇਜੋ",
+    storySummaryHeading: "ਲਾਭਪਾਤਰੀ ਜੀਵਨ ਸਾਰ (Story Summary)",
+    storyInProgressBadge: "ਜਾਣਕਾਰੀ ਦਰਜ ਹੋ ਰਹੀ ਹੈ",
+    dialogueTurnBadge: (n) => `ਗੱਲਬਾਤ ਗੇੜ ${n}`,
+    storyDefaultPlaceholder: "ਲਾਭਪਾਤਰੀ ਦੀ ਪੜ੍ਹਾਈ ਅਤੇ ਕੰਮ ਦੀ ਕਹਾਣੀ ਸੁਣੀ ਜਾ ਰਹੀ ਹੈ... ਆਪਣੀ ਪੜ੍ਹਾਈ ਜਾਂ ਰੁਚੀਆਂ ਦੱਸਣ ਲਈ ਉੱਪਰ ਮਾਈਕ ਦਬਾਓ।",
+    dialogueSectionHeading: "ਗੱਲਬਾਤ (Conversational Dialogue)",
+    btnClearConversationText: "ਸਾਫ਼ ਕਰੋ",
+    assistantSenderName: "ਨਿਵਾਰਾ ਸਹਾਇਕ",
+    listenBtnText: "ਸੁਣੋ",
+    chatTypingText: "ਨਿਵਾਰਾ ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਦੀ ਪੜਤਾਲ ਕਰਕੇ ਢੁਕਵਾਂ ਕੋਰਸ ਲੱਭ ਰਿਹਾ ਹੈ...",
+    chatInputPlaceholder: "ਉੱਪਰ ਮਾਈਕ ਨਾਲ ਬੋਲੋ, ਜਾਂ ਆਪਣਾ ਜਵਾਬ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...",
+    btnSendTextMessageText: "ਭੇਜੋ",
+    quickScenariosHeading: "ਪੂਰਵ-ਨਿਰਧਾਰਤ ਪ੍ਰੋਫਾਈਲ",
+    quickScenariosSubheading: "ਟੈਸਟ ਲਈ ਟੈਪ ਕਰੋ",
+    profileSignalsHeading: "ਦਰਜ ਕੀਤੀ ਗਈ ਜਾਣਕਾਰੀ",
+    sigIntakeBadge: "ਦਰਜ ਹੋ ਰਿਹਾ ਹੈ",
+    sigCompleteBadge: "✓ ਪ੍ਰੋਫਾਈਲ ਮੁਕੰਮਲ",
+    sigLabelEdu: "ਵਿੱਦਿਅਕ ਯੋਗਤਾ",
+    sigLabelFamily: "ਪਰਿਵਾਰਕ ਕੰਮ",
+    sigLabelSkills: "ਹੁਨਰ ਅਤੇ ਤਾਕਤ",
+    sigLabelMobility: "ਸਫ਼ਰ ਦੀ ਤਿਆਰੀ",
+    sigLabelPref: "ਰੋਜ਼ਗਾਰ ਤਰਜੀਹ",
+    sigLabelChannel: "ਮਾਧਿਅਮ",
+    skillRegisterStripText: "ਪੀਐਮ-ਅਜੇ ਯੋਗਤਾ ਰਜਿਸਟਰ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੈ",
+    btnStartFacilitatorText: "ਸੁਵਿਧਾਕਰਤਾ ਮੋਡ",
+    btnResetSessionText: "ਰੀਸੈਟ ਕਰੋ",
+    navLabelVoice: "ਵਾਇਸ AI",
+    navLabelRoadmap: "ਮਾਰਗਦਰਸ਼ਨ",
+    navLabelIvr: "ਆਈਵੀਆਰ",
+    navLabelAdmin: "ਜ਼ਿਲ੍ਹਾ",
+    navTitles: {
+      viewVoiceApp: "ਆਵਾਜ਼ ਸਹਾਇਕ",
+      viewRoadmap: "ਰੋਜ਼ਗਾਰ ਰੋਡਮੈਪ",
+      viewIvr: "ਆਈਵੀਆਰ ਹੈਲਪਲਾਈਨ",
+      viewAdmin: "ਜ਼ਿਲ੍ਹਾ ਪ੍ਰਸ਼ਾਸਨ"
+    },
+    testSoundSpokenText: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਨਿਵਾਰਾ ਰੋਜ਼ਗਾਰ ਮਾਰਗਦਰਸ਼ਕ ਸਰਗਰਮ ਹੈ। ਤੁਹਾਡੀ ਆਵਾਜ਼ ਪ੍ਰਣਾਲੀ ਬਿਲਕੁਲ ਠੀਕ ਕੰਮ ਕਰ ਰਹੀ ਹੈ।"
+  }
+};
+
+/**
+ * Updates all static labels, card titles, badges, and navigation items across the UI
+ * instantly to the requested regional language.
+ */
+function applyLanguage(lang) {
+  const strings = UI_STRINGS[lang] || UI_STRINGS.en;
+  if (!strings) return;
+
+  const setTxt = (elem, text) => { if (elem && text !== undefined) elem.textContent = text; };
+
+  setTxt(el.ministryHeaderTitle, strings.ministryHeaderTitle);
+  setTxt(el.nivaraSubtitle, strings.nivaraSubtitle);
+  setTxt(el.giaDashboardLinkText, strings.giaDashboardLinkText);
+  setTxt(el.statusText, strings.statusText);
+  setTxt(el.spokenLangLabel, strings.spokenLangLabel);
+  setTxt(el.testSoundBtnText, strings.testSoundBtnText);
+  setTxt(el.assistantGuideBadge, strings.assistantGuideBadge);
+  setTxt(el.assistantSpeechSub, strings.assistantSpeechSub);
+  setTxt(el.demoBeneficiaryHeading, strings.demoBeneficiaryHeading);
+  setTxt(el.demoBeneficiarySubheading, strings.demoBeneficiarySubheading);
+  setTxt(el.micLabel, strings.micLabel);
+  setTxt(el.micSubtext, strings.micSubtext);
+  setTxt(el.liveTranscriptHeading, strings.liveTranscriptHeading);
+  setTxt(el.confidenceTag, strings.confidenceTag);
+  setTxt(el.btnManualSubmitUtteranceText, strings.btnManualSubmitUtteranceText);
+  setTxt(el.storySummaryHeading, strings.storySummaryHeading);
+  setTxt(el.dialogueSectionHeading, strings.dialogueSectionHeading);
+  setTxt(el.btnClearConversationText, strings.btnClearConversationText);
+  setTxt(el.assistantSenderName, strings.assistantSenderName);
+  setTxt(el.initialBubbleListenText, strings.listenBtnText);
+  setTxt(el.chatTypingText, strings.chatTypingText);
+  setTxt(el.btnSendTextMessageText, strings.btnSendTextMessageText);
+  setTxt(el.quickScenariosHeading, strings.quickScenariosHeading);
+  setTxt(el.quickScenariosSubheading, strings.quickScenariosSubheading);
+  setTxt(el.profileSignalsHeading, strings.profileSignalsHeading);
+
+  setTxt(el.sigLabelEdu, strings.sigLabelEdu);
+  setTxt(el.sigLabelFamily, strings.sigLabelFamily);
+  setTxt(el.sigLabelSkills, strings.sigLabelSkills);
+  setTxt(el.sigLabelMobility, strings.sigLabelMobility);
+  setTxt(el.sigLabelPref, strings.sigLabelPref);
+  setTxt(el.sigLabelChannel, strings.sigLabelChannel);
+  setTxt(el.skillRegisterStripText, strings.skillRegisterStripText);
+  setTxt(el.btnStartFacilitatorText, strings.btnStartFacilitatorText);
+  setTxt(el.btnResetSessionText, strings.btnResetSessionText);
+
+  // Bottom Navigation Labels
+  setTxt(el.navLabelVoice, strings.navLabelVoice);
+  setTxt(el.navLabelRoadmap, strings.navLabelRoadmap);
+  setTxt(el.navLabelIvr, strings.navLabelIvr);
+  setTxt(el.navLabelAdmin, strings.navLabelAdmin);
+
+  // Update nav-tab data-title attributes
+  if (el.navTabs && strings.navTitles) {
+    el.navTabs.forEach(tab => {
+      const view = tab.getAttribute('data-view');
+      if (view && strings.navTitles[view]) {
+        tab.setAttribute('data-title', strings.navTitles[view]);
+      }
+    });
+  }
+
+  // Update active header view title
+  if (el.headerTitle && strings.navTitles && state.activeTab) {
+    el.headerTitle.textContent = strings.navTitles[state.activeTab] || strings.navTitles.viewVoiceApp;
+  }
+
+  // Update Input Placeholder
+  if (el.chatTextInput && strings.chatInputPlaceholder) {
+    el.chatTextInput.placeholder = strings.chatInputPlaceholder;
+  }
+
+  // Update Live Transcript text if it's default
+  if (el.liveTranscriptText && (!accumulatedTranscript && !interimTranscript)) {
+    el.liveTranscriptText.textContent = `"${strings.liveTranscriptPlaceholder}"`;
+  }
+
+  // Update Story Summary text if turn is 0
+  if (el.liveStorySummaryText && (!state.dialogueTurn || state.dialogueTurn === 0)) {
+    el.liveStorySummaryText.textContent = strings.storyDefaultPlaceholder;
+  }
+  if (el.turnCounterBadge && (!state.dialogueTurn || state.dialogueTurn === 0)) {
+    el.turnCounterBadge.textContent = strings.storyInProgressBadge;
+  }
+
+  // Update existing chat bubble listen buttons
+  document.querySelectorAll('.chat-bubble-tts span:last-child').forEach(s => {
+    s.textContent = strings.listenBtnText;
+  });
+}
+
 // Trade Sector Icon Mappings for Material Symbols
 const TRADE_ICONS = {
   food_processing: 'agriculture',
@@ -283,6 +650,40 @@ function initElements() {
     navTabs: document.querySelectorAll('.nav-tab'),
     views: document.querySelectorAll('.view-panel'),
     headerTitle: document.getElementById('headerActiveViewTitle'),
+    ministryHeaderTitle: document.getElementById('ministryHeaderTitle'),
+    nivaraSubtitle: document.getElementById('nivaraSubtitle'),
+    giaDashboardLinkText: document.getElementById('giaDashboardLinkText'),
+    spokenLangLabel: document.getElementById('spokenLangLabel'),
+    testSoundBtnText: document.getElementById('testSoundBtnText'),
+    assistantGuideBadge: document.getElementById('assistantGuideBadge'),
+    demoBeneficiaryHeading: document.getElementById('demoBeneficiaryHeading'),
+    demoBeneficiarySubheading: document.getElementById('demoBeneficiarySubheading'),
+    micSubtext: document.getElementById('micSubtext'),
+    liveTranscriptHeading: document.getElementById('liveTranscriptHeading'),
+    btnManualSubmitUtteranceText: document.getElementById('btnManualSubmitUtteranceText'),
+    storySummaryHeading: document.getElementById('storySummaryHeading'),
+    dialogueSectionHeading: document.getElementById('dialogueSectionHeading'),
+    btnClearConversationText: document.getElementById('btnClearConversationText'),
+    assistantSenderName: document.getElementById('assistantSenderName'),
+    initialBubbleListenText: document.getElementById('initialBubbleListenText'),
+    chatTypingText: document.getElementById('chatTypingText'),
+    btnSendTextMessageText: document.getElementById('btnSendTextMessageText'),
+    quickScenariosHeading: document.getElementById('quickScenariosHeading'),
+    quickScenariosSubheading: document.getElementById('quickScenariosSubheading'),
+    profileSignalsHeading: document.getElementById('profileSignalsHeading'),
+    sigLabelEdu: document.getElementById('sigLabelEdu'),
+    sigLabelFamily: document.getElementById('sigLabelFamily'),
+    sigLabelSkills: document.getElementById('sigLabelSkills'),
+    sigLabelMobility: document.getElementById('sigLabelMobility'),
+    sigLabelPref: document.getElementById('sigLabelPref'),
+    sigLabelChannel: document.getElementById('sigLabelChannel'),
+    skillRegisterStripText: document.getElementById('skillRegisterStripText'),
+    btnStartFacilitatorText: document.getElementById('btnStartFacilitatorText'),
+    btnResetSessionText: document.getElementById('btnResetSessionText'),
+    navLabelVoice: document.getElementById('navLabelVoice'),
+    navLabelRoadmap: document.getElementById('navLabelRoadmap'),
+    navLabelIvr: document.getElementById('navLabelIvr'),
+    navLabelAdmin: document.getElementById('navLabelAdmin'),
     langSelect: document.getElementById('langSelect'),
     langPills: document.querySelectorAll('.lang-pill'),
 
@@ -419,13 +820,14 @@ function initElements() {
 // -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   initElements();
+  applyLanguage(state.language);
   bindNavigation();
   initSpeechRecognition();
   bindVoiceEvents();
   bindRoadmapEvents();
   bindIvrEvents();
   bindAdminEvents();
-  startNewSession();
+  startNewSession(state.entryMode, state.language, false);
   startIvrTimer();
   updateClock();
   setInterval(updateClock, 1000);
@@ -468,7 +870,7 @@ function bindNavigation() {
   }
 }
 
-function setAppLanguage(lang) {
+function setAppLanguage(lang, autoSpeak = true) {
   unlockSpeechAndAudio();
   state.language = lang;
 
@@ -490,9 +892,11 @@ function setAppLanguage(lang) {
     state.recognition.lang = LANG_LOCALES[lang] || 'en-IN';
   }
 
+  applyLanguage(lang);
+
   const langNames = { en: 'English', hi: 'हिन्दी', mr: 'मराठी', pa: 'ਪੰਜਾਬੀ', ta: 'தமிழ்' };
   showToast(`Language set to ${langNames[lang] || lang}`, 'translate');
-  startNewSession(state.entryMode, state.language);
+  startNewSession(state.entryMode, state.language, autoSpeak);
 }
 
 function switchTab(viewId, title) {
@@ -533,7 +937,7 @@ function switchTab(viewId, title) {
 // -------------------------------------------------------------
 // Session Management: POST /session/start
 // -------------------------------------------------------------
-async function startNewSession(entryMode = null, language = null) {
+async function startNewSession(entryMode = null, language = null, autoSpeak = false) {
   if (entryMode) state.entryMode = entryMode;
   if (language) state.language = language;
 
@@ -552,13 +956,14 @@ async function startNewSession(entryMode = null, language = null) {
     }
   }
 
+  const strings = UI_STRINGS[state.language] || UI_STRINGS.en;
   state.dialogueTurn = 0;
   if (el.turnCounterBadge) {
-    el.turnCounterBadge.textContent = 'Story in Progress';
+    el.turnCounterBadge.textContent = strings.storyInProgressBadge || 'Story in Progress';
     el.turnCounterBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20';
   }
   if (el.liveStorySummaryText) {
-    el.liveStorySummaryText.textContent = "Listening to beneficiary's background and vocational story... Tap the microphone above to speak about your schooling, family work, or interests.";
+    el.liveStorySummaryText.textContent = strings.storyDefaultPlaceholder;
   }
   if (el.conversationThread) {
     el.conversationThread.innerHTML = '';
@@ -577,13 +982,13 @@ async function startNewSession(entryMode = null, language = null) {
     state.sessionId = data.session_id;
 
     const prompt = data.initial_prompt || INITIAL_PROMPTS[state.language] || INITIAL_PROMPTS.en;
-    setAssistantSpeech(prompt);
-    addChatBubble(prompt, 'assistant');
+    setAssistantSpeech(prompt, autoSpeak, data.initial_audio_base64);
+    addChatBubble(prompt, 'assistant', data.initial_audio_base64);
   } catch (err) {
     console.warn('Session start fallback:', err);
     state.sessionId = 'local-' + Date.now();
     const prompt = INITIAL_PROMPTS[state.language] || INITIAL_PROMPTS.en;
-    setAssistantSpeech(prompt);
+    setAssistantSpeech(prompt, autoSpeak);
     addChatBubble(prompt, 'assistant');
   }
 }
@@ -869,9 +1274,11 @@ function bindVoiceEvents() {
     el.btnTestAudioOutput.addEventListener('click', () => {
       unlockSpeechAndAudio();
       playChime(587.33, 0.2);
+      const strings = UI_STRINGS[state.language] || UI_STRINGS.en;
+      const testText = strings.testSoundSpokenText || "Welcome! Nivara PM-AJAY Livelihood Guide voice output is active and working clearly.";
       setTimeout(() => {
-        speak("Hello! The Nivara audio assistant is working. Your system sound and browser voice output are active.");
-        showToast("Playing test voice... Audio output active!", "volume_up");
+        speak(testText);
+        showToast(strings.testSoundBtnText || "Playing test voice... Audio output active!", "volume_up");
       }, 80);
     });
   }
@@ -1939,14 +2346,14 @@ function speak(text, audioBase64 = null, onEnd = null) {
 
   unlockSpeechAndAudio();
 
-  // 1. If base64 audio is provided from backend (Bhashini WAV), play it directly
-  if (audioBase64) {
+  const playBase64 = (b64) => {
     try {
       if (activeAudioElement) {
         activeAudioElement.pause();
         activeAudioElement = null;
       }
-      activeAudioElement = new Audio('data:audio/wav;base64,' + audioBase64);
+      const mime = b64.startsWith('UklGR') ? 'audio/wav' : 'audio/mpeg';
+      activeAudioElement = new Audio(`data:${mime};base64,` + b64);
       activeAudioElement.volume = 1.0;
       activeAudioElement.onended = () => {
         activeAudioElement = null;
@@ -1966,13 +2373,46 @@ function speak(text, audioBase64 = null, onEnd = null) {
           speakViaBrowserTTS(text, onEnd);
         });
       }
-      return;
+      return true;
     } catch (err) {
       console.warn('Audio instantiation failed, using speechSynthesis:', err);
+      return false;
     }
+  };
+
+  // 1. If base64 audio is provided from backend (WAV/MP3), play it directly
+  if (audioBase64) {
+    playBase64(audioBase64);
+    return;
   }
 
-  // 2. Fallback to browser's native SpeechSynthesis (Free, runs offline without API keys!)
+  // 2. If no base64 audio provided, dynamically fetch high-fidelity regional neural TTS from backend
+  if (text && text.trim()) {
+    if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
+    fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: text.trim(),
+        language: state.language || 'en'
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data && data.audio_base64) {
+        playBase64(data.audio_base64);
+      } else {
+        speakViaBrowserTTS(text, onEnd);
+      }
+    })
+    .catch(err => {
+      console.warn('Backend TTS fetch failed, using browser speech:', err);
+      speakViaBrowserTTS(text, onEnd);
+    });
+    return;
+  }
+
+  // 3. Fallback to browser's native SpeechSynthesis
   speakViaBrowserTTS(text, onEnd);
 }
 

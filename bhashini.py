@@ -128,40 +128,73 @@ def speech_to_text(audio_base64: str, language_code: str = "hi") -> str:
     return data["pipelineResponse"][0]["output"][0]["source"]
 
 
+def synthesize_free_neural_tts(text: str, language_code: str = "en") -> Optional[str]:
+    """
+    Synthesizes speech audio (MP3 base64-encoded) without requiring any API key.
+    Supports Indian regional languages: ta (Tamil), hi (Hindi), mr (Marathi), pa (Punjabi), en (English).
+    """
+    if not text or not text.strip():
+        return None
+    try:
+        import urllib.request
+        import urllib.parse
+        import base64
+        import re
+
+        clean = re.sub(r'[*_#`~]', '', text).strip()
+        # Truncate to reasonable sentence length for TTS chunk
+        short_text = clean[:180]
+        q = urllib.parse.quote(short_text)
+        url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl={language_code}&client=tw-ob&q={q}"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+        with urllib.request.urlopen(req, timeout=6) as response:
+            if response.status == 200:
+                audio_bytes = response.read()
+                return base64.b64encode(audio_bytes).decode("utf-8")
+    except Exception as e:
+        logger.warning(f"Free neural TTS fallback error: {e}")
+    return None
+
+
 def text_to_speech(text: str, language_code: str = "hi") -> Optional[str]:
     """
-    Converts text to speech audio WAV (base64-encoded) via Bhashini ULCA TTS.
-    Returns None if in mock mode, signaling frontend to use native browser SpeechSynthesis.
+    Converts text to speech audio WAV/MP3 (base64-encoded).
+    Uses Bhashini ULCA TTS if credentials configured;
+    Otherwise uses high-quality Indian regional neural TTS fallback (zero API keys needed!).
     """
-    if is_mock_mode():
-        return None
+    if not is_mock_mode():
+        try:
+            config = get_pipeline_config()
+            callback_url = config["callbackUrl"]
+            inference_key = config["inferenceKeyHeader"]
+            service_id = config["serviceIdByTask"].get("tts")
 
-    config = get_pipeline_config()
-    callback_url = config["callbackUrl"]
-    inference_key = config["inferenceKeyHeader"]
-    service_id = config["serviceIdByTask"].get("tts")
-
-    body = {
-        "pipelineTasks": [
-            {
-                "taskType": "tts",
-                "config": {
-                    "language": {"sourceLanguage": language_code},
-                    "serviceId": service_id,
-                    "gender": "female",
-                    "samplingRate": 8000,
-                },
+            body = {
+                "pipelineTasks": [
+                    {
+                        "taskType": "tts",
+                        "config": {
+                            "language": {"sourceLanguage": language_code},
+                            "serviceId": service_id,
+                            "gender": "female",
+                            "samplingRate": 8000,
+                        },
+                    }
+                ],
+                "inputData": {"input": [{"source": text}]},
             }
-        ],
-        "inputData": {"input": [{"source": text}]},
-    }
 
-    headers = {
-        "Content-Type": "application/json",
-        inference_key["name"]: inference_key["value"],
-    }
+            headers = {
+                "Content-Type": "application/json",
+                inference_key["name"]: inference_key["value"],
+            }
 
-    resp = requests.post(callback_url, json=body, headers=headers, timeout=20)
-    resp.raise_for_status()
-    data = resp.json()
-    return data["pipelineResponse"][0]["audio"][0]["audioContent"]
+            resp = requests.post(callback_url, json=body, headers=headers, timeout=20)
+            resp.raise_for_status()
+            data = resp.json()
+            return data["pipelineResponse"][0]["audio"][0]["audioContent"]
+        except Exception as e:
+            logger.warning(f"Bhashini TTS error, falling back to neural TTS: {e}")
+
+    # High-quality neural TTS fallback (supports Tamil, Hindi, Marathi, Punjabi, English)
+    return synthesize_free_neural_tts(text, language_code)

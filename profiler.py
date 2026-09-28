@@ -298,6 +298,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 0: If the beneficiary only provided soft skills with no concrete interest or technical skill
     if has_soft and not has_concrete:
         prompts = {
+            "ta": "உங்கள் தனிப்பட்ட பலங்களை (உழைப்பு, பொறுமை அல்லது நற்பண்புகள்) பகிர்ந்ததற்கு நன்றி! சரியான தொழிற்பயிற்சியை பரிந்துரைக்க, நீங்கள் கற்க விரும்பும் ஒரு குறிப்பிட்ட செய்முறை திறன் அல்லது விருப்பமான தொழில் (தையல், வயரிங், வாகன பழுதுபார்ப்பு, உணவு பதப்படுத்துதல், கணினி, அல்லது விவசாயம்) பற்றி சொல்ல முடியுமா?",
             "hi": "अपनी व्यक्तिगत खूबियों (जैसे मेहनत, धैर्य, या व्यवहार) को साझा करने के लिए धन्यवाद! सही ट्रेड का सुझाव देने के लिए, क्या आप किसी व्यावहारिक हुनर, रुचि या कार्यक्षेत्र (जैसे सिलाई, बिजली/वायरिंग, वाहन मरम्मत, खाद्य प्रसंस्करण, कंप्यूटर, या खेती) के बारे में बता सकते हैं?",
             "mr": "तुमचे वैयक्तिक गुण (उदा. कष्टाळूपणा, संयम किंवा संवाद) सांगितल्याबद्दल धन्यवाद! योग्य उपजीविकेची शिफारस करण्यासाठी, तुम्हाला कोणत्या विशिष्ट कामात किंवा कौशल्यात रस आहे (उदा. सिलाई, इलेक्ट्रिकल काम, वाहन दुरुस्ती, अन्न प्रक्रिया, संगणक किंवा शेती) ते सांगू शकाल का?",
             "pa": "ਆਪਣੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਮਿਹਨਤ, ਸਬਰ ਜਾਂ ਮਿਲਣਸਾਰ ਹੋਣਾ) ਸਾਂਝੀਆਂ ਕਰਨ ਲਈ ਧੰਨਵਾਦ! ਸਹੀ ਰੋਜ਼ਗਾਰ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕਰਨ ਲਈ, ਕੀ ਤੁਸੀਂ ਕਿਸੇ ਖਾਸ ਕੰਮ, ਹੁਨਰ ਜਾਂ ਖੇਤਰ (ਜਿਵੇਂ ਸਿਲਾਈ, ਬਿਜਲੀ ਦਾ ਕੰਮ, ਗੱਡੀਆਂ ਦੀ ਮੁਰੰਮਤ, ਫੂਡ ਪ੍ਰੋਸੈਸਿੰਗ, ਕੰਪਿਊਟਰ ਜਾਂ ਖੇਤੀਬਾੜੀ) ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ?",
@@ -317,6 +318,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 1: Name + Education + Skills (initial greeting — bundle if multiple are missing)
     if missing_skills and missing_edu:
         prompts = {
+            "ta": "வணக்கம்! உங்களைப் பற்றி கூறுங்கள் — உங்கள் பெயர் என்ன, படிப்பு எவ்வளவு மற்றும் உங்களிடம் என்ன திறமைகள் உள்ளன? இது குடும்ப வேலை (விவசாயம், தையல்), தொழில்நுட்ப திறன், அல்லது உங்கள் தனிப்பட்ட பலமாக கூட இருக்கலாம்.",
             "hi": "नमस्ते! आप अपने बारे में बताएं — आपका नाम क्या है, पढ़ाई कितनी हुई है, और आपकी क्या खूबियां या हुनर हैं? यह कोई पारंपरिक काम (जैसे खेती, सिलाई), तकनीकी हुनर, या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा मेलजोल, धैर्य, या मेहनत) भी हो सकती है।",
             "mr": "नमस्कार! तुमच्याबद्दल सांगा — तुमचे नाव, शिक्षण किती झाले आणि तुमच्याकडे कोणती कौशल्ये किंवा गुण आहेत? हे कोणतेही कौटुंबिक काम (उदा. शेती, विणकाम), तांत्रिक काम, किंवा तुमचे व्यक्तिमत्त्व गुण (उदा. लोकांसोबत चांगले संबंध, संयम, कष्ट करण्याची तयारी) असू शकते.",
             "pa": "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਆਪਣੇ ਬਾਰੇ ਦੱਸੋ — ਤੁਹਾਡਾ ਨਾਮ ਕੀ ਹੈ, ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ ਅਤੇ ਤੁਹਾਡਾ ਕੀ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਹੈ? ਇਹ ਕੋਈ ਪਰਿਵਾਰਕ ਕੰਮ (ਜਿਵੇਂ ਖੇਤੀ, ਸਿਲਾਈ), ਤਕਨੀਕੀ ਹੁਨਰ, ਜਾਂ ਤੁਹਾਡੀਆਂ ਨਿੱਜੀ ਖੂਬੀਆਂ (ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਚੰਗਾ ਰਾਬਤਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤ) ਵੀ ਹੋ ਸਕਦਾ ਹੈ।",
@@ -327,6 +329,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 2: Skills missing (education already captured)
     if missing_skills:
         prompts = {
+            "ta": "மிக நல்லது! உங்கள் திறன்கள் அல்லது ஆர்வங்கள் பற்றி சொல்ல முடியுமா? இது முறையான பயிற்சியாக இருக்க வேண்டியதில்லை — பாரம்பரிய குடும்ப வேலை அல்லது தனிப்பட்ட திறமையாக கூட இருக்கலாம்.",
             "hi": "बहुत अच्छा! क्या आप अपने कौशल या खूबियों के बारे में बता सकते हैं? यह केवल तकनीकी काम ही नहीं, बल्कि पारंपरिक पारिवारिक काम (जैसे खेती, शिल्प) या आपकी व्यक्तिगत ताकत (जैसे लोगों से अच्छा व्यवहार, धैर्य, या लगन) भी हो सकती है।",
             "mr": "छान! तुमच्याकडे कोणती कौशल्ये किंवा ताकदीचे पैलू आहेत ते सांगू शकाल का? हे केवळ तांत्रिक काम नसून पारंपरिक कौटुंबिक काम किंवा लोकांसोबत चांगले वागणे, संयम व कष्टाळूपणा यासारखे वैयक्तिक गुणही असू शकतात.",
             "pa": "ਬਹੁਤ ਵਧੀਆ! ਕੀ ਤੁਸੀਂ ਆਪਣੇ ਕਿਸੇ ਹੁਨਰ ਜਾਂ ਖੂਬੀ ਬਾਰੇ ਦੱਸ ਸਕਦੇ ਹੋ? ਇਹ ਕੋਈ ਰਵਾਇਤੀ ਜਾਂ ਪਰਿਵਾਰਕ ਕੰਮ ਹੋ ਸਕਦਾ ਹੈ ਜਾਂ ਨਿੱਜੀ ਖੂਬੀਆਂ ਜਿਵੇਂ ਲੋਕਾਂ ਨਾਲ ਮਿਲਣਸਾਰ ਹੋਣਾ, ਸਬਰ ਜਾਂ ਮਿਹਨਤੀ ਸੁਭਾਅ ਵੀ ਹੋ ਸਕਦਾ ਹੈ।",
@@ -337,6 +340,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 3: Education missing (skills already captured)
     if missing_edu:
         prompts = {
+            "ta": "சிறப்பு! உங்கள் கல்வித்தகுதி என்ன, அதாவது 8-ஆம் வகுப்பு, 10-ஆம் வகுப்பு அல்லது 12-ஆம் வகுப்பு முடித்துள்ளீர்களா?",
             "hi": "बहुत अच्छा! क्या आप अपनी पढ़ाई के बारे में बता सकते हैं, जैसे 8वीं, 10वीं या 12वीं पास?",
             "mr": "छान! तुमचे शिक्षण कितवीपर्यंत झाले आहे ते सांगू शकता का (उदा. ८वी, १०वी किंवा १२वी)?",
             "pa": "ਬਹੁਤ ਵਧੀਆ! ਤੁਹਾਡੀ ਪੜ੍ਹਾਈ ਕਿੰਨੀ ਹੈ, ਜਿਵੇਂ 8ਵੀਂ, 10ਵੀਂ ਜਾਂ 12ਵੀਂ?",
@@ -347,6 +351,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 4: State/Location missing
     if missing_state:
         prompts = {
+            "ta": "நீங்கள் எந்த மாநிலம் அல்லது மாவட்டத்தில் வசிக்கிறீர்கள்? (எடுத்துக்காட்டாக தமிழ்நாடு, சென்னை, மதுரை, அல்லது பிற மாவட்டங்கள்)",
             "hi": "आप किस राज्य या जिले में रहते हैं? (जैसे दिल्ली, महाराष्ट्र, तमिलनाडु, कर्नाटक, या उत्तर प्रदेश)",
             "mr": "तुम्ही कोणत्या राज्यात किंवा जिल्ह्यात राहता? (उदा. दिल्ली, महाराष्ट्र, तामिळनाडू, कर्नाटक, किंवा उत्तर प्रदेश)",
             "pa": "ਤੁਸੀਂ ਕਿਸ ਰਾਜ ਜਾਂ ਜ਼ਿਲ੍ਹੇ ਵਿੱਚ ਰਹਿੰਦੇ ਹੋ? (ਜਿਵੇਂ ਦਿੱਲੀ, ਮਹਾਰਾਸ਼ਟਰ, ਤਾਮਿਲਨਾਡੂ, ਕਰਨਾਟਕ, ਜਾਂ ਉੱਤਰ ਪ੍ਰਦੇਸ਼)",
@@ -357,6 +362,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 5: Family Occupation missing
     if missing_family_occ:
         prompts = {
+            "ta": "உங்கள் குடும்பத்தின் பாரம்பரிய தொழில் என்ன? (எடுத்துக்காட்டாக விவசாயம், கூலி வேலை, தையல், வியாபாரம், அல்லது கால்நடை வளர்ப்பு)",
             "hi": "आपके परिवार का पारंपरिक पेशा क्या है? (जैसे खेती, मजदूरी, सिलाई, दुकानदारी, या पशुपालन)",
             "mr": "तुमच्या कुटुंबाचा पारंपरिक व्यवसाय कोणता आहे? (उदा. शेती, मजुरी, शिलाई, दुकानदारी, किंवा पशुपालन)",
             "pa": "ਤੁਹਾਡੇ ਪਰਿਵਾਰ ਦਾ ਰਵਾਇਤੀ ਕੰਮ ਕੀ ਹੈ? (ਜਿਵੇਂ ਖੇਤੀ, ਮਜ਼ਦੂਰੀ, ਸਿਲਾਈ, ਦੁਕਾਨਦਾਰੀ, ਜਾਂ ਪਸ਼ੂ ਪਾਲਣ)",
@@ -367,6 +373,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 6: Mobility constraint missing
     if missing_mobility:
         prompts = {
+            "ta": "பயிற்சிக்காக நீங்கள் அருகிலுள்ள நகரத்திற்கு செல்ல முடியுமா, அல்லது உங்கள் ஊரிலேயே இருக்க வேண்டுமா?",
             "hi": "क्या आप प्रशिक्षण के लिए पास के शहर या तालुके तक जा सकते हैं, या आपको घर/गाँव के पास ही रहना ज़रूरी है?",
             "mr": "तुम्ही प्रशिक्षणासाठी जवळच्या शहरात किंवा तालुक्यात जाऊ शकता का, की तुम्हाला गावाजवळच राहणे आवश्यक आहे?",
             "pa": "ਕੀ ਤੁਸੀਂ ਸਿਖਲਾਈ ਲਈ ਨੇੜੇ ਦੇ ਸ਼ਹਿਰ ਜਾ ਸਕਦੇ ਹੋ, ਜਾਂ ਤੁਹਾਨੂੰ ਘਰ/ਪਿੰਡ ਦੇ ਨੇੜੇ ਹੀ ਰਹਿਣਾ ਜ਼ਰੂਰੀ ਹੈ?",
@@ -377,6 +384,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     # Priority 7: Employment Preference missing
     if missing_emp_pref:
         prompts = {
+            "ta": "நீங்கள் சொந்தமாக சுயதொழில் தொடங்க விரும்புகிறீர்களா, அல்லது நிறுவனத்தில் மாத சம்பள வேலை செய்ய விரும்புகிறீர்களா?",
             "hi": "क्या आप खुद की दुकान या व्यवसाय शुरू करना चाहते हैं, या किसी कंपनी में नौकरी करना चाहते हैं?",
             "mr": "तुम्हाला स्वतःचा व्यवसाय सुरू करायचा आहे की नोकरी करायची आहे?",
             "pa": "ਕੀ ਤੁਸੀਂ ਆਪਣਾ ਕਾਰੋਬਾਰ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ ਜਾਂ ਨੌਕਰੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
@@ -386,6 +394,7 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
 
     # All 7 fields captured — profile is rich enough for recommendation
     prompts = {
+        "ta": "நன்றி! உங்கள் முழு விவரங்களும் பெறப்பட்டன. இப்போது உங்களுக்கான சிறந்த PM-AJAY திறன் பயிற்சி மற்றும் வாழ்வாதார திட்டம் தயாரிக்கப்படுகிறது.",
         "hi": "धन्यवाद! आपकी पूरी जानकारी मिल गई है। अब हम आपके लिए सबसे उपयुक्त पीएम-अजय कौशल योजना तैयार कर रहे हैं।",
         "mr": "धन्यवाद! तुमची सर्व माहिती मिळाली आहे. आता तुमच्यासाठी योग्य पीएम-अजय कौशल्य योजना तयार केली जात आहे.",
         "pa": "ਧੰਨਵਾਦ! ਤੁਹਾਡੀ ਪੂਰੀ ਜਾਣਕਾਰੀ ਮਿਲ ਗਈ ਹੈ। ਹੁਣ ਅਸੀਂ ਤੁਹਾਡੇ ਲਈ ਸਭ ਤੋਂ ਢੁਕਵੀਂ ਪੀਐਮ-ਅਜੇ ਸਿਖਲਾਈ ਯੋਜਨਾ ਤਿਆਰ ਕਰ ਰਹੇ ਹਾਂ।",
@@ -394,12 +403,11 @@ def generate_next_prompt(profile: Dict[str, Any], language: str = "en") -> str:
     return prompts.get(language, prompts["en"])
 
 
-def generate_story_summary(profile: Dict[str, Any], history: List[Dict[str, str]] = None) -> str:
+def generate_story_summary(profile: Dict[str, Any], history: List[Dict[str, str]] = None, language: str = "en") -> str:
     """
     Synthesizes a coherent, human-readable narrative summary of the beneficiary's life story,
-    education, family background, and trade aspirations based on accumulated dialogue turns.
+    education, family background, and trade aspirations based on accumulated dialogue turns in the selected language.
     """
-    parts = []
     name = profile.get("name")
     loc = profile.get("location") or profile.get("state")
     edu = profile.get("education_level") or profile.get("education")
@@ -409,6 +417,84 @@ def generate_story_summary(profile: Dict[str, Any], history: List[Dict[str, str]
     mobility = profile.get("mobility_constraint") or profile.get("mobility")
     pref = profile.get("employment_preference")
 
+    if language == "ta":
+        parts = []
+        if name and loc and loc != "Your Local District":
+            parts.append(f"{name} {loc} பகுதியைச் சேர்ந்த ஆர்வமுள்ள தொழிற்கல்வி பயனாளி ஆவார்.")
+        elif name:
+            parts.append(f"{name} ஒரு ஆர்வமுள்ள தொழிற்கல்வி பயனாளி ஆவார்.")
+        elif loc and loc != "Your Local District":
+            parts.append(f"பயனாளி {loc} பகுதியில் வசிக்கிறார்.")
+        else:
+            parts.append("பயனாளி PM-AJAY திட்டத்தின் கீழ் தொழில் வழிகாட்டலை நாடுகிறார்.")
+
+        if edu:
+            parts.append(f"இவர் {edu} முடித்துள்ளார்.")
+        if occ and occ != "None" and occ != "Informal / None":
+            parts.append(f"இவரது குடும்பத்தின் பாரம்பரிய தொழில் {occ} ஆகும்.")
+        if skills:
+            s_text = ", ".join(skills[:3])
+            parts.append(f"இவரிடம் {s_text} போன்ற செய்முறை திறன்கள் உள்ளன.")
+        if interests:
+            i_text = ", ".join(interests)
+            p_text = "சுயதொழில் தொடங்குதல்" if pref == "self_employment" else "வேலைவாய்ப்பு பெறுதல்"
+            parts.append(f"இவரது முதன்மை ஆர்வம் {i_text} துறையில் {p_text} ஆகும்.")
+        return " ".join(parts)
+
+    elif language == "hi":
+        parts = []
+        if name and loc and loc != "Your Local District":
+            parts.append(f"{name} {loc} के एक महत्वाकांक्षी उम्मीदवार हैं।")
+        elif name:
+            parts.append(f"{name} एक महत्वाकांक्षी व्यावसायिक उम्मीदवार हैं।")
+        elif loc and loc != "Your Local District":
+            parts.append(f"उम्मीदवार {loc} में निवास करते हैं।")
+        else:
+            parts.append("उम्मीदवार पीएम-अजय के तहत आजीविका मार्गदर्शन चाहते हैं।")
+
+        if edu:
+            parts.append(f"इन्होंने {edu} तक पढ़ाई की है।")
+        if occ and occ != "None" and occ != "Informal / None":
+            parts.append(f"इनका पारिवारिक पेशा {occ} है।")
+        if skills:
+            s_text = ", ".join(skills[:3])
+            parts.append(f"इनके पास {s_text} का व्यावहारिक हुनर है।")
+        if interests:
+            i_text = ", ".join(interests)
+            p_text = "स्वरोजगार" if pref == "self_employment" else "वेतनभोगी रोजगार"
+            parts.append(f"इनकी मुख्य रुचि {i_text} में {p_text} की ओर है।")
+        return " ".join(parts)
+
+    elif language == "mr":
+        parts = []
+        if name:
+            parts.append(f"{name} हे एक महत्त्वाकांक्षी व्यावसायिक उमेदवार आहेत.")
+        else:
+            parts.append("उमेदवार पीएम-अजय अंतर्गत मार्गदर्शन शोधत आहेत.")
+        if edu:
+            parts.append(f"त्यांचे शिक्षण {edu} झाले आहे.")
+        if occ and occ != "None":
+            parts.append(f"कौटुंबिक पार्श्वभूमी {occ} ची आहे.")
+        if skills:
+            parts.append(f"त्यांच्याकडे {', '.join(skills[:3])} चे कौशल्य आहे.")
+        return " ".join(parts)
+
+    elif language == "pa":
+        parts = []
+        if name:
+            parts.append(f"{name} ਇੱਕ ਚਾਹਵਾਨ ਕਿੱਤਾਮੁਖੀ ਉਮੀਦਵਾਰ ਹੈ।")
+        else:
+            parts.append("ਉਮੀਦਵਾਰ ਪੀਐਮ-ਅਜੇ ਅਧੀਨ ਰੋਜ਼ੀ-ਰੋਟੀ ਮਾਰਗਦਰਸ਼ਨ ਚਾਹੁੰਦਾ ਹੈ।")
+        if edu:
+            parts.append(f"ਉਹਨਾਂ ਨੇ {edu} ਪੜ੍ਹਾਈ ਕੀਤੀ ਹੈ।")
+        if occ and occ != "None":
+            parts.append(f"ਪਰਿਵਾਰਕ ਕੰਮ {occ} ਹੈ।")
+        if skills:
+            parts.append(f"ਉਹਨਾਂ ਕੋਲ {', '.join(skills[:3])} ਦਾ ਤਜਰਬਾ ਹੈ।")
+        return " ".join(parts)
+
+    # English Default
+    parts = []
     if name and loc and loc != "Your Local District":
         parts.append(f"{name} is an aspiring candidate from {loc}.")
     elif name:

@@ -68,20 +68,44 @@ class VoiceInputRequest(BaseModel):
 class FollowUpRequest(BaseModel):
     status: str  # 'enrolled', 'dropped', 'placed', 'no_contact'
 
+class TTSApiRequest(BaseModel):
+    text: str
+    language: Optional[str] = "en"
+
 # --- 1. POST /session/start ---
 @app.post("/session/start")
 def session_start(req: SessionStartRequest):
     entry_mode = req.entry_mode if req.entry_mode in ["app", "call", "facilitator"] else "app"
-    session_id = database.create_session(entry_mode=entry_mode, language=req.language or "en")
+    lang = req.language or "en"
+    session_id = database.create_session(entry_mode=entry_mode, language=lang)
     
     # Initial greeting prompt based on language
-    initial_prompt = profiler.generate_next_prompt({}, language=req.language or "en")
+    initial_prompt = profiler.generate_next_prompt({}, language=lang)
+    initial_audio_base64 = None
+    try:
+        initial_audio_base64 = bhashini.text_to_speech(initial_prompt, lang)
+    except Exception:
+        pass
 
     return {
         "session_id": session_id,
         "entry_mode": entry_mode,
-        "language": req.language or "en",
-        "initial_prompt": initial_prompt
+        "language": lang,
+        "initial_prompt": initial_prompt,
+        "initial_audio_base64": initial_audio_base64
+    }
+
+# --- Standalone TTS Endpoint for on-demand speech playback ---
+@app.post("/api/tts")
+def api_tts(req: TTSApiRequest):
+    if not req.text or not req.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    lang = req.language or "en"
+    audio = bhashini.text_to_speech(req.text, lang)
+    return {
+        "audio_base64": audio,
+        "language": lang,
+        "format": "audio/mpeg"
     }
 
 # --- 2. POST /session/{id}/voice-input ---
@@ -171,6 +195,8 @@ async def voice_input(session_id: str, request: Request):
         else:
             if lang == "hi":
                 next_prompt = "धन्यवाद! आपकी जानकारी दर्ज कर ली गई है। आपके लिए उपयुक्त पीएम-अजय कौशल योजना तैयार की जा रही है।"
+            elif lang == "ta":
+                next_prompt = "நன்றி! உங்கள் விவரங்கள் பதிவு செய்யப்பட்டுள்ளன. உங்களுக்கான PM-AJAY வாழ்வாதார பயிற்சி திட்டம் தயாராகிறது."
             elif lang == "mr":
                 next_prompt = "धन्यवाद! तुमची सर्व माहिती नोंदवली गेली आहे. तुमच्यासाठी योग्य कौशल्य प्रशिक्षण आराखडा तयार केला जात आहे."
             elif lang == "pa":
@@ -250,7 +276,7 @@ async def voice_input(session_id: str, request: Request):
     except Exception:
         pass
 
-    story_summary = profiler.generate_story_summary(updated_profile, history)
+    story_summary = profiler.generate_story_summary(updated_profile, history, language=lang)
 
     response_data = {
         "transcript": input_text,

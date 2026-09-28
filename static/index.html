@@ -96,10 +96,10 @@
           🇮🇳
         </div>
         <div class="flex flex-col min-w-0">
-          <span class="text-[11px] uppercase tracking-wider text-on-surface-variant truncate font-semibold">Ministry of Social Justice &amp; Empowerment</span>
+          <span class="text-[11px] uppercase tracking-wider text-on-surface-variant truncate font-semibold" id="ministryHeaderTitle">Ministry of Social Justice &amp; Empowerment</span>
           <div class="flex items-baseline gap-space-xs">
             <span class="font-display font-bold text-lg text-on-surface truncate">Nivara</span>
-            <span class="text-[11px] text-on-surface-variant hidden sm:inline">PM-AJAY Livelihood Guide • निवारा</span>
+            <span class="text-[11px] text-on-surface-variant hidden sm:inline" id="nivaraSubtitle">PM-AJAY Livelihood Guide • निवारा</span>
           </div>
           <span class="text-xs text-secondary font-semibold" id="headerActiveViewTitle">Voice Assistant</span>
         </div>
@@ -109,7 +109,7 @@
       <div class="flex items-center gap-space-sm flex-shrink-0">
         <a href="/dashboard" class="flex items-center gap-1 bg-surface-container hover:bg-surface-container-high text-secondary text-xs font-bold px-2.5 py-1.5 rounded-full border border-secondary/20 shadow-sm transition-all" title="GIA Coordination Dashboard">
           <span class="material-symbols-outlined text-[16px]">monitoring</span>
-          <span class="hidden sm:inline">GIA Dashboard</span>
+          <span class="hidden sm:inline" id="giaDashboardLinkText">GIA Dashboard</span>
         </a>
         <div class="relative flex items-center bg-surface-container rounded-full px-2 py-1 shadow-sm border border-secondary/15">
           <span class="material-symbols-outlined text-[18px] text-secondary ml-1">translate</span>
@@ -167,7 +167,7 @@
       <div class="w-full flex flex-wrap items-center justify-between gap-2 bg-surface-container-low px-space-md py-2 rounded-xl shadow-xs border border-secondary/15">
         <div class="flex items-center gap-1.5 text-xs font-bold text-on-surface">
           <span class="material-symbols-outlined text-[18px] text-secondary">translate</span>
-          <span>Spoken Language / भाषा:</span>
+          <span id="spokenLangLabel">Spoken Language / भाषा:</span>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap" id="langPills">
           <button type="button" data-lang="en" class="lang-pill active text-xs font-bold px-3 py-1 rounded-full bg-secondary text-on-secondary shadow-sm transition-all cursor-pointer">English</button>
@@ -177,7 +177,7 @@
           <button type="button" data-lang="ta" class="lang-pill text-xs font-semibold px-3 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-all cursor-pointer">தமிழ்</button>
           <button type="button" id="btnTestAudioOutput" class="text-xs font-bold px-3 py-1 rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/25 transition-all cursor-pointer inline-flex items-center gap-1 ml-1" title="Click to test voice output in your browser">
             <span class="material-symbols-outlined text-[15px]">volume_up</span>
-            <span>Test Sound / आवाज़ जांचें</span>
+            <span id="testSoundBtnText">Test Sound / आवाज़ जांचें</span>
           </button>
         </div>
       </div>
@@ -189,7 +189,7 @@
           <div class="flex-1 space-y-space-xs">
             <div class="flex items-center gap-1.5">
               <span class="material-symbols-outlined text-secondary text-[18px]">smart_toy</span>
-              <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Nivara AI • Livelihood Guide</span>
+              <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold" id="assistantGuideBadge">Nivara AI • Livelihood Guide</span>
             </div>
             <p id="assistantSpeechText" class="font-display font-semibold text-lg text-on-surface leading-snug">
               "Welcome! Please tell me about yourself — what is your education level, and what kind of work interests you?"
@@ -209,9 +209,9 @@
         <div class="flex items-center justify-between px-0.5">
           <div class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[18px] text-secondary">badge</span>
-            <span class="text-xs text-on-surface uppercase tracking-wider font-bold">Try a sample beneficiary</span>
+            <span class="text-xs text-on-surface uppercase tracking-wider font-bold" id="demoBeneficiaryHeading">Try a sample beneficiary</span>
           </div>
-          <span class="text-[11px] text-secondary font-medium">1-Click Pipeline Simulation</span>
+          <span class="text-[11px] text-secondary font-medium" id="demoBeneficiarySubheading">1-Click Pipeline Simulation</span>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-space-xs" id="demoBeneficiaryRow">
           <!-- Beneficiary 1: Textiles / Delhi -->
@@ -287,7 +287,7 @@
             <span class="inline-block w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
             <span class="font-display font-bold text-base text-on-surface" id="micLabel">Tap &amp; Speak / बोलिए</span>
           </div>
-          <p class="text-xs text-on-surface-variant mt-0.5 font-medium">Bilingual Automatic Speech Recognition (Hindi / English / Regional)</p>
+          <p class="text-xs text-on-surface-variant mt-0.5 font-medium" id="micSubtext">Bilingual Automatic Speech Recognition (Hindi / English / Regional)</p>
         </div>
 
         <!-- Dynamic 7-Bar Audio Waveform -->
@@ -307,7 +307,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[18px] text-secondary">record_voice_over</span>
-            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Live Speech Recognition (सजीव संवाद)</span>
+            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold" id="liveTranscriptHeading">Live Speech Recognition (सजीव संवाद)</span>
           </div>
           <span id="confidenceTag" class="text-xs text-secondary bg-surface-container px-2 py-0.5 rounded-full font-semibold">Live Stream</span>
         </div>
@@ -316,7 +316,7 @@
             "Press the mic button and speak freely in your language..."
           </p>
           <button id="btnManualSubmitUtterance" class="hidden px-3 py-1.5 bg-secondary text-on-secondary rounded-lg text-xs font-bold shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-1">
-            <span>Send</span>
+            <span id="btnManualSubmitUtteranceText">Send</span>
             <span class="material-symbols-outlined text-[14px]">send</span>
           </button>
         </div>
@@ -327,7 +327,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-secondary text-[20px]">auto_stories</span>
-            <span class="text-xs font-bold uppercase tracking-wider text-secondary">Beneficiary Story Summary (जीवन सारांश)</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-secondary" id="storySummaryHeading">Beneficiary Story Summary (जीवन सारांश)</span>
           </div>
           <span id="turnCounterBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">Story in Progress</span>
         </div>
@@ -341,11 +341,11 @@
         <div class="flex items-center justify-between border-b border-surface-container-high pb-2">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-secondary text-[20px]">forum</span>
-            <span class="text-xs font-bold uppercase tracking-wider text-on-surface">Conversational Dialogue (बातचीत)</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-on-surface" id="dialogueSectionHeading">Conversational Dialogue (बातचीत)</span>
           </div>
           <button id="btnClearConversation" class="text-[11px] text-on-surface-variant hover:text-error flex items-center gap-1 transition-colors">
             <span class="material-symbols-outlined text-[14px]">refresh</span>
-            <span>Clear</span>
+            <span id="btnClearConversationText">Clear</span>
           </button>
         </div>
 
@@ -357,11 +357,11 @@
               <span class="material-symbols-outlined text-[16px]">smart_toy</span>
             </div>
             <div class="bg-surface-container-low rounded-2xl rounded-tl-sm p-3 text-xs text-on-surface leading-relaxed shadow-sm space-y-1">
-              <p class="font-semibold text-secondary">Nivara Assistant</p>
+              <p class="font-semibold text-secondary" id="assistantSenderName">Nivara Assistant</p>
               <p id="chatGreetingText">Welcome! Please tell me about yourself — what is your education level, and what kind of work interests you?</p>
               <button id="initialBubbleListenBtn" class="chat-bubble-tts text-[11px] text-secondary font-bold inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/10 hover:bg-secondary/20 transition-all cursor-pointer mt-1">
                 <span class="material-symbols-outlined text-[15px]">volume_up</span>
-                <span>Listen / सुनें</span>
+                <span id="initialBubbleListenText">Listen / सुनें</span>
               </button>
             </div>
           </div>
@@ -373,14 +373,14 @@
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
           </span>
-          <span>Nivara is analyzing your story &amp; matching NSQF trades...</span>
+          <span id="chatTypingText">Nivara is analyzing your story &amp; matching NSQF trades...</span>
         </div>
 
         <!-- Direct Text Input Bar for accessibility & quiet environments -->
         <form id="chatTextForm" class="flex items-center gap-2 pt-1 border-t border-surface-container-high">
           <input type="text" id="chatTextInput" placeholder="Speak with mic above, or type your answer here..." class="flex-1 bg-surface-container-low border border-secondary/15 rounded-xl px-3 py-2 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-secondary transition-all">
           <button type="submit" id="btnSendTextMessage" class="bg-secondary text-on-secondary hover:bg-secondary/90 active:scale-95 px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1 flex-shrink-0">
-            <span>Send</span>
+            <span id="btnSendTextMessageText">Send</span>
             <span class="material-symbols-outlined text-[15px]">send</span>
           </button>
         </form>
@@ -389,8 +389,8 @@
       <!-- 4 One-Tap Scenario Selector Chips -->
       <div class="w-full space-y-space-xs">
         <div class="flex items-center justify-between px-0.5">
-          <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Quick Test Scenarios / पूर्व-निर्धारित प्रोफाइल</span>
-          <span class="text-xs text-secondary font-medium">Tap to simulate</span>
+          <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold" id="quickScenariosHeading">Quick Test Scenarios / पूर्व-निर्धारित प्रोफाइल</span>
+          <span class="text-xs text-secondary font-medium" id="quickScenariosSubheading">Tap to simulate</span>
         </div>
         <div class="grid grid-cols-2 gap-space-xs" id="demoChipsContainer">
           <!-- Dynamically populated or static chips -->
@@ -444,7 +444,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[20px] text-secondary">psychology</span>
-            <span class="font-display font-semibold text-base text-on-surface">Extracted Profile Signals</span>
+            <span class="font-display font-semibold text-base text-on-surface" id="profileSignalsHeading">Extracted Profile Signals</span>
           </div>
           <span id="signalsBadge" class="text-xs bg-surface-container px-2 py-0.5 rounded-full text-on-surface-variant font-semibold">Intake In Progress</span>
         </div>
@@ -453,7 +453,7 @@
           <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
             <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
               <span class="material-symbols-outlined text-[16px] text-secondary">school</span>
-              <span class="text-[11px] font-semibold">Education Level</span>
+              <span class="text-[11px] font-semibold" id="sigLabelEdu">Education Level</span>
             </div>
             <p class="text-xs text-on-surface font-bold truncate" id="sigEducation">—</p>
           </div>
@@ -461,7 +461,7 @@
           <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
             <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
               <span class="material-symbols-outlined text-[16px] text-secondary">groups</span>
-              <span class="text-[11px] font-semibold">Family Occupation</span>
+              <span class="text-[11px] font-semibold" id="sigLabelFamily">Family Occupation</span>
             </div>
             <p class="text-xs text-on-surface font-bold truncate" id="sigFamilyOcc">—</p>
           </div>
@@ -469,7 +469,7 @@
           <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
             <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
               <span class="material-symbols-outlined text-[16px] text-secondary">inventory_2</span>
-              <span class="text-[11px] font-semibold">Skills / Interests</span>
+              <span class="text-[11px] font-semibold" id="sigLabelSkills">Skills / Interests</span>
             </div>
             <p class="text-xs text-on-surface font-bold truncate" id="sigSkills">—</p>
           </div>
@@ -477,7 +477,7 @@
           <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
             <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
               <span class="material-symbols-outlined text-[16px] text-secondary">explore</span>
-              <span class="text-[11px] font-semibold">Mobility Constraint</span>
+              <span class="text-[11px] font-semibold" id="sigLabelMobility">Mobility Constraint</span>
             </div>
             <p class="text-xs text-on-surface font-bold truncate" id="sigMobility">—</p>
           </div>
@@ -485,7 +485,7 @@
           <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
             <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
               <span class="material-symbols-outlined text-[16px] text-secondary">storefront</span>
-              <span class="text-[11px] font-semibold">Livelihood Type</span>
+              <span class="text-[11px] font-semibold" id="sigLabelPref">Livelihood Type</span>
             </div>
             <p class="text-xs text-on-surface font-bold truncate" id="sigPref">—</p>
           </div>
@@ -493,7 +493,7 @@
           <div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-between">
             <div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
               <span class="material-symbols-outlined text-[16px] text-secondary">devices</span>
-              <span class="text-[11px] font-semibold">Access Channel</span>
+              <span class="text-[11px] font-semibold" id="sigLabelChannel">Access Channel</span>
             </div>
             <p class="text-xs text-on-surface font-bold truncate" id="sigEntryMode">Smartphone (App)</p>
           </div>
@@ -502,7 +502,7 @@
         <div class="flex items-center justify-between pt-1">
           <div class="flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[16px] text-secondary">task_alt</span>
-            <span class="text-xs text-on-surface-variant font-medium">Mapped against PM-AJAY Skill Qualification Register</span>
+            <span class="text-xs text-on-surface-variant font-medium" id="skillRegisterStripText">Mapped against PM-AJAY Skill Qualification Register</span>
           </div>
           <span id="matchConfidenceBadge" class="text-xs text-secondary font-bold">NSQF Aligned</span>
         </div>
@@ -512,11 +512,11 @@
       <div class="w-full flex items-center gap-space-xs pt-1">
         <button id="btnStartFacilitator" class="flex-1 bg-surface-container hover:bg-surface-container-high text-on-surface py-space-sm px-space-md rounded-lg flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-sm">
           <span class="material-symbols-outlined text-[20px] text-secondary">handshake</span>
-          <span class="text-xs font-bold truncate">Facilitator Mode</span>
+          <span class="text-xs font-bold truncate" id="btnStartFacilitatorText">Facilitator Mode</span>
         </button>
         <button id="btnResetSession" class="flex-1 bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant hover:text-on-surface py-space-sm px-space-md rounded-lg flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-sm">
           <span class="material-symbols-outlined text-[20px]">restart_alt</span>
-          <span class="text-xs font-bold truncate">Reset Voice</span>
+          <span class="text-xs font-bold truncate" id="btnResetSessionText">Reset Voice</span>
         </button>
       </div>
 
@@ -1274,19 +1274,19 @@
     <div class="h-16 px-space-xs flex items-center justify-around">
       <button class="nav-tab active flex flex-col items-center justify-center min-w-[68px] h-12 px-2 transition-all" data-view="viewVoiceApp" data-title="Voice Assistant">
         <span class="material-symbols-outlined text-[24px]">mic</span>
-        <span class="text-[11px] font-semibold mt-0.5">Voice AI</span>
+        <span class="text-[11px] font-semibold mt-0.5" id="navLabelVoice">Voice AI</span>
       </button>
       <button class="nav-tab flex flex-col items-center justify-center min-w-[68px] h-12 px-2 text-on-surface-variant transition-all" data-view="viewRoadmap" data-title="Roadmap &amp; Skills">
         <span class="material-symbols-outlined text-[24px]">route</span>
-        <span class="text-[11px] font-semibold mt-0.5">Pathways</span>
+        <span class="text-[11px] font-semibold mt-0.5" id="navLabelRoadmap">Pathways</span>
       </button>
       <button class="nav-tab flex flex-col items-center justify-center min-w-[68px] h-12 px-2 text-on-surface-variant transition-all" data-view="viewIvr" data-title="IVR Line">
         <span class="material-symbols-outlined text-[24px]">phone_in_talk</span>
-        <span class="text-[11px] font-semibold mt-0.5">IVR Line</span>
+        <span class="text-[11px] font-semibold mt-0.5" id="navLabelIvr">IVR Line</span>
       </button>
       <button class="nav-tab flex flex-col items-center justify-center min-w-[68px] h-12 px-2 text-on-surface-variant transition-all" data-view="viewAdmin" data-title="District Admin">
         <span class="material-symbols-outlined text-[24px]">analytics</span>
-        <span class="text-[11px] font-semibold mt-0.5">District</span>
+        <span class="text-[11px] font-semibold mt-0.5" id="navLabelAdmin">District</span>
       </button>
     </div>
   </nav>
@@ -1299,6 +1299,6 @@
     <span class="text-xs font-medium flex-1" id="toastMessage">Success</span>
   </div>
 
-  <script src="/static/app.js?v=2.2"></script>
+  <script src="/static/app.js?v=2.3"></script>
 </body>
 </html>
