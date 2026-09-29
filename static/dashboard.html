@@ -3,186 +3,236 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-  <title>Nivara — PM-AJAY GIA Coordination Dashboard (Delhi)</title>
-  <meta name="description" content="Government coordination and analytics dashboard for PM-AJAY GIA component beneficiary mapping, NSQF skilling enrolments, scheme uptake, and district-wise monitoring in Delhi."/>
+  <meta content="mobile_tab" name="shell-type"/>
+  <title>Nivara — PM-AJAY GIA Coordination Dashboard (Delhi NCT)</title>
+  <meta name="description" content="Government coordination and analytics dashboard for PM-AJAY GIA component beneficiary mapping, NSQF skilling enrolments, Delhi SC schemes, and district-wise monitoring."/>
 
-  <!-- Fonts: Material Symbols, Inter, Plus Jakarta Sans, Hind -->
+  <!-- Fonts: Material Symbols, Inter, Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+
   <!-- Shared Universal Design Tokens -->
   <link rel="stylesheet" href="/static/theme.css"/>
 
-  <!-- Tailwind CSS via CDN -->
+  <!-- Tailwind CSS via CDN with User's Exact Design System Tokens -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
+  <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
-          colors: {
-            "surface": "#f8fafc",
-            "surface-container": "#f1f5f9",
-            "surface-container-high": "#e2e8f0",
-            "primary": "#0f172a",
+          "colors": {
+            "on-primary-fixed-variant": "#3f465c",
+            "tertiary-fixed-dim": "#ffb95f",
+            "outline-variant": "#c6c6cd",
+            "background": "#f8f9ff",
+            "surface-bright": "#f8f9ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary-container": "#b87500",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed-variant": "#653e00",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#45464d",
+            "primary-fixed-dim": "#bec6e0",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#000000",
+            "surface-variant": "#d3e4fe",
+            "primary-container": "#131b2e",
+            "secondary-fixed": "#dbe1ff",
+            "on-primary-fixed": "#131b2e",
+            "tertiary-container": "#2a1700",
+            "tertiary-fixed": "#ffddb8",
+            "surface-container-low": "#eff4ff",
+            "on-primary-container": "#7c839b",
+            "surface-container-highest": "#d3e4fe",
+            "on-background": "#0b1c30",
+            "secondary-fixed-dim": "#b4c5ff",
+            "surface-container": "#e5eeff",
+            "on-error": "#ffffff",
+            "primary": "#000000",
+            "surface-dim": "#cbdbf5",
+            "on-surface": "#0b1c30",
+            "inverse-primary": "#bec6e0",
+            "error-container": "#ffdad6",
+            "surface-tint": "#565e74",
+            "on-secondary-fixed-variant": "#003ea8",
+            "error": "#ba1a1a",
             "secondary": "#0051d5",
-            "secondary-container": "#eff6ff",
-            "secondary-dark": "#003da5",
-            "saffron": "#ea580c",
-            "saffron-light": "#fff7ed",
-            "emerald": "#059669",
-            "emerald-light": "#ecfdf5",
-            "gov-navy": "#071126"
+            "on-secondary-fixed": "#00174b",
+            "on-tertiary-fixed": "#2a1700",
+            "inverse-surface": "#213145",
+            "secondary-container": "#316bf3",
+            "on-primary": "#ffffff",
+            "surface-container-high": "#dce9ff",
+            "outline": "#76777d",
+            "primary-fixed": "#dae2fd",
+            "surface": "#f8f9ff",
+            "on-secondary-container": "#fefcff"
           },
-          fontFamily: {
-            sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
-            display: ["Plus Jakarta Sans", "Inter", "sans-serif"],
-            indic: ["Hind", "sans-serif"]
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2.5rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "0.75rem",
+            "gutter": "1.5rem",
+            "margin": "2rem",
+            "space-md": "1rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Inter", "sans-serif"],
+            "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"],
+            "label-lg": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "display-lg-mobile": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "display-lg-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "800" }]
           }
         }
       }
     };
   </script>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-
   <style>
-    /* Custom clean scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-    /* Government Card & Badge Utilities */
-    .gov-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 1rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+      main > :first-child {
+        margin-top: 0 !important;
+      }
+      main > :last-child {
+        margin-bottom: 0 !important;
+      }
     }
-    .gov-card:hover {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    ::-webkit-scrollbar {
+      display: none;
     }
-
-    .badge-saffron {
-      background: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #fed7aa;
-    }
-    .badge-emerald {
-      background: #ecfdf5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
-    }
-    .badge-blue {
-      background: #eff6ff;
-      color: #1d4ed8;
-      border: 1px solid #bfdbfe;
-    }
-    .badge-amber {
-      background: #fffbeb;
-      color: #b45309;
-      border: 1px solid #fde68a;
-    }
-    .badge-red {
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-    }
-    .badge-purple {
-      background: #faf5ff;
-      color: #6b21a8;
-      border: 1px solid #e9d5ff;
-    }
-
-    /* Dark mode overrides for accessibility */
-    html.dark body {
-      background-color: #0b1120;
-      color: #f8fafc;
-    }
-    html.dark .gov-card {
-      background: #131d33;
-      border-color: #1e293b;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-    }
-    html.dark .gov-header {
-      background-color: rgba(11, 17, 32, 0.95);
-      border-color: #1e293b;
-    }
-    html.dark thead {
-      background-color: #0f172a !important;
-      color: #94a3b8 !important;
-      border-color: #1e293b !important;
-    }
-    html.dark tbody tr:hover {
-      background-color: rgba(255, 255, 255, 0.03) !important;
-    }
-    html.dark input, html.dark select, html.dark textarea {
-      background-color: #0f172a !important;
-      border-color: #334155 !important;
-      color: #f8fafc !important;
+    body {
+      min-height: max(884px, 100dvh);
     }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+<body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen">
 
-  <!-- TOP TRICOLOR NATIONAL STRIP -->
-  <div class="h-1 bg-gradient-to-r from-[#f59e0b] via-[#ffffff] to-[#10b981] w-full fixed top-0 left-0 z-50"></div>
-
-  <!-- OFFICIAL GOVERNMENT PORTAL HEADER -->
-  <header class="gov-header fixed top-1 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-colors shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      
-      <!-- Top Sub-Bar: Ministry Identity -->
-      <div class="py-1.5 border-b border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-        <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-700 tracking-wide">सत्यमेव जयते</span>
-          <span class="text-slate-300">|</span>
-          <span class="truncate">Ministry of Social Justice &amp; Empowerment · Government of India</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-[10px] font-semibold">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
-            PM-AJAY GIA Coordination Portal · Delhi NCT
-          </span>
+  <!-- TOP TRICOLOR NATIONAL STRIP & HEADER -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="h-1 bg-gradient-to-r from-[#f59e0b] via-[#ffffff] to-[#10b981] w-full"></div>
+    <div class="h-20 px-margin-mobile flex items-center justify-between gap-space-sm max-w-7xl mx-auto w-full">
+      <div class="flex items-center gap-space-sm min-w-0">
+        <img alt="PM-AJAY Government Emblem Seal" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB172nMu8w7IiSyOB-muXQFyRJMGM1PZs76UWspDuSxVI0gtybEQbZtuPlN1grTGoIWEgjpB44XRkeu391yOc5zk9-TB25IJw7z26SCX8_XVwf_G2SpHVUwvQnwMCo22VcalMbW77urJayaMYsQUWyDnmNDm1U1mq666nwdDsLGVgQYcwQyNIihMREpmTAzkXfNH62YlT36U-nX4_0pEShpdPODfiDk_1UYsUsaRiLp0uMGru7TzGmX"/>
+        <div class="flex flex-col min-w-0">
+          <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant truncate">Ministry of Social Justice &amp; Empowerment</span>
+          <div class="flex items-baseline gap-space-xs">
+            <span class="font-headline-sm text-headline-sm text-on-surface truncate">PM-AJAY GIA Coordination Dashboard</span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">प्रधानमंत्री अनुसूचित जाति अभ्युदय योजना</span>
+          </div>
+          <span class="font-label-sm text-label-sm text-secondary font-semibold">Delhi NCT Regional Administration</span>
         </div>
       </div>
+      <div class="flex items-center gap-space-sm flex-shrink-0">
+        <div class="relative flex items-center bg-surface-container rounded-full px-space-xs">
+          <span class="material-symbols-outlined text-[18px] text-on-surface-variant ml-1">translate</span>
+          <select aria-label="Select Regional Language" class="appearance-none bg-transparent font-label-md text-label-md text-on-surface pl-1 pr-6 py-1 focus:outline-none cursor-pointer">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="pa">ਪੰਜਾਬੀ</option>
+            <option value="ur">اردو</option>
+          </select>
+          <span class="material-symbols-outlined text-[14px] text-on-surface-variant absolute right-1.5 pointer-events-none">arrow_drop_down</span>
+        </div>
+        <a href="/" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-on-primary hover:opacity-90 transition-opacity" title="Back to Citizen App">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+        </a>
+      </div>
+    </div>
+  </header>
 
-      <!-- Main Navigation & Command Bar -->
-      <div class="py-2.5 flex flex-wrap items-center justify-between gap-3">
-        
-        <!-- Portal Title & Emblem -->
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shadow-xs flex-shrink-0">
-            🇮🇳
-          </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h1 class="font-display font-extrabold text-base sm:text-lg text-slate-900 tracking-tight flex items-center gap-1.5">
-                <span>Nivara</span>
-                <span class="text-xs font-semibold text-secondary px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200">GIA Dashboard</span>
-              </h1>
-              <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
-                Live Sync
-              </span>
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="flex-1 flex flex-col relative w-full pt-20 pb-24 bg-surface max-w-7xl mx-auto">
+    <div class="flex flex-col w-full pb-8">
+
+      <!-- Administrative Top Scope Banner -->
+      <section class="bg-surface-container-lowest shadow-sm rounded-b-xl px-margin-mobile pt-3 pb-4 mb-space-md">
+        <div class="flex items-center justify-between gap-space-xs mb-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <img alt="PM-AJAY Emblem" class="w-8 h-8 rounded-full object-contain shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1Ui2bdGl5Kq3RkgD9Ub-pNfklFjvydx4fDbLgqSIWb9hu9bkhiqIFm6X5iGG1nurD_kB5HWSli73iyb1MlSGVkKDZgNQ9uggWGDOlDYzpNXr61W-4sWdwtdxpELlROkxldRKJ1--Ef7b2ELNy1ieawEJhfwsnNjgUv2L_wu93_zeRmlLhcMTKmdag441T1PSwcc0nGXtY_c_VT20m1nzt94I6f94gImGK3AsxsxdbF_24mUBs8TQ242nnI"/>
+            <div class="min-w-0">
+              <p class="font-label-sm text-label-sm text-on-surface-variant truncate uppercase tracking-wider">MoSJE PM-AJAY • GIA Component</p>
+              <h1 class="font-headline-sm text-headline-sm text-on-surface truncate">Nivara Regional Command</h1>
             </div>
-            <p class="text-[11px] text-slate-500 hidden sm:block">
-              Delhi Livelihood Mapping &amp; NSQF Skilling Coordination Command
-            </p>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0 bg-surface-container px-2.5 py-1 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            <span class="font-label-sm text-label-sm text-secondary font-semibold">Live Sync</span>
           </div>
         </div>
 
-        <!-- Controls Toolbar -->
-        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-          
-          <!-- District Filter -->
-          <div class="relative flex items-center">
-            <span class="material-symbols-outlined text-[16px] text-slate-400 absolute left-2.5 pointer-events-none">location_on</span>
-            <select id="districtFilter" onchange="loadDashboardData()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold pl-8 pr-7 py-1.5 rounded-lg hover:border-slate-300 focus:outline-none focus:border-secondary transition cursor-pointer shadow-xs">
+        <!-- Administrative Pill Bar -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-1 pb-3 text-on-surface-variant">
+          <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">
+            <span class="material-symbols-outlined text-[14px] text-secondary">location_on</span>
+            Delhi NCT (11 Districts)
+          </span>
+          <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-sm text-label-sm font-semibold">
+            <span class="material-symbols-outlined text-[14px] text-emerald-700">verified</span>
+            Primary Sources Verified
+          </span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant font-mono text-[10px]">
+            region="delhi"
+          </span>
+          <a href="/whatsapp" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-semibold border border-emerald-200">
+            <span class="material-symbols-outlined text-[13px]">chat</span> WhatsApp Sim
+          </a>
+          <a href="/#viewIvr" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-semibold border border-blue-200">
+            <span class="material-symbols-outlined text-[13px]">phone_in_talk</span> IVR Helpline
+          </a>
+        </div>
+
+        <!-- District Selection & Control Strip -->
+        <div class="grid grid-cols-12 gap-2 pt-1">
+          <div class="col-span-8 relative">
+            <select aria-label="Select District Scope" class="w-full h-10 pl-3 pr-8 rounded-lg bg-surface-container font-label-md text-label-md text-on-surface appearance-none focus:outline-none focus:ring-1 focus:ring-secondary cursor-pointer" id="districtFilter" onchange="loadDashboardData()">
               <option value="all">All Delhi (Consolidated)</option>
               <option value="Central Delhi">Central Delhi</option>
               <option value="East Delhi">East Delhi</option>
@@ -196,399 +246,328 @@
               <option value="South West Delhi">South West Delhi</option>
               <option value="West Delhi">West Delhi</option>
             </select>
-            <span class="material-symbols-outlined text-[14px] text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
+            <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[18px] text-on-surface-variant pointer-events-none">arrow_drop_down</span>
+          </div>
+          <div class="col-span-2">
+            <button aria-label="Refresh Dataset" class="w-full h-10 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface transition-colors" id="refreshBtn" onclick="loadDashboardData()">
+              <span class="material-symbols-outlined text-[20px]" id="refreshIcon">sync</span>
+            </button>
+          </div>
+          <div class="col-span-2">
+            <button aria-label="Export Data" class="w-full h-10 rounded-lg bg-secondary text-on-secondary flex items-center justify-center transition-colors hover:opacity-90 active:scale-95" id="exportCsvBtn" onclick="exportCSV()">
+              <span class="material-symbols-outlined text-[20px]">download</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 Civic KPI Metric Cards (2x2 Grid / 4-Col Desktop) -->
+      <section class="px-margin-mobile mb-space-md">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter-mobile">
+          
+          <!-- KPI 1: Beneficiaries Mapped -->
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Beneficiaries</span>
+              <span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded font-semibold" id="valCoveragePct">98.7%</span>
+            </div>
+            <div>
+              <div class="font-headline-md text-headline-md text-on-surface tracking-tight" id="valTotalMapped">1,184</div>
+              <div class="flex items-center gap-1 mt-1 font-label-sm text-label-sm text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+                <span id="valTargetCount">Target: 1,200</span>
+              </div>
+            </div>
           </div>
 
-          <!-- Sync / Refresh Button -->
-          <button onclick="loadDashboardData()" id="btnSync" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 transition active:scale-95 shadow-xs" title="Refresh Live Data">
-            <span class="material-symbols-outlined text-[16px] text-secondary" id="syncIcon">sync</span>
-            <span class="hidden sm:inline">Refresh</span>
-          </button>
+          <!-- KPI 2: Active Skilling -->
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-label-sm text-label-sm text-on-surface-variant">In Skilling</span>
+              <span class="font-label-sm text-label-sm text-on-tertiary-container bg-tertiary-fixed px-1.5 py-0.5 rounded font-semibold">NSQF 3–6</span>
+            </div>
+            <div>
+              <div class="font-headline-md text-headline-md text-on-surface tracking-tight text-secondary" id="valEnrolments">468</div>
+              <div class="flex items-center gap-1 mt-1 font-label-sm text-label-sm text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">school</span>
+                <span>22 Accredited Ctrs</span>
+              </div>
+            </div>
+          </div>
 
-          <!-- Export CSV Button -->
-          <button onclick="exportCSV()" class="hidden md:flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition shadow-xs">
-            <span class="material-symbols-outlined text-[16px]">download</span>
-            <span>Export CSV</span>
-          </button>
+          <!-- KPI 3: Verified Placements -->
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Placements</span>
+              <span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded font-semibold" id="valPlacementRate">66.7%</span>
+            </div>
+            <div>
+              <div class="font-headline-md text-headline-md text-on-surface tracking-tight" id="valPlacements">312</div>
+              <div class="flex items-center gap-1 mt-1 font-label-sm text-label-sm text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">badge</span>
+                <span id="valPlacementSub">Placed / Self-Employed</span>
+              </div>
+            </div>
+          </div>
 
-          <!-- Theme Toggle -->
-          <button onclick="toggleTheme()" id="btnThemeToggle" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-600 transition" title="Toggle Light/Dark Theme">
-            <span class="material-symbols-outlined text-[18px]" id="themeIcon">dark_mode</span>
-          </button>
-
-          <!-- Back to Citizen App Link -->
-          <a href="/" class="flex items-center gap-1.5 bg-[#0051d5] hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition active:scale-95">
-            <span class="material-symbols-outlined text-[15px]">arrow_back</span>
-            <span>Beneficiary App</span>
-          </a>
+          <!-- KPI 4: GIA Grants Utilization -->
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-label-sm text-label-sm text-on-surface-variant">GIA Grants</span>
+              <span class="font-label-sm text-label-sm text-on-secondary-container bg-secondary-container px-1.5 py-0.5 rounded font-semibold" id="valGrantPct">84.1%</span>
+            </div>
+            <div>
+              <div class="font-headline-md text-headline-md text-on-surface tracking-tight" id="valGrantUtilized">₹5.76 <span class="text-body-sm font-body-sm text-on-surface-variant">Cr</span></div>
+              <div class="flex items-center gap-1 mt-1 font-label-sm text-label-sm text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">account_balance</span>
+                <span id="valGrantSanctioned">Sanction: ₹6.85 Cr</span>
+              </div>
+            </div>
+          </div>
 
         </div>
-      </div>
+      </section>
+
+      <!-- Regional Directives & Urgent Interventions (Command Alerts) -->
+      <section class="px-margin-mobile mb-space-md">
+        <div class="flex items-center justify-between mb-2.5">
+          <h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-secondary text-[22px]">notification_important</span>
+            Command Alerts
+          </h2>
+          <span class="font-label-sm text-label-sm text-on-surface-variant" id="alertCountBadge">4 Requires Action</span>
+        </div>
+        
+        <div class="flex flex-col gap-2.5" id="alertsContainer">
+          <!-- Dynamically populated from API -->
+          <div class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm text-xs text-on-surface-variant">
+            Loading regional directives...
+          </div>
+        </div>
+      </section>
+
+      <!-- Skill Progression & NSQF Analytics -->
+      <section class="px-margin-mobile mb-space-md">
+        <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">NSQF Skill Alignment</h2>
+            <span class="font-label-sm text-label-sm text-on-surface-variant" id="nsqfTotalLabel">468 Candidates</span>
+          </div>
+
+          <!-- Visual Distribution Multi-Segment Bar -->
+          <div class="w-full h-3 rounded-full bg-surface-container flex overflow-hidden mb-3" id="nsqfBar">
+            <div class="h-full bg-secondary transition-all" style="width: 39%" id="nsqfBarL3" title="Level 3: 39%"></div>
+            <div class="h-full bg-secondary-container transition-all" style="width: 38%" id="nsqfBarL4" title="Level 4: 38%"></div>
+            <div class="h-full bg-surface-tint transition-all" style="width: 23%" id="nsqfBarL5" title="Level 5/6: 23%"></div>
+          </div>
+
+          <!-- Segment Legends -->
+          <div class="flex flex-col gap-2.5 pt-1" id="nsqfLegends">
+            <div class="flex items-center justify-between text-body-sm font-body-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-secondary shrink-0"></span>
+                <span class="text-on-surface">Level 3 (Electrician, Tailoring, Food Tech)</span>
+              </div>
+              <span class="font-label-md text-label-md text-on-surface" id="nsqfValL3">242 (32%)</span>
+            </div>
+            <div class="flex items-center justify-between text-body-sm font-body-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-secondary-container shrink-0"></span>
+                <span class="text-on-surface">Level 4 (Solar PV, General Duty Assistant, CNC)</span>
+              </div>
+              <span class="font-label-md text-label-md text-on-surface" id="nsqfValL4">348 (47%)</span>
+            </div>
+            <div class="flex items-center justify-between text-body-sm font-body-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-surface-tint shrink-0"></span>
+                <span class="text-on-surface">Level 5/6 (EV Maintenance, DSEU Diploma, Automation)</span>
+              </div>
+              <span class="font-label-md text-label-md text-on-surface" id="nsqfValL5">158 (21%)</span>
+            </div>
+          </div>
+
+          <!-- SCHEME INTEGRATION MIX (DELHI SC SCHEMES) -->
+          <div class="mt-4 pt-3 bg-surface-container-low rounded-lg p-3">
+            <div class="flex items-center justify-between mb-2">
+              <p class="font-label-md text-label-md text-on-surface-variant uppercase font-semibold">
+                Delhi SC Scheme Integration Mix
+              </p>
+              <span class="font-label-sm text-label-sm text-secondary font-semibold">MoSJE &amp; GNCTD</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-label-sm font-label-sm" id="schemeMixGrid">
+              <!-- Dynamically populated from API & Verified Schemes -->
+              <div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col justify-between border border-surface-container-high/60 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-on-surface truncate">PM-AJAY GIA Component</span>
+                  <span class="font-bold text-secondary text-xs">89.3%</span>
+                </div>
+                <div class="text-[11px] text-on-surface-variant mt-1">Skill stipend &amp; toolkits for SC candidates</div>
+              </div>
+              <div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col justify-between border border-surface-container-high/60 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-on-surface truncate">DSFDC Concessional Loan</span>
+                  <span class="font-bold text-secondary text-xs">87.0%</span>
+                </div>
+                <div class="text-[11px] text-on-surface-variant mt-1">GNCTD self-employment finance up to ₹5L at 4-6%</div>
+              </div>
+              <div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col justify-between border border-surface-container-high/60 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-on-surface truncate">Post-Matric SC Scholarship</span>
+                  <span class="font-bold text-secondary text-xs">96.9%</span>
+                </div>
+                <div class="text-[11px] text-on-surface-variant mt-1">100% fee waiver &amp; monthly maintenance (GNCTD)</div>
+              </div>
+              <div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col justify-between border border-surface-container-high/60 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-on-surface truncate">DSEU Certificate Tracks</span>
+                  <span class="font-bold text-secondary text-xs">84.0%</span>
+                </div>
+                <div class="text-[11px] text-on-surface-variant mt-1">Delhi Skill Univ industry certification &amp; labs</div>
+              </div>
+              <div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col justify-between border border-surface-container-high/60 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-on-surface truncate">PMKVY 4.0 Delhi Projects</span>
+                  <span class="font-bold text-secondary text-xs">88.8%</span>
+                </div>
+                <div class="text-[11px] text-on-surface-variant mt-1">Special skilling batches with MSDE assessment</div>
+              </div>
+              <div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col justify-between border border-surface-container-high/60 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-on-surface truncate">National Apprenticeship (NAPS)</span>
+                  <span class="font-bold text-secondary text-xs">76.5%</span>
+                </div>
+                <div class="text-[11px] text-on-surface-variant mt-1">Govt stipend support ₹1,500/month on-the-job</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Training Capacity vs Demand Gap Analysis -->
+      <section class="px-margin-mobile mb-space-md">
+        <div class="flex items-center justify-between mb-2.5">
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">Seat Capacity vs Demand</h2>
+          <span class="font-label-sm text-label-sm text-on-surface-variant">Delhi Trade Clusters</span>
+        </div>
+        <div class="flex flex-col gap-2.5" id="capacityContainer">
+          <!-- Dynamically populated from API -->
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm text-xs text-on-surface-variant">
+            Loading capacity gap analysis...
+          </div>
+        </div>
+      </section>
+
+      <!-- Delhi 11-District Coverage Leaderboard -->
+      <section class="px-margin-mobile mb-space-md">
+        <div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Delhi 11-District Coverage</h2>
+            <span class="font-label-sm text-label-sm text-secondary font-semibold" id="districtCoverageConsolidated">All 11 Districts</span>
+          </div>
+          <div class="flex flex-col gap-3" id="districtLeaderboardContainer">
+            <!-- Dynamically populated from API -->
+            <div class="text-xs text-on-surface-variant">Loading 11 Delhi districts...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pending Beneficiary Applications Queue -->
+      <section class="px-margin-mobile mb-space-md">
+        <div class="flex items-center justify-between mb-2.5">
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">Pending Beneficiary Applications</h2>
+          <span class="font-label-sm text-label-sm text-on-surface-variant" id="pendingAppsCountLabel">Queue</span>
+        </div>
+        <div class="flex flex-col gap-2.5" id="pendingAppsContainer">
+          <!-- Dynamically populated from API -->
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm text-xs text-on-surface-variant">
+            Loading pending applications queue...
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Beneficiary Registry Table / Cards -->
+      <section class="px-margin-mobile mb-space-md">
+        <div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm">
+          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h2 class="font-headline-sm text-headline-sm text-on-surface">Live Beneficiary Registry</h2>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">Intake database sync</p>
+            </div>
+            <select id="statusFilter" onchange="filterBeneficiaries()" class="bg-surface-container text-xs font-semibold text-on-surface px-2.5 py-1.5 rounded-lg focus:outline-none">
+              <option value="all">All Statuses</option>
+              <option value="enrolled">Enrolled</option>
+              <option value="placed">Placed</option>
+              <option value="pending">Pending</option>
+              <option value="dropped">Dropped</option>
+            </select>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-container text-on-surface-variant font-bold text-[10px] uppercase">
+                <tr>
+                  <th class="py-2.5 px-3">Candidate</th>
+                  <th class="py-2.5 px-3">District</th>
+                  <th class="py-2.5 px-3">Trade &amp; NSQF</th>
+                  <th class="py-2.5 px-3">Status</th>
+                  <th class="py-2.5 px-3 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="beneficiaryTableBody" class="divide-y divide-surface-container-high/50 text-on-surface">
+                <tr><td colspan="5" class="py-4 text-center text-on-surface-variant">Loading beneficiaries...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Administrative Footer & Data Sync Bridge -->
+      <footer class="px-margin-mobile pt-2">
+        <div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm flex flex-col items-center text-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+            <span class="material-symbols-outlined text-[24px]">security</span>
+          </div>
+          <div>
+            <p class="font-label-md text-label-md text-on-surface font-semibold">NIC Data Sync Bridge Connected</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">PM-AJAY GIA Component (Revised Guidelines) • 256-bit Encrypted</p>
+          </div>
+          <button class="w-full h-11 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm transition-opacity active:opacity-90" id="downloadReportBtn" onclick="exportCSV()">
+            <span class="material-symbols-outlined text-[18px]">description</span>
+            Download Consolidated GIA Report (CSV/Excel)
+          </button>
+          <span class="font-label-sm text-label-sm text-on-surface-variant">MoSJE Delhi NCT Region • Automated snapshot sync active</span>
+        </div>
+      </footer>
+
     </div>
-  </header>
 
-  <!-- MAIN DASHBOARD CONTENT -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-24 pb-12 flex flex-col gap-6">
-
-    <!-- DATA SCOPE & OFFICIAL GIA BANNER -->
-    <section class="gov-card p-4 border-l-4 border-l-amber-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-gradient-to-r from-amber-50/40 via-white to-white">
-      <div class="flex items-start sm:items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 text-amber-800 flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-[22px]">policy</span>
-        </div>
-        <div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="font-display font-bold text-xs text-amber-900 uppercase tracking-wider">MoSJE PM-AJAY GIA Component · Scope: Delhi Region</span>
-            <span class="text-[10px] bg-slate-100 text-slate-600 font-mono px-2 py-0.5 rounded border border-slate-200">region="delhi"</span>
-            <span class="badge-emerald px-2 py-0.5 rounded text-[10px] font-bold">Primary Sources Verified</span>
-          </div>
-          <p class="text-xs text-slate-600 mt-0.5">
-            Real-time livelihood mapping, NSQF skilling enrolments across 22 accredited Delhi centers, and district-level project monitoring under Revised May 2023 Guidelines.
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
-        <a href="/whatsapp" class="text-xs text-secondary hover:underline flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs font-semibold">
-          <span class="material-symbols-outlined text-[15px] text-emerald-600">chat</span> WhatsApp Sim
-        </a>
-        <a href="/#viewIvr" class="text-xs text-secondary hover:underline flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs font-semibold">
-          <span class="material-symbols-outlined text-[15px] text-blue-600">phone_in_talk</span> IVR Hotline
-        </a>
-      </div>
-    </section>
-
-    <!-- KPI ROW (4 KEY METRIC CARDS) -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="kpiSection">
-      
-      <!-- Card 1: Total Beneficiaries Mapped -->
-      <div class="gov-card p-5 flex flex-col justify-between">
+    <!-- ACTION MODAL (FOR APPLICATION REVIEW / SANCTION) -->
+    <div id="actionModal" class="hidden fixed inset-0 z-50 bg-primary/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-5 flex flex-col gap-4 shadow-xl border border-surface-container-high">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Beneficiaries Mapped</span>
-          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
-            <span class="material-symbols-outlined text-[20px]">groups</span>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-surface-container text-secondary flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">verified</span>
+            </div>
+            <div>
+              <h4 class="font-headline-sm text-headline-sm text-on-surface" id="modalTitle">Administrative Review</h4>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">PM-AJAY GIA Sanction Committee</p>
+            </div>
           </div>
-        </div>
-        <div class="my-3">
-          <span class="font-display font-extrabold text-3xl text-slate-900" id="valTotalMapped">—</span>
-          <span class="text-xs text-slate-500 ml-1">candidates</span>
-        </div>
-        <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-          <span class="text-emerald-700 font-bold flex items-center gap-1">
-            <span class="material-symbols-outlined text-[16px]">trending_up</span>
-            <span id="valCoveragePct">—%</span> of Target
-          </span>
-          <span class="text-slate-500 font-medium" id="valTargetCount">Target: —</span>
-        </div>
-      </div>
-
-      <!-- Card 2: Active Skilling Enrolments -->
-      <div class="gov-card p-5 flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Skilling Enrolments</span>
-          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-            <span class="material-symbols-outlined text-[20px]">school</span>
-          </div>
-        </div>
-        <div class="my-3">
-          <span class="font-display font-extrabold text-3xl text-emerald-700" id="valEnrolments">—</span>
-          <span class="text-xs text-slate-500 ml-1">in training</span>
-        </div>
-        <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-          <span class="badge-emerald px-2 py-0.5 rounded text-[10px] font-bold">NSQF Levels 3–6</span>
-          <span class="text-slate-500 font-medium">22 Delhi Centres</span>
-        </div>
-      </div>
-
-      <!-- Card 3: Verified Placements -->
-      <div class="gov-card p-5 flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Verified Placements</span>
-          <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
-            <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
-          </div>
-        </div>
-        <div class="my-3">
-          <span class="font-display font-extrabold text-3xl text-purple-700" id="valPlacements">—</span>
-          <span class="text-xs text-slate-500 ml-1">placed / self-emp</span>
-        </div>
-        <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-          <span class="text-purple-700 font-bold" id="valPlacementRate">—% Placement Rate</span>
-          <span class="text-slate-500 font-medium" id="valDropouts">— Dropouts</span>
-        </div>
-      </div>
-
-      <!-- Card 4: GIA Grant Utilization -->
-      <div class="gov-card p-5 flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">GIA Grant Utilization</span>
-          <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
-            <span class="material-symbols-outlined text-[20px]">account_balance</span>
-          </div>
-        </div>
-        <div class="my-3">
-          <span class="font-display font-extrabold text-3xl text-amber-800" id="valGrantSanctioned">₹6.85 Cr</span>
-          <span class="text-xs text-slate-500 ml-1">sanctioned</span>
-        </div>
-        <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-          <span class="text-amber-800 font-bold" id="valGrantUtilized">₹5.76 Cr Utilized</span>
-          <span class="badge-amber px-2 py-0.5 rounded text-[10px] font-bold" id="valGrantPct">84.1%</span>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ALERTS PANEL -->
-    <section class="gov-card p-5 flex flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-            <span class="material-symbols-outlined text-[18px]">notifications_active</span>
-          </div>
-          <div>
-            <h2 class="font-display font-bold text-sm text-slate-900">Regional Coordination Alerts &amp; Directives (Delhi NCT)</h2>
-            <p class="text-[11px] text-slate-500">Live issues requiring State Director or District Welfare Officer intervention</p>
-          </div>
-        </div>
-        <span class="badge-amber px-2.5 py-1 rounded-full text-xs font-bold" id="alertCountBadge">4 Active Alerts</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1" id="alertsContainer">
-        <!-- Rendered dynamically -->
-        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 animate-pulse text-xs text-slate-500">Loading alerts...</div>
-      </div>
-    </section>
-
-    <!-- CHARTS SECTION (NSQF LEVEL DISTRIBUTION & SCHEME UPTAKE) -->
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      
-      <!-- Chart 1: Skilling Enrolments by NSQF Level -->
-      <div class="gov-card p-5 flex flex-col">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-              <span class="material-symbols-outlined text-emerald-600 text-[18px]">stairs</span>
-              <span>Skilling Enrolments by NSQF Level</span>
-            </h3>
-            <p class="text-[11px] text-slate-500 mt-0.5">Beneficiary progression across National Skills Qualifications Framework tiers</p>
-          </div>
-          <span class="badge-emerald px-2 py-0.5 rounded text-[10px] font-bold">
-            Delhi Cohort
-          </span>
-        </div>
-        <div class="relative w-full h-64">
-          <canvas id="nsqfChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Chart 2: Scheme Uptake & Utilization -->
-      <div class="gov-card p-5 flex flex-col">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-              <span class="material-symbols-outlined text-blue-600 text-[18px]">pie_chart</span>
-              <span>Scheme Uptake &amp; Sanctions</span>
-            </h3>
-            <p class="text-[11px] text-slate-500 mt-0.5">Beneficiaries enrolled per central &amp; Delhi state-specific scheme</p>
-          </div>
-          <span class="badge-blue px-2 py-0.5 rounded text-[10px] font-bold">
-            6 Schemes
-          </span>
-        </div>
-        <div class="relative w-full h-64">
-          <canvas id="schemeChart"></canvas>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- CAPACITY VS DEMAND GAP ANALYSIS -->
-    <section class="gov-card p-5 flex flex-col">
-      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div>
-          <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-            <span class="material-symbols-outlined text-purple-600 text-[18px]">compare_arrows</span>
-            <span>Training Capacity vs. Skill Demand Analysis</span>
-          </h3>
-          <p class="text-[11px] text-slate-500 mt-0.5">
-            Real beneficiary demand vs. accredited training seat capacity across Delhi trade clusters
-          </p>
-        </div>
-        <span class="text-[10px] text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md font-medium">
-          ⚠ Illustrative capacity — pending direct sync with Skill India Digital Hub
-        </span>
-      </div>
-
-      <div class="overflow-x-auto border border-slate-200 rounded-xl">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 font-bold uppercase tracking-wider text-[10px]">
-            <tr>
-              <th class="py-3 px-4">Trade &amp; NSQF Qualification</th>
-              <th class="py-3 px-4 text-right">Beneficiary Demand</th>
-              <th class="py-3 px-4 text-right">Est. Batch Capacity</th>
-              <th class="py-3 px-4 text-center">Net Balance</th>
-              <th class="py-3 px-4">Capacity Status</th>
-            </tr>
-          </thead>
-          <tbody id="capacityTableBody" class="divide-y divide-slate-100 text-slate-700">
-            <tr>
-              <td colspan="5" class="py-4 text-center text-slate-400">Loading capacity analysis...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- DELHI DISTRICT-WISE COVERAGE (ALL 11 DISTRICTS) -->
-    <section class="gov-card p-5 flex flex-col">
-      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div>
-          <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-            <span class="material-symbols-outlined text-saffron text-[18px]">map</span>
-            <span>Delhi 11-District Coverage &amp; Performance</span>
-          </h3>
-          <p class="text-[11px] text-slate-500 mt-0.5">Click any district row to filter the entire command dashboard view</p>
-        </div>
-        <span class="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-md border border-slate-200" id="districtCoverageConsolidated">
-          Overall Coverage: 98.7%
-        </span>
-      </div>
-
-      <div class="overflow-x-auto border border-slate-200 rounded-xl">
-        <table class="w-full text-left text-xs min-w-[700px]">
-          <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 font-bold uppercase tracking-wider text-[10px]">
-            <tr>
-              <th class="py-3 px-4">Delhi District</th>
-              <th class="py-3 px-4 text-right">Target</th>
-              <th class="py-3 px-4 text-right">Mapped</th>
-              <th class="py-3 px-4 text-right">Enrolled</th>
-              <th class="py-3 px-4 text-right">Placed</th>
-              <th class="py-3 px-4">Coverage Progress</th>
-              <th class="py-3 px-4">Priority Trade</th>
-              <th class="py-3 px-4 text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody id="districtTableBody" class="divide-y divide-slate-100 text-slate-700">
-            <tr>
-              <td colspan="8" class="py-4 text-center text-slate-400">Loading Delhi district data...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- PENDING APPLICATIONS QUEUE -->
-    <section class="gov-card p-5 flex flex-col">
-      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div>
-          <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-            <span class="material-symbols-outlined text-amber-600 text-[18px]">pending_actions</span>
-            <span>Pending Beneficiary Applications Queue</span>
-          </h3>
-          <p class="text-[11px] text-slate-500 mt-0.5">Document verification, batch assignment, and sanction status</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="text" id="appSearchInput" onkeyup="filterApplications()" placeholder="Search applicant, trade..." class="bg-white border border-slate-200 text-xs text-slate-800 px-3 py-1.5 rounded-lg focus:outline-none focus:border-secondary w-52 shadow-xs"/>
-        </div>
-      </div>
-
-      <div class="overflow-x-auto border border-slate-200 rounded-xl">
-        <table class="w-full text-left text-xs min-w-[750px]">
-          <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 font-bold uppercase tracking-wider text-[10px]">
-            <tr>
-              <th class="py-3 px-4">Application ID</th>
-              <th class="py-3 px-4">Applicant Name</th>
-              <th class="py-3 px-4">District</th>
-              <th class="py-3 px-4">Target Scheme &amp; Trade</th>
-              <th class="py-3 px-4">Stage / Status</th>
-              <th class="py-3 px-4">Verification Details</th>
-              <th class="py-3 px-4 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="pendingApplicationsBody" class="divide-y divide-slate-100 text-slate-700">
-            <tr>
-              <td colspan="7" class="py-4 text-center text-slate-400">Loading pending applications...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- BENEFICIARY REGISTRY TABLE (DATABASE LIVE SYNC) -->
-    <section class="gov-card p-5 flex flex-col">
-      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div>
-          <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-            <span class="material-symbols-outlined text-secondary text-[18px]">contacts</span>
-            <span>Live Beneficiary Registry</span>
-          </h3>
-          <p class="text-[11px] text-slate-500 mt-0.5">Synchronized with voice intake recommendations and district registrations</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <select id="statusFilter" onchange="filterBeneficiaries()" class="bg-white border border-slate-200 text-xs font-semibold text-slate-800 px-3 py-1.5 rounded-lg focus:outline-none shadow-xs">
-            <option value="all">All Statuses</option>
-            <option value="enrolled">Enrolled</option>
-            <option value="placed">Placed</option>
-            <option value="pending">Pending</option>
-            <option value="dropped">Dropped Out</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="overflow-x-auto border border-slate-200 rounded-xl">
-        <table class="w-full text-left text-xs min-w-[700px]">
-          <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 font-bold uppercase tracking-wider text-[10px]">
-            <tr>
-              <th class="py-3 px-4">Candidate</th>
-              <th class="py-3 px-4">Location / District</th>
-              <th class="py-3 px-4">Recommended Trade</th>
-              <th class="py-3 px-4">NSQF Alignment</th>
-              <th class="py-3 px-4">Mode</th>
-              <th class="py-3 px-4">Status</th>
-              <th class="py-3 px-4 text-center">Update Follow-Up</th>
-            </tr>
-          </thead>
-          <tbody id="beneficiaryTableBody" class="divide-y divide-slate-100 text-slate-700">
-            <tr>
-              <td colspan="7" class="py-4 text-center text-slate-400">Loading beneficiary registry...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ACTION MODAL (FOR APPLICATION REVIEW / VERIFY) -->
-  <div id="actionModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 flex flex-col gap-4 border border-slate-200 shadow-xl">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <div class="w-9 h-9 rounded-xl bg-blue-50 text-secondary flex items-center justify-center border border-blue-100">
-            <span class="material-symbols-outlined text-[20px]" id="modalIcon">verified</span>
-          </div>
-          <div>
-            <h4 class="font-display font-bold text-base text-slate-900" id="modalTitle">Application Action</h4>
-            <p class="text-[11px] text-slate-500">Official Administrative Review</p>
-          </div>
-        </div>
-        <button onclick="closeActionModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
-          <span class="material-symbols-outlined text-[20px]">close</span>
-        </button>
-      </div>
-
-      <div class="flex flex-col gap-3 text-xs text-slate-700">
-        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-          <div class="text-[11px] text-slate-500">Applicant:</div>
-          <div class="font-bold text-slate-900 text-sm" id="modalApplicantName">—</div>
-          <div class="text-[11px] text-slate-500 mt-2">Application ID:</div>
-          <div class="font-mono font-bold text-secondary text-xs" id="modalAppId">—</div>
-          <div class="text-[11px] text-slate-500 mt-2">District:</div>
-          <div class="text-slate-800 font-semibold" id="modalDistrict">—</div>
+          <button onclick="closeActionModal()" class="text-on-surface-variant hover:text-on-surface p-1">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
         </div>
 
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Action to Record:</label>
-          <select id="modalActionSelect" class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 font-medium focus:outline-none focus:border-secondary shadow-xs">
+        <div class="p-3 rounded-lg bg-surface-container-low text-xs flex flex-col gap-1">
+          <div><span class="text-on-surface-variant">Applicant:</span> <strong id="modalApplicantName" class="text-on-surface">—</strong></div>
+          <div><span class="text-on-surface-variant">Application ID:</span> <span id="modalAppId" class="font-mono text-secondary font-bold">—</span></div>
+          <div><span class="text-on-surface-variant">District:</span> <span id="modalDistrict" class="font-semibold text-on-surface">—</span></div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="font-label-sm text-label-sm text-on-surface uppercase font-bold">Action to Record:</label>
+          <select id="modalActionSelect" class="w-full bg-surface-container border border-surface-container-high rounded-lg p-2.5 text-xs font-semibold text-on-surface focus:outline-none">
             <option value="verify_docs">Mark Documents as Verified</option>
             <option value="approve">Approve Scheme Grant / Sanction</option>
             <option value="assign_centre">Assign to JSS / PMKVY Training Batch</option>
@@ -596,73 +575,56 @@
           </select>
         </div>
 
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Administrative Note:</label>
-          <textarea id="modalActionNote" rows="3" placeholder="e.g. Verified Aadhaar and caste certificate via Tehsildar portal..." class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:outline-none focus:border-secondary shadow-xs"></textarea>
+        <div class="flex flex-col gap-2">
+          <label class="font-label-sm text-label-sm text-on-surface uppercase font-bold">Administrative Note:</label>
+          <textarea id="modalActionNote" rows="2" placeholder="e.g. Verified Aadhaar and caste certificate via Delhi e-district portal..." class="w-full bg-surface-container border border-surface-container-high rounded-lg p-2 text-xs text-on-surface focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button onclick="closeActionModal()" class="px-3.5 py-1.5 rounded-lg bg-surface-container text-on-surface text-xs font-semibold">Cancel</button>
+          <button onclick="submitActionModal()" class="px-4 py-1.5 rounded-lg bg-secondary text-on-secondary text-xs font-bold shadow-xs active:scale-95">Confirm Action</button>
         </div>
       </div>
-
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeActionModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200">Cancel</button>
-        <button onclick="submitActionModal()" class="px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold hover:bg-blue-700 shadow-sm active:scale-95 transition-all">Confirm Action</button>
-      </div>
     </div>
-  </div>
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastContainer" class="fixed bottom-20 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- OFFICIAL FOOTER -->
-  <footer class="border-t border-slate-200 bg-white py-6 px-6 text-center text-xs text-slate-500 mt-auto">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <span>🇮🇳</span>
-        <span class="font-semibold text-slate-700">Nivara Livelihood Guidance Platform</span>
-        <span>·</span>
-        <span>MoSJE PM-AJAY (GIA Component)</span>
-      </div>
-      <div class="text-[11px] text-slate-400">
-        Demonstration release · Delhi NCT Regional Implementation
-      </div>
+  </main>
+
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.06)]" data-active-classes="text-secondary font-semibold bg-surface-container-low rounded-xl">
+    <div class="h-16 px-space-xs flex items-center justify-around max-w-7xl mx-auto">
+      <a class="flex flex-col items-center justify-center min-w-[64px] h-12 px-2 text-on-surface-variant hover:text-secondary transition-colors" data-path="voice-assistant" href="/">
+        <span class="material-symbols-outlined text-[24px]">mic</span>
+        <span class="font-label-sm text-label-sm mt-0.5">Voice AI</span>
+      </a>
+      <a class="flex flex-col items-center justify-center min-w-[64px] h-12 px-2 text-on-surface-variant hover:text-secondary transition-colors" data-path="roadmap-and-skills" href="/#viewPathways">
+        <span class="material-symbols-outlined text-[24px]">route</span>
+        <span class="font-label-sm text-label-sm mt-0.5">Pathways</span>
+      </a>
+      <a class="flex flex-col items-center justify-center min-w-[64px] h-12 px-2 text-on-surface-variant hover:text-secondary transition-colors" data-path="ivr-helpline" href="/#viewIvr">
+        <span class="material-symbols-outlined text-[24px]">phone_in_talk</span>
+        <span class="font-label-sm text-label-sm mt-0.5">IVR Line</span>
+      </a>
+      <a class="flex flex-col items-center justify-center min-w-[64px] h-12 px-2 text-secondary font-semibold bg-surface-container-low rounded-xl transition-colors" data-path="district-admin" href="/dashboard">
+        <span class="material-symbols-outlined text-[24px]">analytics</span>
+        <span class="font-label-sm text-label-sm mt-0.5">District</span>
+      </a>
     </div>
-  </footer>
+  </nav>
 
-  <!-- DASHBOARD SCRIPT -->
+  <!-- JAVASCRIPT CONTROLLER -->
   <script>
     let globalData = null;
-    let nsqfChartInstance = null;
-    let schemeChartInstance = null;
     let activeModalAppId = null;
 
-    // Theme Toggle Logic (Defaults to light matching main app)
-    function initTheme() {
-      const saved = localStorage.getItem('nivara_theme') || 'light';
-      if (saved === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.getElementById('themeIcon').textContent = 'light_mode';
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.getElementById('themeIcon').textContent = 'dark_mode';
-      }
-    }
-
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('nivara_theme', isDark ? 'dark' : 'light');
-      document.getElementById('themeIcon').textContent = isDark ? 'light_mode' : 'dark_mode';
-      
-      // Update Chart colors on theme change
-      if (globalData) {
-        if (globalData.nsqf_enrolments) renderNSQFChart(globalData.nsqf_enrolments);
-        if (globalData.scheme_uptake) renderSchemeChart(globalData.scheme_uptake);
-      }
-    }
-
-    // Load Dashboard Data
+    // Load Dashboard Summary and Capacity Gap Data
     async function loadDashboardData() {
-      const district = document.getElementById('districtFilter').value;
-      const syncIcon = document.getElementById('syncIcon');
-      if (syncIcon) syncIcon.classList.add('animate-spin');
+      const select = document.getElementById('districtFilter');
+      const district = select ? select.value : 'all';
+      const refreshIcon = document.getElementById('refreshIcon');
+      if (refreshIcon) refreshIcon.classList.add('animate-spin');
 
       try {
         const [summaryRes, capacityRes] = await Promise.all([
@@ -675,101 +637,266 @@
 
         renderKPIs(globalData);
         renderAlerts(globalData.alerts || []);
-        renderNSQFChart(globalData.nsqf_enrolments || []);
-        renderSchemeChart(globalData.scheme_uptake || []);
-        renderCapacityTable(capacityData);
-        renderDistrictTable(globalData.district_coverage || []);
+        renderNSQF(globalData.nsqf_enrolments || []);
+        renderSchemeMix(globalData.scheme_uptake || []);
+        renderCapacity(capacityData);
+        renderDistrictLeaderboard(globalData.district_coverage || []);
         renderPendingApplications(globalData.pending_applications || []);
-        renderBeneficiaryTable(globalData.beneficiaries || []);
+        renderBeneficiaries(globalData.beneficiaries || []);
 
       } catch (err) {
-        console.error('Failed to load dashboard metrics:', err);
-        showToast('Error syncing dashboard data: ' + err.message, 'error');
+        console.error('Failed to load dashboard data:', err);
+        showToast('Error syncing dashboard: ' + err.message, 'error');
       } finally {
-        if (syncIcon) {
-          setTimeout(() => syncIcon.classList.remove('animate-spin'), 600);
+        if (refreshIcon) {
+          setTimeout(() => refreshIcon.classList.remove('animate-spin'), 650);
         }
       }
     }
 
     // 1. Render KPIs
     function renderKPIs(data) {
+      if (!data) return;
       document.getElementById('valTotalMapped').textContent = (data.total_beneficiaries || 0).toLocaleString();
       document.getElementById('valEnrolments').textContent = (data.enrolments || 0).toLocaleString();
       document.getElementById('valPlacements').textContent = (data.placements || 0).toLocaleString();
-      document.getElementById('valDropouts').textContent = `${data.dropouts || 0} Dropouts`;
       
-      const covPct = data.overall_coverage_pct || (data.target_beneficiaries ? Math.round((data.total_beneficiaries / data.target_beneficiaries)*100) : 98.7);
+      const target = data.target_beneficiaries || 1200;
+      const covPct = data.overall_coverage_pct || Math.round(((data.total_beneficiaries || 0) / target) * 100);
       document.getElementById('valCoveragePct').textContent = `${covPct}%`;
-      document.getElementById('valTargetCount').textContent = `Target: ${(data.target_beneficiaries || 1200).toLocaleString()}`;
-      
-      const placRate = data.placement_rate_pct || Math.round((data.placements / Math.max(data.enrolments, 1))*100);
-      document.getElementById('valPlacementRate').textContent = `${placRate}% Placement Rate`;
+      document.getElementById('valTargetCount').textContent = `Target: ${target.toLocaleString()}`;
 
-      if (data.grant_sanctioned_cr) {
-        document.getElementById('valGrantSanctioned').textContent = `₹${data.grant_sanctioned_cr} Cr`;
-      }
+      const placRate = data.placement_rate_pct || Math.round(((data.placements || 0) / Math.max(data.enrolments || 1, 1)) * 100);
+      document.getElementById('valPlacementRate').textContent = `${placRate}%`;
+      document.getElementById('valPlacementSub').textContent = `${data.dropouts || 0} Dropouts · Placed`;
+
       if (data.grant_utilized_cr) {
-        document.getElementById('valGrantUtilized').textContent = `₹${data.grant_utilized_cr} Cr Utilized`;
+        document.getElementById('valGrantUtilized').innerHTML = `₹${data.grant_utilized_cr} <span class="text-body-sm font-body-sm text-on-surface-variant">Cr</span>`;
+      }
+      if (data.grant_sanctioned_cr) {
+        document.getElementById('valGrantSanctioned').textContent = `Sanction: ₹${data.grant_sanctioned_cr} Cr`;
       }
       if (data.grant_utilization_pct) {
         document.getElementById('valGrantPct').textContent = `${data.grant_utilization_pct}%`;
       }
     }
 
-    // 2. Render Alerts
+    // 2. Render Command Alerts
     function renderAlerts(alerts) {
       const container = document.getElementById('alertsContainer');
-      document.getElementById('alertCountBadge').textContent = `${alerts.length} Active Alerts`;
+      const badge = document.getElementById('alertCountBadge');
+      if (badge) badge.textContent = `${alerts.length} Requires Action`;
 
       if (!alerts || alerts.length === 0) {
-        container.innerHTML = '<div class="col-span-2 p-4 text-slate-500 text-xs text-center bg-slate-50 rounded-xl border border-slate-200">No active administrative alerts for the selected district.</div>';
+        container.innerHTML = '<div class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm text-xs text-on-surface-variant">No critical directives pending for selected district.</div>';
         return;
       }
 
       container.innerHTML = alerts.map(a => {
-        let borderCol = 'border-amber-200 bg-amber-50/50';
-        let badgeCol = 'badge-amber';
-        let icon = 'warning';
-        let iconCol = 'text-amber-600 bg-amber-100';
+        let isUrgent = a.severity === 'urgent';
+        let dotColor = isUrgent ? 'bg-error' : 'bg-tertiary-fixed-dim';
+        let labelColor = isUrgent ? 'text-error' : 'text-on-tertiary-container';
+        let btnBg = isUrgent ? 'bg-error text-on-error' : 'bg-surface-container-high text-on-surface hover:bg-surface-container';
 
-        if (a.severity === 'urgent') {
-          borderCol = 'border-red-200 bg-red-50/50';
-          badgeCol = 'badge-red';
-          icon = 'emergency_home';
-          iconCol = 'text-red-600 bg-red-100';
-        } else if (a.severity === 'success') {
-          borderCol = 'border-emerald-200 bg-emerald-50/50';
-          badgeCol = 'badge-emerald';
-          icon = 'check_circle';
-          iconCol = 'text-emerald-600 bg-emerald-100';
-        } else if (a.severity === 'info') {
-          borderCol = 'border-blue-200 bg-blue-50/50';
-          badgeCol = 'badge-blue';
-          icon = 'info';
-          iconCol = 'text-blue-600 bg-blue-100';
+        return `
+          <div class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <div class="flex items-start justify-between gap-2 mb-1.5">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full ${dotColor} shrink-0"></span>
+                <span class="font-label-md text-label-md ${labelColor} uppercase font-bold">${a.badge || a.title}</span>
+              </div>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">${a.district}</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface mb-3 leading-relaxed">
+              ${a.message}
+            </p>
+            <button onclick="handleAlertAction('${a.id}', '${a.action_label || 'Take Action'}')" class="w-full h-9 rounded-lg ${btnBg} font-label-md text-label-md flex items-center justify-center gap-1.5 transition-opacity active:opacity-90 font-semibold shadow-xs">
+              <span class="material-symbols-outlined text-[16px]">${isUrgent ? 'add_business' : 'forward_to_inbox'}</span>
+              <span>${a.action_label || 'Execute Intervention'}</span>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleAlertAction(alertId, actionLabel) {
+      showToast(`Directive Dispatched: "${actionLabel}"`, 'success');
+    }
+
+    // 3. Render NSQF Skill Alignment
+    function renderNSQF(nsqfData) {
+      if (!nsqfData || nsqfData.length === 0) return;
+      const total = nsqfData.reduce((acc, cur) => acc + (cur.enrolled || 0), 0);
+      const totalLabel = document.getElementById('nsqfTotalLabel');
+      if (totalLabel) totalLabel.textContent = `${total} Candidates`;
+
+      const l3 = nsqfData.find(d => d.level.includes('3')) || { enrolled: 242, pct: 32 };
+      const l4 = nsqfData.find(d => d.level.includes('4')) || { enrolled: 348, pct: 47 };
+      const l56 = nsqfData.filter(d => d.level.includes('5') || d.level.includes('6'));
+      const l56Enrolled = l56.reduce((acc, cur) => acc + cur.enrolled, 0);
+      const l56Pct = total > 0 ? Math.round((l56Enrolled / total) * 100) : 21;
+
+      const barL3 = document.getElementById('nsqfBarL3');
+      const barL4 = document.getElementById('nsqfBarL4');
+      const barL5 = document.getElementById('nsqfBarL5');
+      if (barL3) barL3.style.width = `${l3.pct}%`;
+      if (barL4) barL4.style.width = `${l4.pct}%`;
+      if (barL5) barL5.style.width = `${l56Pct}%`;
+
+      const valL3 = document.getElementById('nsqfValL3');
+      const valL4 = document.getElementById('nsqfValL4');
+      const valL5 = document.getElementById('nsqfValL5');
+      if (valL3) valL3.textContent = `${l3.enrolled} (${l3.pct}%)`;
+      if (valL4) valL4.textContent = `${l4.enrolled} (${l4.pct}%)`;
+      if (valL5) valL5.textContent = `${l56Enrolled} (${l56Pct}%)`;
+    }
+
+    // 4. Render Delhi SC Scheme Integration Mix
+    function renderSchemeMix(schemes) {
+      const grid = document.getElementById('schemeMixGrid');
+      if (!grid) return;
+
+      if (!schemes || schemes.length === 0) return;
+
+      grid.innerHTML = schemes.map(s => `
+        <div class="bg-surface-container-lowest p-2.5 rounded-lg flex flex-col justify-between border border-surface-container-high/60 shadow-xs">
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-bold text-on-surface truncate" title="${s.scheme_name}">${s.scheme_name}</span>
+            <span class="font-bold text-secondary text-xs shrink-0">${s.uptake_pct}%</span>
+          </div>
+          <div class="text-[11px] text-on-surface-variant mt-1 flex items-center justify-between">
+            <span class="truncate">${s.department}</span>
+            <span class="font-semibold text-on-surface shrink-0 ml-1">${s.enrolled} enrolled</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 5. Render Capacity vs Demand Gap
+    function renderCapacity(report) {
+      const container = document.getElementById('capacityContainer');
+      if (!container) return;
+
+      if (!report || !report.trades || report.trades.length === 0) {
+        container.innerHTML = '<div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm text-xs text-on-surface-variant">Capacity data unavailable.</div>';
+        return;
+      }
+
+      container.innerHTML = report.trades.slice(0, 4).map(t => {
+        const diff = t.estimated_capacity - t.demand;
+        let badgeBg = 'bg-surface-container-low text-on-surface-variant';
+        let barBg = 'bg-secondary-container';
+        let label = 'Balanced';
+        let widthPct = Math.min(Math.round((t.demand / Math.max(t.estimated_capacity, 1)) * 100), 100);
+
+        if (t.gap_status === 'demand_exceeding') {
+          badgeBg = 'bg-error-container text-on-error-container';
+          barBg = 'bg-error';
+          label = `${diff} Deficit`;
+          widthPct = 100;
+        } else if (diff > 0) {
+          badgeBg = 'bg-surface-container-high text-secondary';
+          barBg = 'bg-secondary';
+          label = `+${diff} Surplus`;
+          widthPct = Math.min(Math.round((t.demand / t.estimated_capacity) * 100), 100);
         }
 
         return `
-          <div class="p-4 rounded-xl border ${borderCol} flex flex-col justify-between gap-2.5 transition hover:shadow-xs bg-white">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <div class="w-6 h-6 rounded-md ${iconCol} flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[15px]">${icon}</span>
-                </div>
-                <span class="${badgeCol} px-2 py-0.5 rounded text-[10px] font-bold uppercase">${a.badge || a.severity}</span>
-                <span class="text-[11px] font-semibold text-slate-600">📍 ${a.district}</span>
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm">
+            <div class="flex items-start justify-between mb-1.5">
+              <div>
+                <h3 class="font-label-lg text-label-lg text-on-surface font-semibold">${t.trade_name}</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Demand: ${t.demand} • Capacity: ${t.estimated_capacity} seats</p>
               </div>
-              <span class="text-[10px] text-slate-400 font-medium">${a.timestamp || 'Recent'}</span>
+              <span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full ${badgeBg} font-semibold whitespace-nowrap">
+                ${label}
+              </span>
             </div>
-            <div>
-              <h4 class="font-bold text-xs text-slate-900">${a.title}</h4>
-              <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">${a.message}</p>
+            <div class="w-full bg-surface-container rounded-full h-2 mt-2 overflow-hidden">
+              <div class="${barBg} h-2 rounded-full transition-all" style="width: ${widthPct}%"></div>
             </div>
-            <div class="pt-2 flex items-center justify-between border-t border-slate-100">
-              <button onclick="handleAlertAction('${a.id}', '${a.action_label || 'Take Action'}')" class="text-xs font-bold text-secondary hover:text-blue-700 flex items-center gap-1">
-                <span>${a.action_label || 'Resolve Alert'}</span>
-                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 6. Render Delhi 11-District Coverage Leaderboard
+    function renderDistrictLeaderboard(districts) {
+      const container = document.getElementById('districtLeaderboardContainer');
+      if (!container) return;
+
+      if (!districts || districts.length === 0) {
+        container.innerHTML = '<div class="text-xs text-on-surface-variant">No district records found.</div>';
+        return;
+      }
+
+      container.innerHTML = districts.map(d => {
+        let barColor = 'bg-secondary';
+        if (d.coverage_pct < 85) barColor = 'bg-tertiary-fixed-dim';
+        if (d.coverage_pct < 70) barColor = 'bg-error';
+
+        return `
+          <div class="flex flex-col gap-1 pb-2 border-b border-surface-container/60 last:border-none cursor-pointer hover:bg-surface-container-low/40 p-1.5 rounded-lg transition" onclick="selectDistrict('${d.district}')">
+            <div class="flex items-center justify-between">
+              <span class="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px] text-secondary">location_on</span>
+                ${d.district}
+              </span>
+              <span class="font-label-md text-label-md text-secondary font-bold">${d.coverage_pct}% (${d.mapped}/${d.target})</span>
+            </div>
+            <div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+              <div class="${barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${Math.min(d.coverage_pct, 100)}%"></div>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Priority: ${d.priority_trade || 'Vocational Training'}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectDistrict(distName) {
+      const select = document.getElementById('districtFilter');
+      if (select) {
+        select.value = distName;
+        loadDashboardData();
+        showToast(`Filtered to ${distName}`, 'info');
+      }
+    }
+
+    // 7. Render Pending Beneficiary Applications
+    function renderPendingApplications(apps) {
+      const container = document.getElementById('pendingAppsContainer');
+      const countLabel = document.getElementById('pendingAppsCountLabel');
+      if (countLabel) countLabel.textContent = `${(apps || []).length} Actionable`;
+      if (!container) return;
+
+      if (!apps || apps.length === 0) {
+        container.innerHTML = '<div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm text-xs text-on-surface-variant">No pending applications requiring intervention.</div>';
+        return;
+      }
+
+      container.innerHTML = apps.map(a => {
+        let badgeBg = 'bg-surface-container text-secondary';
+        if (a.status.includes('Tehsildar') || a.status.includes('Pending')) badgeBg = 'bg-tertiary-fixed text-on-tertiary-container';
+        if (a.status.includes('Batch')) badgeBg = 'bg-surface-container-low text-on-surface-variant';
+        if (a.status.includes('Resubmission')) badgeBg = 'bg-error-container text-on-error-container';
+
+        return `
+          <div class="bg-surface-container-lowest p-3.5 rounded-xl shadow-sm flex flex-col gap-2 border border-surface-container-high/40">
+            <div class="flex items-start justify-between">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-label-lg text-label-lg text-on-surface font-bold">${a.applicant_name}</span>
+                  <span class="px-1.5 py-0.5 rounded ${badgeBg} font-label-sm text-label-sm font-semibold">${a.status}</span>
+                </div>
+                <p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5 truncate">
+                  ID: ${a.application_id} • ${a.district}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <span class="font-body-sm text-body-sm text-on-surface truncate mr-2">${a.trade} (${a.nsqf || 'NSQF 4'})</span>
+              <button onclick="openActionModal('${a.application_id}', '${a.applicant_name}', '${a.district}')" class="h-8 px-3 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md font-semibold hover:opacity-90 transition-opacity active:scale-95 shrink-0 shadow-xs">
+                Review Case
               </button>
             </div>
           </div>
@@ -777,289 +904,62 @@
       }).join('');
     }
 
-    function handleAlertAction(alertId, actionLabel) {
-      showToast(`Action dispatched: "${actionLabel}" logged to District Welfare Committee.`, 'success');
-    }
-
-    // 3. Render NSQF Level Chart
-    function renderNSQFChart(nsqfData) {
-      const ctx = document.getElementById('nsqfChart');
-      if (!ctx) return;
-
-      if (nsqfChartInstance) nsqfChartInstance.destroy();
-
-      const labels = nsqfData.map(d => d.level);
-      const values = nsqfData.map(d => d.enrolled);
-      const isDark = document.documentElement.classList.contains('dark');
-
-      nsqfChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Enrolled Beneficiaries',
-            data: values,
-            backgroundColor: [
-              'rgba(5, 150, 105, 0.85)',
-              'rgba(0, 81, 213, 0.85)',
-              'rgba(234, 88, 12, 0.85)',
-              'rgba(124, 58, 237, 0.85)'
-            ],
-            borderColor: [
-              '#059669',
-              '#0051d5',
-              '#ea580c',
-              '#7c3aed'
-            ],
-            borderWidth: 1.5,
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: isDark ? '#0f172a' : '#1e293b',
-              titleFont: { family: 'Inter', size: 12, weight: 'bold' },
-              bodyFont: { family: 'Inter', size: 11 },
-              padding: 10,
-              cornerRadius: 8,
-              callbacks: {
-                afterLabel: function(context) {
-                  const item = nsqfData[context.dataIndex];
-                  return `${item.description}\nTrades: ${item.key_trades ? item.key_trades.join(', ') : ''}`;
-                }
-              }
-            }
-          },
-          scales: {
-            y: {
-              grid: { color: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)' },
-              ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { family: 'Inter', size: 10 } }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { color: isDark ? '#e2e8f0' : '#334155', font: { family: 'Inter', size: 11, weight: '600' } }
-            }
-          }
-        }
-      });
-    }
-
-    // 4. Render Scheme Uptake Chart
-    function renderSchemeChart(schemeData) {
-      const ctx = document.getElementById('schemeChart');
-      if (!ctx) return;
-
-      if (schemeChartInstance) schemeChartInstance.destroy();
-
-      const labels = schemeData.map(s => s.scheme_name.length > 22 ? s.scheme_name.substring(0, 22) + '...' : s.scheme_name);
-      const values = schemeData.map(s => s.enrolled);
-      const isDark = document.documentElement.classList.contains('dark');
-
-      schemeChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: [
-              '#ea580c',
-              '#0051d5',
-              '#059669',
-              '#7c3aed',
-              '#0891b2',
-              '#d97706'
-            ],
-            borderWidth: 2,
-            borderColor: isDark ? '#131d33' : '#ffffff'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'right',
-              labels: {
-                color: isDark ? '#cbd5e1' : '#334155',
-                font: { family: 'Inter', size: 10, weight: '500' },
-                boxWidth: 12,
-                padding: 10
-              }
-            },
-            tooltip: {
-              backgroundColor: isDark ? '#0f172a' : '#1e293b',
-              titleFont: { family: 'Inter', size: 12, weight: 'bold' },
-              bodyFont: { family: 'Inter', size: 11 },
-              padding: 10,
-              cornerRadius: 8,
-              callbacks: {
-                label: function(context) {
-                  const s = schemeData[context.dataIndex];
-                  return `${s.scheme_name}: ${s.enrolled} enrolled (${s.uptake_pct}%)`;
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
-    // 5. Render Capacity Gap Table
-    function renderCapacityTable(report) {
-      const tbody = document.getElementById('capacityTableBody');
+    // 8. Render Beneficiary Table
+    function renderBeneficiaries(bList) {
+      const tbody = document.getElementById('beneficiaryTableBody');
       if (!tbody) return;
 
-      if (!report || !report.trades || report.trades.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-slate-400">No capacity data available</td></tr>';
+      if (!bList || bList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-on-surface-variant">No candidates found matching filter.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = report.trades.map(t => {
-        let badgeClass = 'badge-emerald';
-        let statusLabel = 'Adequate';
-        let gapDiff = t.estimated_capacity - t.demand;
-        let gapStr = gapDiff >= 0 ? `+${gapDiff} seats` : `${gapDiff} seat deficit`;
+      tbody.innerHTML = bList.map(b => `
+        <tr class="hover:bg-surface-container-low/30 transition">
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-on-surface">${b.name}</div>
+            <div class="text-[10px] text-on-surface-variant font-mono">ID: ${b.id.substring(0, 8)}</div>
+          </td>
+          <td class="py-2.5 px-3 text-on-surface-variant">${b.location}</td>
+          <td class="py-2.5 px-3">
+            <div class="font-semibold text-on-surface">${b.trade}</div>
+            <div class="text-[10px] text-secondary font-medium">${b.nsqf || 'NSQF 4'}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${b.status === 'placed' ? 'bg-blue-100 text-blue-800' : (b.status === 'enrolled' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800')}">${b.status}</span>
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            <select onchange="updateBeneficiaryStatus('${b.id}', this.value)" class="bg-surface-container text-[11px] font-semibold text-on-surface rounded px-1.5 py-1 focus:outline-none">
+              <option value="enrolled" ${b.status === 'enrolled' ? 'selected' : ''}>Enrolled</option>
+              <option value="placed" ${b.status === 'placed' ? 'selected' : ''}>Placed</option>
+              <option value="dropped" ${b.status === 'dropped' ? 'selected' : ''}>Dropped</option>
+            </select>
+          </td>
+        </tr>
+      `).join('');
+    }
 
-        if (t.gap_status === 'demand_exceeding') {
-          badgeClass = 'badge-red';
-          statusLabel = 'Deficit / Over-subscribed';
-        } else if (t.gap_status === 'roughly_matched') {
-          badgeClass = 'badge-blue';
-          statusLabel = 'Balanced Capacity';
-        } else {
-          statusLabel = 'Capacity Surplus';
+    function filterBeneficiaries() {
+      const st = document.getElementById('statusFilter').value;
+      if (!globalData || !globalData.beneficiaries) return;
+      const filtered = st === 'all' ? globalData.beneficiaries : globalData.beneficiaries.filter(b => b.status === st);
+      renderBeneficiaries(filtered);
+    }
+
+    async function updateBeneficiaryStatus(id, newStatus) {
+      try {
+        const res = await fetch(`/followup/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        if (res.ok) {
+          showToast(`Status updated to ${newStatus}`, 'success');
+          loadDashboardData();
         }
-
-        return `
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="py-3 px-4">
-              <div class="font-bold text-slate-900">${t.trade_name}</div>
-              <div class="text-[11px] text-slate-500 font-mono">QP Code: ${t.qp_code} · NSQF Tier</div>
-            </td>
-            <td class="py-3 px-4 text-right font-mono font-bold text-slate-900">${t.demand}</td>
-            <td class="py-3 px-4 text-right font-mono text-slate-700">${t.estimated_capacity}</td>
-            <td class="py-3 px-4 text-center">
-              <span class="font-mono text-xs ${gapDiff < 0 ? 'text-red-700 font-extrabold' : 'text-emerald-700 font-bold'}">${gapStr}</span>
-            </td>
-            <td class="py-3 px-4">
-              <span class="${badgeClass} px-2.5 py-0.5 rounded-full text-[10px] font-bold">${t.gap_label || statusLabel}</span>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    // 6. Render District Coverage Table
-    function renderDistrictTable(districts) {
-      const tbody = document.getElementById('districtTableBody');
-      if (!tbody) return;
-
-      if (!districts || districts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="py-4 text-center text-slate-400">No district coverage data available</td></tr>';
-        return;
+      } catch (err) {
+        showToast('Error updating status: ' + err.message, 'error');
       }
-
-      tbody.innerHTML = districts.map(d => {
-        let barColor = 'bg-emerald-600';
-        if (d.coverage_pct < 85) barColor = 'bg-amber-500';
-        if (d.coverage_pct < 70) barColor = 'bg-red-500';
-
-        return `
-          <tr class="hover:bg-blue-50/50 transition-colors cursor-pointer" onclick="filterByDistrictClick('${d.district}')">
-            <td class="py-3 px-4 font-bold text-slate-900 flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[16px] text-secondary">location_on</span>
-              <span>${d.district}</span>
-            </td>
-            <td class="py-3 px-4 text-right font-mono text-slate-500">${d.target}</td>
-            <td class="py-3 px-4 text-right font-mono font-bold text-slate-900">${d.mapped}</td>
-            <td class="py-3 px-4 text-right font-mono font-bold text-emerald-700">${d.enrolled}</td>
-            <td class="py-3 px-4 text-right font-mono font-bold text-purple-700">${d.placed}</td>
-            <td class="py-3 px-4 min-w-[150px]">
-              <div class="flex items-center gap-2">
-                <div class="flex-1 h-2 rounded-full bg-slate-200 overflow-hidden">
-                  <div class="${barColor} h-full rounded-full transition-all duration-500" style="width: ${Math.min(d.coverage_pct, 100)}%"></div>
-                </div>
-                <span class="text-xs font-mono text-slate-700 font-bold">${d.coverage_pct}%</span>
-              </div>
-            </td>
-            <td class="py-3 px-4 text-slate-600 text-xs truncate max-w-[180px]">${d.priority_trade || 'Vocational'}</td>
-            <td class="py-3 px-4 text-center">
-              <button onclick="event.stopPropagation(); filterByDistrictClick('${d.district}')" class="px-2.5 py-1 rounded-md bg-blue-50 hover:bg-blue-100 text-secondary border border-blue-200 text-[11px] font-bold transition">
-                Filter
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function filterByDistrictClick(distName) {
-      const select = document.getElementById('districtFilter');
-      select.value = distName;
-      loadDashboardData();
-      showToast(`Dashboard filtered to ${distName}`, 'info');
-    }
-
-    // 7. Render Pending Applications Queue
-    function renderPendingApplications(apps) {
-      const tbody = document.getElementById('pendingApplicationsBody');
-      if (!tbody) return;
-
-      if (!apps || apps.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="py-4 text-center text-slate-400">No pending applications match filter.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = apps.map(a => {
-        let badgeClass = 'badge-amber';
-        if (a.status.includes('Verified') || a.status.includes('Ready')) badgeClass = 'badge-emerald';
-        if (a.status.includes('Resubmission')) badgeClass = 'badge-red';
-        if (a.status.includes('Bank')) badgeClass = 'badge-blue';
-
-        return `
-          <tr class="hover:bg-slate-50 transition-colors" id="row-${a.application_id}">
-            <td class="py-3 px-4 font-mono text-xs text-secondary font-bold">${a.application_id}</td>
-            <td class="py-3 px-4">
-              <div class="font-bold text-slate-900">${a.applicant_name}</div>
-              <div class="text-[11px] text-slate-500">${a.gender || 'Applicant'} · Age: ${a.age || '—'}</div>
-            </td>
-            <td class="py-3 px-4 text-slate-700 font-medium">${a.district}</td>
-            <td class="py-3 px-4">
-              <div class="font-semibold text-slate-900">${a.trade}</div>
-              <div class="text-[11px] text-slate-500">${a.scheme_name} · <span class="text-emerald-700 font-semibold">${a.nsqf}</span></div>
-            </td>
-            <td class="py-3 px-4">
-              <span class="${badgeClass} px-2.5 py-0.5 rounded-full text-[10px] font-bold">${a.status}</span>
-            </td>
-            <td class="py-3 px-4 text-xs text-slate-600 max-w-[220px]">
-              ${a.documents_status}
-            </td>
-            <td class="py-3 px-4 text-center">
-              <div class="flex items-center justify-center gap-1.5">
-                <button onclick="openActionModal('${a.application_id}', '${a.applicant_name}', '${a.district}')" class="px-3 py-1 rounded-lg bg-secondary hover:bg-blue-700 text-white text-xs font-bold transition active:scale-95 shadow-xs">
-                  Review
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function filterApplications() {
-      const q = document.getElementById('appSearchInput').value.toLowerCase();
-      if (!globalData || !globalData.pending_applications) return;
-      const filtered = globalData.pending_applications.filter(a => 
-        a.applicant_name.toLowerCase().includes(q) ||
-        a.application_id.toLowerCase().includes(q) ||
-        a.trade.toLowerCase().includes(q) ||
-        a.district.toLowerCase().includes(q)
-      );
-      renderPendingApplications(filtered);
     }
 
     // Action Modal Logic
@@ -1087,85 +987,19 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: action, note: note })
         });
-        const resData = await res.json();
-        showToast(`Application ${activeModalAppId} updated: ${action}`, 'success');
+        const data = await res.json();
+        showToast(`Action recorded for ${activeModalAppId}: ${action}`, 'success');
         closeActionModal();
         loadDashboardData();
       } catch (err) {
-        showToast('Error recording action: ' + err.message, 'error');
+        showToast('Error submitting action: ' + err.message, 'error');
       }
     }
 
-    // 8. Render Beneficiary Registry Table
-    function renderBeneficiaryTable(beneficiaries) {
-      const tbody = document.getElementById('beneficiaryTableBody');
-      if (!tbody) return;
-
-      if (!beneficiaries || beneficiaries.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="py-4 text-center text-slate-400">No beneficiaries registered yet.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = beneficiaries.map(b => {
-        let stClass = 'badge-emerald';
-        if (b.status === 'placed') stClass = 'badge-blue';
-        if (b.status === 'dropped') stClass = 'badge-red';
-        if (b.status === 'pending') stClass = 'badge-amber';
-
-        return `
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="py-3 px-4">
-              <div class="font-bold text-slate-900">${b.name}</div>
-              <div class="text-[11px] text-slate-500 font-mono">ID: ${b.id.substring(0, 8)} · ${b.education || '10th Standard'}</div>
-            </td>
-            <td class="py-3 px-4 text-slate-700">${b.location}</td>
-            <td class="py-3 px-4 font-semibold text-slate-900">${b.trade}</td>
-            <td class="py-3 px-4">
-              <span class="badge-emerald px-2 py-0.5 rounded text-[10px] font-bold">${b.nsqf || 'NSQF 4'}</span>
-            </td>
-            <td class="py-3 px-4 font-mono text-xs text-slate-500 uppercase">${b.entry_mode || 'app'}</td>
-            <td class="py-3 px-4">
-              <span class="${stClass} px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase">${b.status}</span>
-            </td>
-            <td class="py-3 px-4 text-center">
-              <select onchange="updateBeneficiaryStatus('${b.id}', this.value)" class="bg-white border border-slate-200 text-xs font-semibold text-slate-700 rounded-lg px-2 py-1 shadow-xs">
-                <option value="enrolled" ${b.status === 'enrolled' ? 'selected' : ''}>Enrolled</option>
-                <option value="placed" ${b.status === 'placed' ? 'selected' : ''}>Placed</option>
-                <option value="dropped" ${b.status === 'dropped' ? 'selected' : ''}>Dropped</option>
-              </select>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function filterBeneficiaries() {
-      const st = document.getElementById('statusFilter').value;
-      if (!globalData || !globalData.beneficiaries) return;
-      const filtered = st === 'all' ? globalData.beneficiaries : globalData.beneficiaries.filter(b => b.status === st);
-      renderBeneficiaryTable(filtered);
-    }
-
-    async function updateBeneficiaryStatus(id, newStatus) {
-      try {
-        const res = await fetch(`/followup/${id}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: newStatus })
-        });
-        if (res.ok) {
-          showToast(`Beneficiary status updated to ${newStatus}`, 'success');
-          loadDashboardData();
-        }
-      } catch (err) {
-        showToast('Error updating status: ' + err.message, 'error');
-      }
-    }
-
-    // Export CSV
+    // CSV Export
     function exportCSV() {
       if (!globalData || !globalData.beneficiaries) {
-        showToast('No data to export', 'error');
+        showToast('No dataset available to export', 'error');
         return;
       }
       const headers = ['ID', 'Name', 'Location', 'Trade', 'NSQF', 'Status', 'Last Contact'];
@@ -1183,21 +1017,21 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Nivara_GIA_Delhi_Report_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `PM_AJAY_Delhi_GIA_Report_${new Date().toISOString().slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast('CSV Export generated successfully', 'success');
+      showToast('Consolidated Delhi GIA CSV report generated', 'success');
     }
 
-    // Toast Utility
+    // Toast Notification Utility
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      let borderCol = 'border-blue-200 bg-white text-blue-800 shadow-lg';
-      if (type === 'success') borderCol = 'border-emerald-200 bg-white text-emerald-800 shadow-lg';
-      if (type === 'error') borderCol = 'border-red-200 bg-white text-red-800 shadow-lg';
+      let borderCol = 'border-secondary bg-surface-container-lowest text-on-surface';
+      if (type === 'success') borderCol = 'border-emerald-600 bg-surface-container-lowest text-emerald-900';
+      if (type === 'error') borderCol = 'border-error bg-surface-container-lowest text-error';
 
-      toast.className = `p-3.5 rounded-xl border ${borderCol} text-xs font-bold flex items-center gap-2 pointer-events-auto transition transform translate-y-2 opacity-0`;
+      toast.className = `p-3 rounded-xl border-l-4 ${borderCol} text-xs font-semibold flex items-center gap-2 pointer-events-auto shadow-md transition transform translate-y-2 opacity-0 max-w-xs`;
       toast.innerHTML = `
         <span class="material-symbols-outlined text-[18px]">${type === 'success' ? 'check_circle' : (type === 'error' ? 'error' : 'info')}</span>
         <span>${msg}</span>
@@ -1214,9 +1048,8 @@
       }, 3500);
     }
 
-    // Auto-init on page load
+    // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
-      initTheme();
       loadDashboardData();
     });
   </script>
