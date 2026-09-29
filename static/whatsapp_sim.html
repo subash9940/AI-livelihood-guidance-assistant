@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Nivara — WhatsApp Service Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/theme.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0c1317;
+      font-family: 'Inter', -apple-system, sans-serif;
+    }
+    .wa-chat-bg {
+      background-color: #0b141a;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .bubble-in {
+      background-color: #202c33;
+      color: #e9edef;
+      border-radius: 0 16px 16px 16px;
+    }
+    .bubble-out {
+      background-color: #005c4b;
+      color: #e9edef;
+      border-radius: 16px 0 16px 16px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col items-center justify-center p-0 sm:p-4">
+
+  <!-- Top Tricolor Bar -->
+  <div class="fixed top-0 w-full h-1 bg-gradient-to-r from-[#f59e0b] via-[#ffffff] to-[#10b981] z-50"></div>
+
+  <!-- Main Container -->
+  <div class="w-full max-w-2xl h-[100vh] sm:h-[92vh] flex flex-col bg-[#111b21] sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-800">
+    
+    <!-- Top WhatsApp Header -->
+    <header class="bg-[#202c33] px-4 py-3 flex items-center justify-between border-b border-slate-700/60 flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <a href="/" class="w-9 h-9 rounded-full hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-colors" title="Back to Nivara Portal">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        </a>
+        
+        <div class="relative">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f97316] via-[#6366f1] to-[#10b981] p-0.5 shadow-md flex items-center justify-center">
+            <span class="w-full h-full bg-[#111b21] rounded-full flex items-center justify-center text-lg">🇮🇳</span>
+          </div>
+          <span class="absolute bottom-0 right-0 w-3 h-3 bg-[#25d366] border-2 border-[#202c33] rounded-full"></span>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-bold text-sm text-slate-100">Nivara PM-AJAY (MoSJE)</h1>
+            <span class="material-symbols-outlined text-[15px] text-[#25d366]" style="font-variation-settings: 'FILL' 1;">verified</span>
+          </div>
+          <span class="text-[11px] text-[#25d366] font-medium flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#25d366] animate-pulse"></span>
+            Online • Official Delhi Helpline
+          </span>
+        </div>
+      </div>
+
+      <!-- Phone Number Selector / Beneficiary Switcher -->
+      <div class="flex items-center gap-2">
+        <select id="waPhoneSelector" class="bg-[#111b21] text-xs text-slate-200 px-2.5 py-1.5 rounded-xl border border-slate-700 focus:outline-none focus:border-[#25d366]">
+          <option value="9810123456" selected>📱 +91 98101 23456 (Rohan - South Delhi)</option>
+          <option value="9876543210">📱 +91 98765 43210 (Pooja - North East)</option>
+          <option value="9999988888">📱 +91 99999 88888 (New Candidate)</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Beneficiary Context Info Strip -->
+    <div id="waBeneficiaryBanner" class="bg-[#182229] px-4 py-2 text-xs flex items-center justify-between border-b border-slate-800 text-slate-300">
+      <div class="flex items-center gap-2 truncate">
+        <span class="material-symbols-outlined text-[16px] text-[#25d366]">person</span>
+        <span id="waProfileName" class="font-bold text-slate-200">Rohan Kumar</span>
+        <span class="text-slate-500">•</span>
+        <span id="waProfileCat" class="text-slate-400">SC Category</span>
+        <span class="text-slate-500">•</span>
+        <span id="waProfileLoc" class="text-slate-400">South Delhi</span>
+      </div>
+      <span class="text-[10px] text-slate-400 font-mono bg-slate-800 px-2 py-0.5 rounded">Endpoint: /webhook/whatsapp</span>
+    </div>
+
+    <!-- Chat Message Stream -->
+    <main id="waChatStream" class="flex-1 wa-chat-bg p-4 overflow-y-auto space-y-3 scroll-smooth">
+      
+      <!-- Date Divider -->
+      <div class="flex justify-center my-2">
+        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 bg-[#182229] px-3 py-1 rounded-full shadow-sm">Today</span>
+      </div>
+
+      <!-- Security Notice -->
+      <div class="flex justify-center my-1">
+        <div class="bg-[#182229]/90 border border-slate-700/50 text-[11px] text-amber-300/90 px-3 py-1.5 rounded-xl max-w-sm text-center flex items-center gap-1.5 shadow-sm">
+          <span class="material-symbols-outlined text-[14px]">lock</span>
+          <span>End-to-end encrypted official MoSJE PM-AJAY Livelihood line.</span>
+        </div>
+      </div>
+
+      <!-- Initial Welcome Message from Assistant -->
+      <div class="flex items-start max-w-[85%]">
+        <div class="bubble-in p-3 text-xs shadow-md space-y-2">
+          <p class="font-bold text-[#25d366] text-[13px]">Namaste Rohan Kumar जी! 🙏</p>
+          <p class="leading-relaxed">
+            Welcome to the <strong>Nivara PM-AJAY WhatsApp Assistant</strong>. You can find free vocational training courses, check loan subsidies, or view deadline reminders in Delhi.
+          </p>
+          <div class="bg-[#111b21] p-2.5 rounded-lg border border-slate-700/60 font-mono text-[11px] space-y-1">
+            <p class="text-slate-300 font-bold text-amber-400">Reply with a number:</p>
+            <p><strong class="text-[#25d366]">1</strong> — Free PM-AJAY Schemes &amp; Loans</p>
+            <p><strong class="text-[#25d366]">2</strong> — Nearest Training Centres (Delhi)</p>
+            <p><strong class="text-[#25d366]">3</strong> — Check My Eligibility &amp; Documents</p>
+            <p><strong class="text-[#25d366]">4</strong> — Deadlines &amp; Reminders</p>
+            <p><strong class="text-[#25d366]">5</strong> — Ask Any Question</p>
+            <p><strong class="text-[#25d366]">0</strong> — Main Menu</p>
+          </div>
+          <span class="text-[9px] text-slate-400 block text-right mt-1">11:15 AM</span>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Low-Literacy Quick Reply Shortcut Chips (Tap 1, 2, 3) -->
+    <div class="bg-[#182229] px-3 py-2 border-t border-slate-800 flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-shrink-0">
+      <span class="text-[10px] uppercase font-bold text-slate-400 flex-shrink-0 mr-1">Quick Tap:</span>
+      <button class="wa-chip bg-[#202c33] hover:bg-[#25d366]/20 text-[#25d366] border border-[#25d366]/30 text-xs px-2.5 py-1 rounded-full font-bold flex-shrink-0 transition-colors" data-code="1">
+        1: Schemes &amp; Loans
+      </button>
+      <button class="wa-chip bg-[#202c33] hover:bg-[#25d366]/20 text-[#25d366] border border-[#25d366]/30 text-xs px-2.5 py-1 rounded-full font-bold flex-shrink-0 transition-colors" data-code="2">
+        2: Centres in Delhi
+      </button>
+      <button class="wa-chip bg-[#202c33] hover:bg-[#25d366]/20 text-[#25d366] border border-[#25d366]/30 text-xs px-2.5 py-1 rounded-full font-bold flex-shrink-0 transition-colors" data-code="3">
+        3: My Eligibility
+      </button>
+      <button class="wa-chip bg-[#202c33] hover:bg-[#25d366]/20 text-[#25d366] border border-[#25d366]/30 text-xs px-2.5 py-1 rounded-full font-bold flex-shrink-0 transition-colors" data-code="4">
+        4: Reminders
+      </button>
+      <button class="wa-chip bg-[#202c33] hover:bg-[#25d366]/20 text-[#25d366] border border-[#25d366]/30 text-xs px-2.5 py-1 rounded-full font-bold flex-shrink-0 transition-colors" data-code="0">
+        0: Main Menu
+      </button>
+    </div>
+
+    <!-- Input Footer Bar with Mic, Input, and Send -->
+    <footer class="bg-[#202c33] p-2.5 flex items-center gap-2 border-t border-slate-700/60 flex-shrink-0">
+      <button id="waMicBtn" class="w-10 h-10 rounded-full bg-[#111b21] hover:bg-slate-800 text-slate-300 hover:text-[#25d366] flex items-center justify-center transition-colors flex-shrink-0" title="Simulate Voice Note / Mic Input">
+        <span class="material-symbols-outlined text-[20px]" id="waMicIcon">mic</span>
+      </button>
+      
+      <input type="text" id="waTextInput" placeholder="Type a message or number (1, 2, 3)..." class="flex-1 bg-[#2a3942] text-slate-100 text-xs px-4 py-2.5 rounded-xl border border-transparent focus:border-[#25d366] focus:outline-none placeholder:text-slate-400"/>
+
+      <button id="waSendBtn" class="w-10 h-10 rounded-full bg-[#00a884] hover:bg-[#008f6f] text-slate-900 flex items-center justify-center transition-colors flex-shrink-0 shadow-md">
+        <span class="material-symbols-outlined text-[20px] text-white">send</span>
+      </button>
+    </footer>
+
+  </div>
+
+  <script>
+    (function() {
+      const stream = document.getElementById('waChatStream');
+      const input = document.getElementById('waTextInput');
+      const sendBtn = document.getElementById('waSendBtn');
+      const micBtn = document.getElementById('waMicBtn');
+      const micIcon = document.getElementById('waMicIcon');
+      const phoneSelector = document.getElementById('waPhoneSelector');
+      const chips = document.querySelectorAll('.wa-chip');
+
+      let isRecording = false;
+      let recognition = null;
+
+      // Phone selector switch
+      phoneSelector.addEventListener('change', () => {
+        const phone = phoneSelector.value;
+        loadProfileBanner(phone);
+        appendSystemBubble(`Switched phone profile to: +91 ${phone}`);
+      });
+
+      async function loadProfileBanner(phone) {
+        try {
+          const resp = await fetch(`/api/whatsapp/profile/${phone}`);
+          const p = await resp.json();
+          document.getElementById('waProfileName').textContent = p.name || 'Beneficiary';
+          document.getElementById('waProfileCat').textContent = `${p.category || 'SC'} Category`;
+          document.getElementById('waProfileLoc').textContent = p.district || 'Delhi';
+        } catch(e) {}
+      }
+
+      // Quick tap chips
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const code = chip.getAttribute('data-code');
+          sendMessage(code);
+        });
+      });
+
+      // Send on click / Enter
+      sendBtn.addEventListener('click', () => sendMessage(input.value));
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          sendMessage(input.value);
+        }
+      });
+
+      // Mic Voice Input
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        recognition = new SpeechRec();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+
+        recognition.onstart = () => {
+          isRecording = true;
+          micBtn.classList.add('bg-red-500/20', 'text-red-400', 'animate-pulse');
+          input.placeholder = 'Listening to voice note... Speak now';
+        };
+
+        recognition.onresult = (evt) => {
+          let trans = '';
+          for (let i = evt.resultIndex; i < evt.results.length; i++) {
+            trans += evt.results[i][0].transcript;
+          }
+          input.value = trans;
+        };
+
+        recognition.onerror = () => {
+          isRecording = false;
+          micBtn.classList.remove('bg-red-500/20', 'text-red-400', 'animate-pulse');
+          input.placeholder = 'Type a message or number (1, 2, 3)...';
+        };
+
+        recognition.onend = () => {
+          isRecording = false;
+          micBtn.classList.remove('bg-red-500/20', 'text-red-400', 'animate-pulse');
+          input.placeholder = 'Type a message or number (1, 2, 3)...';
+          if (input.value.trim().length > 1) {
+            sendMessage(input.value.trim());
+          }
+        };
+
+        micBtn.addEventListener('click', () => {
+          if (isRecording) {
+            recognition.stop();
+          } else {
+            recognition.start();
+          }
+        });
+      }
+
+      function appendUserBubble(text) {
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const div = document.createElement('div');
+        div.className = 'flex justify-end';
+        div.innerHTML = `
+          <div class="bubble-out p-3 text-xs shadow-md max-w-[85%] space-y-1">
+            <p class="leading-relaxed">${escapeHtml(text)}</p>
+            <div class="flex items-center justify-end gap-1 text-[9px] text-slate-300">
+              <span>${time}</span>
+              <span class="text-[#53bdeb]">✓✓</span>
+            </div>
+          </div>
+        `;
+        stream.appendChild(div);
+        stream.scrollTop = stream.scrollHeight;
+      }
+
+      function appendSystemBubble(text) {
+        const div = document.createElement('div');
+        div.className = 'flex justify-center my-1';
+        div.innerHTML = `
+          <span class="text-[10px] text-slate-400 bg-[#182229] px-2.5 py-0.5 rounded-full">${escapeHtml(text)}</span>
+        `;
+        stream.appendChild(div);
+        stream.scrollTop = stream.scrollHeight;
+      }
+
+      function appendAssistantBubble(text) {
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const div = document.createElement('div');
+        div.className = 'flex items-start max-w-[88%]';
+
+        // Format WhatsApp bolding *text* -> <strong>text</strong>
+        const formatted = escapeHtml(text)
+          .replace(/\*(.*?)\*/g, '<strong class="text-white">$1</strong>')
+          .replace(/_(.*?)_/g, '<em class="text-slate-400">$1</em>')
+          .replace(/\n/g, '<br/>');
+
+        div.innerHTML = `
+          <div class="bubble-in p-3 text-xs shadow-md space-y-1 leading-relaxed">
+            <div>${formatted}</div>
+            <span class="text-[9px] text-slate-400 block text-right mt-1">${time}</span>
+          </div>
+        `;
+        stream.appendChild(div);
+        stream.scrollTop = stream.scrollHeight;
+      }
+
+      async function sendMessage(text) {
+        const clean = (text || '').trim();
+        if (!clean) return;
+
+        appendUserBubble(clean);
+        input.value = '';
+
+        const phone = phoneSelector.value;
+        try {
+          const resp = await fetch('/api/whatsapp/simulate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from_number: phone,
+              body: clean
+            })
+          });
+
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const data = await resp.json();
+          appendAssistantBubble(data.reply);
+        } catch(e) {
+          console.error('WhatsApp simulator error:', e);
+          appendAssistantBubble("Connection error with Nivara webhook. Please try again.");
+        }
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      loadProfileBanner('9810123456');
+    })();
+  </script>
+</body>
+</html>

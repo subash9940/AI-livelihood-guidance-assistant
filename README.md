@@ -51,14 +51,32 @@ Replacing healthcare triage with official National Skills Qualifications Framewo
 ## 5. Running Locally
 
 ```bash
-cd livelihood-assistant
+pip install -r requirements.txt
 python -m uvicorn api:app --host 127.0.0.1 --port 8000
 ```
 Open your browser at `http://127.0.0.1:8000`.
 
 ---
 
-## 6. Demo Script Walkthrough (Section 10)
+## 6. Voice, Retrieval & Webhook Configuration
+
+- **Voice Input:** browser Web Speech API (Chrome recommended, internet required); Indic accuracy varies; Bhashini/Whisper planned.
+- **Knowledge Retrieval:** lexical (TF-IDF) retrieval with translate-then-retrieve; embedding-based retrieval planned.
+- **WhatsApp Webhook:** sandbox-ready (configured for Twilio WhatsApp sandbox with HMAC signature verification; production WhatsApp Business API planned).
+
+### Environment Variables
+- `MOCK_SPEECH` (default `true`): When set to `true`, the assistant uses keyless local/offline speech synthesis (Edge-TTS) and simulated ASR transcripts for zero-friction local development without requiring government credentials. Set to `false` when connecting to live MeitY Bhashini endpoints.
+- `BHASHINI_USER_ID`: MeitY ULCA / Dhruva User ID.
+- `BHASHINI_API_KEY`: MeitY ULCA / Dhruva API Key (`ulcaApiKey`).
+
+### TTS Generation Hierarchy
+1. **Live Bhashini ULCA TTS**: Active when `MOCK_SPEECH=false` and `BHASHINI_USER_ID` & `BHASHINI_API_KEY` are set in `.env`.
+2. **Keyless Neural TTS (`edge-tts`)**: Default server-side engine when Bhashini credentials are not provided. Uses natural Microsoft neural voices for Indian languages (`hi-IN-SwaraNeural`, `mr-IN-AarohiNeural`, `ta-IN-PallaviNeural`, `en-IN-NeerjaNeural`, `pa-IN` fallback) with sentence-by-sentence audio chunking.
+3. **Browser Web Speech API (`SpeechSynthesis`)**: Client-side fallback if server audio is blocked or unavailable, ensuring voice output functions even without internet access.
+
+---
+
+## 7. Demo Script Walkthrough (Section 10)
 
 1. **Step 1 (Cold Open)**: Open `http://127.0.0.1:8000` with no login. Tap the dominant mic button or click the demo chip: *"I finished 10th, my family does farming, I want something food-related, I can't travel far"*.
 2. **Step 2 (Instant Roadmap)**: System extracts profile signals (10th pass, farming family, food processing, restricted mobility) and renders the 4-step NSQF Level 3 Food Processing roadmap with spoken Indic audio.

@@ -1,0 +1,1115 @@
+{
+  "_metadata": {
+    "dataset_type": "curated_sample_data",
+    "dataset_label": "Curated Sample Government Data - Delhi Region",
+    "region": "delhi",
+    "version": "1.0.0",
+    "last_updated": "2026-09-29",
+    "curated_by": "Nivara AI Knowledge Engineering Team for MoSJE / PM-AJAY",
+    "notice": "All data is curated from official Ministry of Social Justice & Empowerment (MoSJE), DSFDC, DSEU, and Delhi Govt notifications for demonstration and livelihood guidance purposes."
+  },
+  "schemes": [
+    {
+      "id": "pm-ajay-gia",
+      "name": "PM-AJAY: Grants-in-Aid (Comprehensive Livelihood Projects)",
+      "level": "central",
+      "department": "Dept. of Social Justice & Empowerment, MoSJE",
+      "active": true,
+      "eligibility": {
+        "category": [
+          "SC"
+        ],
+        "min_age": null,
+        "max_age": null,
+        "income_limit": null,
+        "income_priority_below": 250000,
+        "income_rule_type": "priority_not_cutoff",
+        "notes": "No fixed income limit. Priority to persons/families with annual income up to Rs 2.5 lakh. SC-majority groups also eligible."
+      },
+      "benefits": [
+        "Skill development linked to livelihood projects (RPL 32-80 hrs, short-term 200-600 hrs, EDP ~80 hrs, long-term 6 months+)",
+        "Financial assistance up to Rs 50,000 or 50% of project cost, whichever is less, where the beneficiary takes a loan for livelihood assets",
+        "No standalone individual asset distribution"
+      ],
+      "how_to_apply": "Benefits are delivered through approved State/District projects and implementing agencies, not a direct individual application. Beneficiaries are mobilised and selected by the State/District administration or the training partner through a selection committee. Ask the District Social Welfare/SC Welfare office (suggested contact, not named in the guidelines).",
+      "official_url": "https://pmajay.dosje.gov.in",
+      "guidelines_url": "https://pmajay.dosje.gov.in/Writereaddata/Guidelines.pdf",
+      "source_url": "https://pmajay.dosje.gov.in",
+      "helpline": null,
+      "helpline_note": "No helpline printed in the May 2023 guidelines.",
+      "verification_status": "verified",
+      "last_verified": "2026-09-29",
+      "verified_by": "Antigravity",
+      "notes": "Verified against Revised Guidelines (May 2023), Ch. 3. Approved period in the guidelines runs to 2025-26; confirm the current cycle on the portal."
+    },
+    {
+      "id": "dsfdc-composite-loan",
+      "name": "DSFDC Composite Loan Scheme",
+      "level": "state",
+      "department": "Delhi SC/ST/OBC/Minorities & Handicapped Finance & Development Corporation",
+      "active": true,
+      "eligibility": {
+        "category": [
+          "SC",
+          "ST",
+          "OBC",
+          "Minority",
+          "PwD"
+        ],
+        "residency": "Delhi",
+        "min_age": 18,
+        "max_age": 50,
+        "income_limit": 120000,
+        "income_priority_below": null,
+        "income_rule_type": "hard_cap",
+        "other": [
+          "Owned or rented workplace for the activity",
+          "Not a defaulter under any DSFDC scheme"
+        ]
+      },
+      "benefits": [
+        "Need-based loan up to Rs 3 lakh (SC)",
+        "Need-based loan up to Rs 1 lakh (OBC, Minority, PwD)",
+        "Loans up to Rs 50,000: guarantor/collateral not required (discretionary); two local references needed"
+      ],
+      "documents_required": [
+        "Loan application form (free, from branches or website)",
+        "Aadhaar (identity and residence)",
+        "Caste certificate (Delhi Govt) / PwD certificate (min 40%) / affidavit for minorities",
+        "Age proof; income affidavit",
+        "Estimate of items/machines to be bought",
+        "Workplace ownership proof or rent agreement with owner's ID",
+        "Affidavit of no loan from other institutions; personal guarantee affidavit",
+        "ECS mandate and post-dated cheques",
+        "PMSBY/PMJJBY insurance receipt",
+        "Rs 350 demand draft as processing fee",
+        "Two witnesses with ID; guarantor documents for larger loans"
+      ],
+      "how_to_apply": "Apply directly at a DSFDC branch: Rajpur Road, Mangolpuri, Nand Nagri, or HQ at Rohini.",
+      "official_url": "https://dsfdc.delhi.gov.in/sites/default/files/cls_schem_details.pdf",
+      "source_url": "https://dsfdc.delhi.gov.in/sites/default/files/cls_schem_details.pdf",
+      "helpline": null,
+      "verification_status": "verified",
+      "last_verified": "2026-09-29",
+      "verified_by": "Antigravity",
+      "notes": "Verified against the DSFDC scheme PDF. The PDF is undated and cites an old delhi.gov.in URL, so income and loan limits may have been revised; confirm at a branch. Loan limit for ST applicants is not stated in the PDF."
+    },
+    {
+      "id": "delhi-dilli-swarojgar-yojna",
+      "name": "Dilli Swarojgar Yojna (DSFDC Micro-Credit)",
+      "level": "state",
+      "department": "Delhi SC/ST/OBC/Minorities/Handicapped Financial & Development Corporation (DSFDC)",
+      "description": "Collateral-free micro loans up to ₹5 lakh at low interest (6%) for petty shops, sewing/tailoring units, dairy, mobile repair, and artisan workshops.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 50,
+        "income_limit": 200000,
+        "category": [
+          "SC",
+          "ST",
+          "OBC"
+        ],
+        "education": "None",
+        "gender": "all",
+        "residency": "Delhi resident for 3+ years",
+        "other_criteria": [
+          "Annual family income under ₹2,00,000",
+          "No prior default on any government loan"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Micro loans up to ₹5,00,000 with simple documentation",
+        "stipend": "None",
+        "loan_subsidy": "Interest charged at 6% p.a., rebate of 1% on timely repayment",
+        "toolkit_support": "Included in micro-loan sanction",
+        "details": "Collateral-free up to ₹1,00,000 with personal guarantee; flexible 5-year repayment schedule."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Caste Certificate (SC issued in Delhi)",
+        "Family Income Certificate (below ₹2 Lakh)",
+        "Delhi Voter ID / Ration Card (3+ years residency)",
+        "Rent agreement or shop ownership proof",
+        "Bank passbook copy with IFSC"
+      ],
+      "how_to_apply": [
+        "Apply online via e-District Delhi Portal or in person at DSFDC field offices",
+        "Fill enterprise details (tailoring, food stall, electrical repair, salon)",
+        "Verification by field welfare inspector",
+        "Sanction letter issued within 30 working days"
+      ],
+      "official_url": "https://edistrict.delhigovt.nic.in",
+      "helpline": "011-23588450",
+      "nearest_offices": [
+        {
+          "district": "West Delhi",
+          "name": "DSFDC Facilitation Desk West",
+          "address": "D-Block, Institutional Area, Janakpuri, New Delhi - 110058",
+          "contact": "011-25501830"
+        },
+        {
+          "district": "North East Delhi",
+          "name": "DSFDC Helpdesk (North East)",
+          "address": "DC Office Complex, Weaver's Colony, Nand Nagri, Delhi - 110093",
+          "contact": "011-22122634"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://edistrict.delhigovt.nic.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-post-matric-sc",
+      "name": "Post-Matric Scholarship Scheme for SC Students (Delhi NCT)",
+      "level": "central",
+      "department": "Department for the Welfare of SC/ST/OBC, GNCTD & MoSJE",
+      "description": "Full tuition fee reimbursement and monthly maintenance allowance for Scheduled Caste students pursuing post-matriculation courses, ITI, polytechnic, and university degrees in Delhi.",
+      "eligibility": {
+        "min_age": 16,
+        "max_age": 35,
+        "income_limit": 250000,
+        "category": [
+          "SC"
+        ],
+        "education": "10th Standard",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "Passed Class 10th or higher",
+          "Enrolled in recognized ITI, Diploma, Polytechnic or College"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "100% non-refundable fees reimbursed directly to institution or student",
+        "stipend": "Maintenance allowance from ₹550 to ₹1,200 per month depending on course group",
+        "loan_subsidy": "Not applicable (DBT Grant)",
+        "toolkit_support": "Book grant & study tour allowance for technical courses",
+        "details": "Direct Benefit Transfer (DBT) directly into Aadhaar-seeded bank account via PFMS."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "SC Caste Certificate issued by GNCTD",
+        "Income Certificate (< ₹2.5 Lakh/year)",
+        "Previous Year Marksheet (Class 10th/12th)",
+        "Fee Receipt & College Admission Verification Letter",
+        "Bank Passbook copy"
+      ],
+      "how_to_apply": [
+        "Login to e-District Delhi portal (edistrict.delhigovt.nic.in)",
+        "Select 'Post-Matric Scholarship for SC Students'",
+        "Fill academic and institution enrollment details",
+        "Upload fee receipts and certificates",
+        "Institution nodally verifies application, followed by State Welfare Dept approval"
+      ],
+      "official_url": "https://scholarships.gov.in",
+      "helpline": "011-22460141 / 1800-111-555",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "Dept for Welfare of SC/ST/OBC, GNCTD",
+          "address": "B-Block, 2nd Floor, Vikas Bhawan, I.P. Estate, New Delhi - 110002",
+          "contact": "011-23378418"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://scholarships.gov.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-nsfdc-elst",
+      "name": "NSFDC Employment-Linked Skill Training Programme (ELST)",
+      "level": "central",
+      "department": "National Scheduled Castes Finance and Development Corporation (NSFDC)",
+      "description": "Completely free NSQF-aligned job-oriented training courses with mandatory wage or self-employment placement for educated and semi-skilled SC youth in Delhi NCR.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 35,
+        "income_limit": 300000,
+        "category": [
+          "SC"
+        ],
+        "education": "8th Standard",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "Valid SC Certificate",
+          "Unemployed or underemployed youth"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Free training, assessment, and NSQF certification cost covered 100%",
+        "stipend": "₹1,500 per month stipend for non-residential day scholars; food & lodging for residential",
+        "loan_subsidy": "Direct tie-up for NSFDC concessional loans for self-employment graduates",
+        "toolkit_support": "Free course material and sector toolkit",
+        "details": "Minimum 70% placement guarantee in organized sectors (retail, healthcare, green jobs, EV)."
+      },
+      "documents_required": [
+        "SC Certificate",
+        "Aadhaar Card",
+        "Income Certificate or BPL Ration Card",
+        "Highest Qualification Marksheet",
+        "Bank Account details",
+        "Recent passport photos"
+      ],
+      "how_to_apply": [
+        "Apply via NSFDC Delhi portal or empanelled Sector Skill Council partners",
+        "Walk into NSFDC Corporate Office or accredited Delhi ITI / PMKK center",
+        "Trade counseling and batch allotment",
+        "Biometric registration under Skill India Digital platform"
+      ],
+      "official_url": "https://nsfdc.nic.in",
+      "helpline": "011-22054392 / 1800-11-2005",
+      "nearest_offices": [
+        {
+          "district": "East Delhi",
+          "name": "NSFDC Corporate Office",
+          "address": "14th Floor, Scope Minar, Core 1 & 2, Laxmi Nagar District Centre, Delhi - 110092",
+          "contact": "011-22054392"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://nsfdc.nic.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "stand-up-india",
+      "name": "Stand-Up India (original scheme)",
+      "level": "central",
+      "department": "Dept. of Financial Services",
+      "active": false,
+      "status_note": "Original scheme ran to 31 Mar 2025 and has ended; a revamped version was announced but not confirmed as launched.",
+      "eligibility": {
+        "category": [
+          "SC",
+          "ST",
+          "Women"
+        ],
+        "min_age": 18,
+        "income_limit": null,
+        "income_priority_below": null,
+        "income_rule_type": "hard_cap"
+      },
+      "benefits": [
+        "Composite loan Rs 10 lakh - Rs 1 crore for greenfield enterprises",
+        "Repayment up to 7 years incl. 18-month moratorium",
+        "Margin money up to 15% via convergence; borrower contributes at least 10%"
+      ],
+      "how_to_apply": "Do not show as an open scheme. Watch for the successor scheme (standupmitra.in / jansamarth.in).",
+      "official_url": "https://financialservices.gov.in/node/3468",
+      "source_url": "https://financialservices.gov.in/node/3468",
+      "helpline": null,
+      "verification_status": "verified",
+      "last_verified": "2026-09-29",
+      "verified_by": "Antigravity",
+      "notes": "Status verified from the DFS page and the Finance Minister's Lok Sabha reply (16 Mar 2026)."
+    },
+    {
+      "id": "delhi-pmkvy-4",
+      "name": "Pradhan Mantri Kaushal Vikas Yojana 4.0 (PMKVY Delhi Hubs)",
+      "level": "central",
+      "department": "Ministry of Skill Development & Entrepreneurship (MSDE) & NSDC",
+      "description": "Industry 4.0, technical, and digital skill training courses tailored for school dropouts and unemployed youth across 40+ Delhi Pradhan Mantri Kaushal Kendras (PMKK).",
+      "eligibility": {
+        "min_age": 15,
+        "max_age": 45,
+        "income_limit": null,
+        "category": [
+          "ALL",
+          "SC"
+        ],
+        "education": "8th Standard",
+        "gender": "all",
+        "residency": "India",
+        "other_criteria": [
+          "Aadhaar-seeded bank account",
+          "Priority batch slots reserved for SC candidates under PM-AJAY convergence"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "100% free government funded training & certification",
+        "stipend": "Conveyance allowance ₹1,000 - ₹1,500/month for eligible categories",
+        "loan_subsidy": "Skill Loan Scheme eligibility up to ₹1,50,000",
+        "toolkit_support": "Free uniform, study material, and sector toolkit",
+        "details": "Government QR-verifiable NSQF Certificate, Kaushal Mela direct job interviews."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Bank Passbook (Aadhaar linked)",
+        "Education certificate (8th, 10th or 12th)",
+        "Caste certificate (for special component tracking)",
+        "Passport photographs"
+      ],
+      "how_to_apply": [
+        "Register on Skill India Digital Portal (skillindiadigital.gov.in)",
+        "Search Delhi PMKK centers by PIN code or district",
+        "Enroll in desired QP/NOS job role course",
+        "Complete batch training and NSDC assessment test"
+      ],
+      "official_url": "https://www.pmkvyofficial.org",
+      "helpline": "08800055555 / 1800-123-9626",
+      "nearest_offices": [
+        {
+          "district": "South West Delhi",
+          "name": "PMKK Dwarka Training Hub",
+          "address": "Sector 12, Dwarka Metro Station Complex, New Delhi - 110075",
+          "contact": "011-28031250"
+        },
+        {
+          "district": "North Delhi",
+          "name": "PMKK Narela Center",
+          "address": "DSIDC Industrial Complex, Narela, Delhi - 110040",
+          "contact": "011-27781190"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://www.pmkvyofficial.org",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-pmegp",
+      "name": "Prime Minister's Employment Generation Programme (PMEGP Delhi)",
+      "level": "central",
+      "department": "Khadi and Village Industries Commission (KVIC) / Delhi KVI Board",
+      "description": "Credit-linked subsidy programme to generate self-employment ventures. SC beneficiaries in Delhi urban and rural pockets receive up to 35% government subsidy on project cost.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 60,
+        "income_limit": null,
+        "category": [
+          "SC",
+          "ST",
+          "OBC",
+          "Women",
+          "General"
+        ],
+        "education": "8th Standard",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "Project cost above ₹10 Lakh in manufacturing or ₹5 Lakh in service requires min 8th pass",
+          "Only new projects are eligible"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Maximum project cost ₹50 Lakh for manufacturing, ₹20 Lakh for service units",
+        "stipend": "Free EDP (Entrepreneurship Development Programme) training (5 to 10 days)",
+        "loan_subsidy": "SC beneficiaries receive 35% margin money subsidy in rural areas, 25% in urban Delhi",
+        "toolkit_support": "Covered under machinery purchase component",
+        "details": "Beneficiary contribution only 5% of project cost for SC category."
+      },
+      "documents_required": [
+        "Aadhaar Card & PAN Card",
+        "SC Caste Certificate issued by GNCTD",
+        "Project Proposal Report with machinery cost breakups",
+        "Highest Educational Certificate (min 8th pass for large units)",
+        "Special category certificate",
+        "Proof of Delhi address"
+      ],
+      "how_to_apply": [
+        "Apply online on kviconline.gov.in/pmegpeportal",
+        "Select Implementing Agency: Delhi Khadi & V.I. Board or KVIC Delhi",
+        "Upload DPR and caste verification documents",
+        "District Task Force Committee (DTFC) reviews and forwards to bank branch in Delhi"
+      ],
+      "official_url": "https://www.kviconline.gov.in/pmegpeportal",
+      "helpline": "011-23363842 / 1800-3000-0034",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "KVIC State Office Delhi",
+          "address": "Gandhi Darshan, Rajghat, New Delhi - 110002",
+          "contact": "011-23392455"
+        },
+        {
+          "district": "North Delhi",
+          "name": "Delhi Khadi & Village Industries Board",
+          "address": "Udyog Sadan, C-Block, Patparganj Industrial Area, Delhi - 110092",
+          "contact": "011-22154378"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://www.kviconline.gov.in/pmegpeportal",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-dseu-skill-programs",
+      "name": "Delhi Skill & Entrepreneurship University (DSEU) Short-Term Certifications",
+      "level": "state",
+      "department": "Delhi Skill and Entrepreneurship University (DSEU), GNCTD",
+      "description": "Short-term hands-on skill development courses in electronics, solar technology, computer operations, data entry, EV technician, and tailoring across 15+ Delhi campus centers.",
+      "eligibility": {
+        "min_age": 17,
+        "max_age": 40,
+        "income_limit": null,
+        "category": [
+          "ALL",
+          "SC"
+        ],
+        "education": "8th Standard",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "Fee concessions and reserved seats for Delhi SC candidates as per GNCTD norms"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Subsidized or 100% sponsored fee under Delhi SC welfare grant schemes",
+        "stipend": "Apprenticeship stipend ₹8,000 - ₹12,000/month upon course completion",
+        "loan_subsidy": "Incubation and micro-grant support through DSEU Innovation Hub",
+        "toolkit_support": "High-tech university lab and maker space access",
+        "details": "State University Certification, NAPS / NATS Apprenticeship contracts with top Delhi firms."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Class 8th / 10th / 12th Marksheet",
+        "SC Certificate (for fee concession)",
+        "Delhi domicile / residence proof",
+        "Two passport photographs"
+      ],
+      "how_to_apply": [
+        "Register on DSEU admissions portal (dseu.ac.in)",
+        "Select short-term skilling / diploma courses at preferred campus (Okhla, Pusa, Shakarpur, Dwarka)",
+        "Verification of documents at local campus counter",
+        "Attend batch orientation and industrial workshops"
+      ],
+      "official_url": "https://dseu.ac.in",
+      "helpline": "011-25081010 / 1800-309-3209",
+      "nearest_offices": [
+        {
+          "district": "South East Delhi",
+          "name": "DSEU Okhla-I Campus",
+          "address": "Okhla Industrial Area, Phase II, New Delhi - 110020",
+          "contact": "011-26388480"
+        },
+        {
+          "district": "Central Delhi",
+          "name": "DSEU Pusa Campus I",
+          "address": "Pusa Polytechnic, Pusa, New Delhi - 110012",
+          "contact": "011-25842845"
+        },
+        {
+          "district": "East Delhi",
+          "name": "DSEU Shakarpur Campus",
+          "address": "Opposite Nirman Vihar Metro Station, Shakarpur, Delhi - 110092",
+          "contact": "011-22460012"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://dseu.ac.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-mukhya-mantri-vidyarthi-pratibha",
+      "name": "Mukhya Mantri Vidyarthi Pratibha Yojna for SC/ST/OBC Students",
+      "level": "state",
+      "department": "Department for Welfare of SC/ST/OBC, GNCTD",
+      "description": "Financial scholarship to meritorious Scheduled Caste students enrolled in recognized schools, vocational institutes, and technical colleges in NCT of Delhi.",
+      "eligibility": {
+        "min_age": 14,
+        "max_age": 28,
+        "income_limit": 800000,
+        "category": [
+          "SC",
+          "ST",
+          "OBC"
+        ],
+        "education": "8th Standard",
+        "gender": "all",
+        "residency": "Delhi resident for 3+ years",
+        "other_criteria": [
+          "Scored 50% or above marks in previous exam",
+          "Family annual income up to ₹8,00,000 (No limit if scored above 60%)"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Direct scholarship of ₹5,000 to ₹10,000 per annum depending on grade and vocational level",
+        "stipend": "None",
+        "loan_subsidy": "Direct DBT assistance",
+        "toolkit_support": "Educational aids incentive",
+        "details": "Encourages SC youth to sustain schooling and vocational training without financial stress."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Delhi SC Certificate",
+        "Income Certificate (if marks between 50%-60%)",
+        "Previous Year Marksheet",
+        "Fee receipt and Student ID card",
+        "Aadhaar seeded bank passbook"
+      ],
+      "how_to_apply": [
+        "Apply via e-District Delhi portal",
+        "Enter student details and school/vocational institute registration code",
+        "Upload mark sheets and caste certificate",
+        "Head of Institution verifies records online"
+      ],
+      "official_url": "https://edistrict.delhigovt.nic.in",
+      "helpline": "011-23378418",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "Vikas Bhawan Scholarship Branch",
+          "address": "Department for Welfare of SC/ST/OBC, 2nd Floor, Vikas Bhawan, IP Estate, New Delhi",
+          "contact": "011-23378418"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://edistrict.delhigovt.nic.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-dkvib-swarojgar",
+      "name": "Delhi Khadi Kaushal Vikas Yojna & Artisan Toolkit Scheme",
+      "level": "state",
+      "department": "Delhi Khadi and Village Industries Board (DKVIB)",
+      "description": "Free skill training, subsidized toolkits, and working capital loans for traditional SC artisans, leather workers, potters, carpenters, and tailors in Delhi.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 55,
+        "income_limit": 250000,
+        "category": [
+          "SC",
+          "OBC",
+          "General"
+        ],
+        "education": "None",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "Traditional craftsman or willing to learn cottage village industry skills in Delhi"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Free training courses + toolkit subsidy up to ₹15,000",
+        "stipend": "₹2,000 per month during intensive hands-on skill batches",
+        "loan_subsidy": "Direct tie-in with KVIC margin money subsidy for unit setup",
+        "toolkit_support": "Modernized motorized sewing machines, pottery wheels, or leather crafting kits",
+        "details": "Exhibition stalls provided at Dilli Haat and Pragati Maidan for direct product sales."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Delhi SC / OBC Certificate",
+        "Residence Proof in Delhi",
+        "Bank account passbook",
+        "Trade background affidavit"
+      ],
+      "how_to_apply": [
+        "Visit DKVIB head office at Patparganj or zonal industrial facilitation centers",
+        "Submit artisan trade application with preferred training module",
+        "Attend 4-week workshop and collect free equipment / toolkit voucher"
+      ],
+      "official_url": "https://delhi.gov.in/dept-industries",
+      "helpline": "011-22154378",
+      "nearest_offices": [
+        {
+          "district": "East Delhi",
+          "name": "DKVIB Headquarters",
+          "address": "Udyog Sadan, Plot No. 419, F.I.E., Patparganj Industrial Area, Delhi - 110092",
+          "contact": "011-22154378"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://delhi.gov.in/dept-industries",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-pm-vishwakarma",
+      "name": "PM Vishwakarma Scheme (Delhi NCT Urban & Rural Clusters)",
+      "level": "central",
+      "department": "Ministry of Micro, Small and Medium Enterprises (MoMSME) / MoSJE",
+      "description": "Holistic support to traditional artisans and craftspeople belonging to 18 traditional trades (tailor, carpenter, blacksmith, cobbler, mason, barber, garland maker, etc.) in Delhi.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 65,
+        "income_limit": null,
+        "category": [
+          "ALL",
+          "SC"
+        ],
+        "education": "None",
+        "gender": "all",
+        "residency": "India",
+        "other_criteria": [
+          "Engaged in one of 18 traditional trades on self-employment basis",
+          "Not availed similar credit schemes in last 5 years"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "PM Vishwakarma Certificate & ID Card; Free basic training (5-7 days) & advanced training (15 days)",
+        "stipend": "₹500 per day stipend during training period",
+        "loan_subsidy": "Collateral-free enterprise loan up to ₹1 Lakh (Tranche 1) and ₹2 Lakh (Tranche 2) at concessional interest of 5%",
+        "toolkit_support": "₹15,000 digital e-voucher for modern toolkit",
+        "details": "Incentive for digital transactions (₹1 per transaction up to 100 transactions/month) and marketing support."
+      },
+      "documents_required": [
+        "Aadhaar Card (Aadhaar linked mobile number)",
+        "Bank Passbook",
+        "Ration Card / Family details",
+        "Caste Certificate (for SC profiling)",
+        "Self-declaration of trade occupation"
+      ],
+      "how_to_apply": [
+        "Register at nearest Common Service Center (CSC) in Delhi or via pmvishwakarma.gov.in",
+        "Biometric verification of the artisan at CSC kiosk",
+        "Three-stage verification: Village Pradhan / Urban Local Body (MCD), District Implementation Committee, National Committee",
+        "Attend basic training and receive ₹15,000 toolkit voucher"
+      ],
+      "official_url": "https://pmvishwakarma.gov.in",
+      "helpline": "1800-267-7777 / 011-23061500",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "MSME Development & Facilitation Office (MSME-DFO)",
+          "address": "Shaheed Capt. Gaur Marg, Okhla Industrial Area, Phase-III, New Delhi - 110020",
+          "contact": "011-26838269"
+        },
+        {
+          "district": "North Delhi",
+          "name": "MCD Zonal Citizen Facilitation Center",
+          "address": "Civil Lines Zone, Rajpur Road, Delhi - 110054",
+          "contact": "011-23940140"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://pmvishwakarma.gov.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-ddugky",
+      "name": "Deen Dayal Upadhyaya Grameen Kaushalya Yojana (DDU-GKY Delhi Peri-Urban)",
+      "level": "central",
+      "department": "Ministry of Rural Development (MoRD) / Delhi State Rural Livelihood Mission",
+      "description": "Placement-linked skill development program for poor rural and peri-urban youth in outer Delhi villages (Najafgarh, Alipur, Kanjhawala, Mehrauli) with guaranteed private sector jobs.",
+      "eligibility": {
+        "min_age": 15,
+        "max_age": 35,
+        "income_limit": 200000,
+        "category": [
+          "SC",
+          "ST",
+          "BPL"
+        ],
+        "education": "8th Standard",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "Resident of peri-urban or rural notified villages of Delhi",
+          "SC candidate or BPL household cardholder"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Free residential training with food, accommodation, and uniform",
+        "stipend": "Post-placement support allowance of ₹1,000 - ₹2,000/month for 6 months after starting work",
+        "loan_subsidy": "Not applicable",
+        "toolkit_support": "Provided during trade course",
+        "details": "Mandatory minimum 70% placement with salaries adhering to Delhi minimum wage regulations."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Caste Certificate (SC)",
+        "BPL Card or Income Certificate",
+        "School Leaving Certificate (8th/10th)",
+        "Bank Passbook"
+      ],
+      "how_to_apply": [
+        "Enroll through Kaushal Panjee app or nearest DDU-GKY partner center",
+        "Attend mobilization camp in outer Delhi village blocks",
+        "Batch selection and counseling interview",
+        "Complete 3-to-9 month certified residential/day batch"
+      ],
+      "official_url": "http://ddugky.gov.in",
+      "helpline": "011-23743640",
+      "nearest_offices": [
+        {
+          "district": "South West Delhi",
+          "name": "Block Development Office (Najafgarh)",
+          "address": "Main Najafgarh Road, BDO Complex, Roshanpura, New Delhi - 110043",
+          "contact": "011-28012390"
+        },
+        {
+          "district": "North West Delhi",
+          "name": "BDO Office Alipur",
+          "address": "GT Karnal Road, Alipur Block, Delhi - 110036",
+          "contact": "011-27201844"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "http://ddugky.gov.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-dr-ambedkar-state-award",
+      "name": "Dr. B.R. Ambedkar State Award for SC/ST/OBC Students",
+      "level": "state",
+      "department": "Department for Welfare of SC/ST/OBC, GNCTD",
+      "description": "Prestigious state felicitation and cash incentive to top performing Scheduled Caste students graduating from professional, technical, or polytechnic degree colleges in Delhi.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 30,
+        "income_limit": null,
+        "category": [
+          "SC"
+        ],
+        "education": "Diploma / Degree",
+        "gender": "all",
+        "residency": "Delhi resident for 3+ years",
+        "other_criteria": [
+          "Topper among SC candidates in recognized Delhi institutions / ITIs / Polytechnics"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "One-time lump sum cash reward of ₹25,000 + Commendation citation from GNCTD",
+        "stipend": "None",
+        "loan_subsidy": "Not applicable",
+        "toolkit_support": "None",
+        "details": "Direct recognition to encourage SC youth toward higher technical excellence."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Delhi SC Certificate",
+        "College graduation marksheet / rank certificate",
+        "Institution recommendation letter",
+        "Bank account passbook"
+      ],
+      "how_to_apply": [
+        "Nomination submitted by college/ITI principal to Dept for Welfare of SC/ST/OBC",
+        "Verification by Directorate of Welfare, Vikas Bhawan",
+        "Award presented during state Ambedkar Jayanti ceremony"
+      ],
+      "official_url": "https://scstwelfare.delhi.gov.in",
+      "helpline": "011-23378418",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "Directorate of Welfare of SC/ST/OBC",
+          "address": "Vikas Bhawan, B-Block, 2nd Floor, IP Estate, New Delhi - 110002",
+          "contact": "011-23378418"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://scstwelfare.delhi.gov.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-pm-surya-ghar",
+      "name": "PM Surya Ghar: Muft Bijli Yojana (Suryamitra Skilling & Rooftop Solar Subsidy)",
+      "level": "central",
+      "department": "Ministry of New and Renewable Energy (MNRE) & Skill Council for Green Jobs (SCGJ)",
+      "description": "Massive solar rooftop scheme offering up to ₹78,000 direct central subsidy for solar installations, coupled with free Suryamitra technical training for SC electricians and technicians.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 40,
+        "income_limit": null,
+        "category": [
+          "ALL",
+          "SC"
+        ],
+        "education": "10th Standard / ITI Electrician",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "10th pass with ITI Electrical/Wireman or science background for technical skilling course"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Free 3-month Suryamitra NSQF Level 4 training; Up to ₹78,000 rooftop solar installation capital subsidy",
+        "stipend": "₹1,500/month stipend during training",
+        "loan_subsidy": "Collateral-free low-interest solar installation loans at 7% through nationalized banks",
+        "toolkit_support": "Solar PV technician multimeter, safety harness, and electrical tool pouch",
+        "details": "Direct linkage with empanelled Delhi DISCOM vendors (BSES Rajdhani, BSES Yamuna, TPDDL) for technician placement."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Electricity Bill of Delhi residence (for rooftop subsidy)",
+        "SC Caste Certificate",
+        "Class 10th marksheet or ITI Electrician certificate",
+        "Bank Passbook copy"
+      ],
+      "how_to_apply": [
+        "Register on national portal pmsuryaghar.gov.in",
+        "For training: Register on Skill Council for Green Jobs portal or Delhi ITI Pusa Solar cell",
+        "Choose local Delhi DISCOM vendor for technical apprenticeship or installation"
+      ],
+      "official_url": "https://pmsuryaghar.gov.in",
+      "helpline": "15555 / 1800-180-3333",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "Skill Council for Green Jobs (SCGJ)",
+          "address": "CBIP Building, Malcha Marg, Chanakyapuri, New Delhi - 110021",
+          "contact": "011-40166586"
+        },
+        {
+          "district": "North Delhi",
+          "name": "Tata Power-DDL Learning Center",
+          "address": "Cenpeep, Sector 11, Rohini, Delhi - 110085",
+          "contact": "011-66112222"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://pmsuryaghar.gov.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-sc-nursing-gda",
+      "name": "Delhi Healthcare Skills Mission: General Duty Assistant (GDA) & Nursing Support",
+      "level": "state",
+      "department": "Delhi State Health Mission & Healthcare Sector Skill Council (HSSC)",
+      "description": "Specialized vocational program to train SC youths as certified General Duty Assistants and Home Health Aides with direct placement in Delhi Government and private hospitals.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 35,
+        "income_limit": 250000,
+        "category": [
+          "SC",
+          "ST"
+        ],
+        "education": "10th Standard",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "Class 10th pass",
+          "Fitness certificate for clinical duty"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Free clinical training, scrubs, and HSSC NSQF Level 4 certification",
+        "stipend": "₹2,500/month during mandatory 30-day hospital internship",
+        "loan_subsidy": "Not applicable",
+        "toolkit_support": "Basic medical diagnostic kit (BP monitor, pulse oximeter, digital thermometer)",
+        "details": "Immediate wage employment linkage with average starting salary of ₹18,000 - ₹24,000/month."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "SC Caste Certificate",
+        "10th Marksheet",
+        "Medical Fitness Certificate",
+        "Delhi Residence proof"
+      ],
+      "how_to_apply": [
+        "Apply at Delhi Skill Centers or empanelled hospitals (e.g., Rajiv Gandhi Super Speciality, LNJP training annex)",
+        "Counseling and batch enrollment",
+        "Classroom module (2 months) followed by 1 month hospital ward practicum"
+      ],
+      "official_url": "https://dshm.delhi.gov.in",
+      "helpline": "011-22307733",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "Maulana Azad Medical College Skills Cell",
+          "address": "2, Bahadur Shah Zafar Marg, New Delhi - 110002",
+          "contact": "011-23233242"
+        },
+        {
+          "district": "East Delhi",
+          "name": "GTB Hospital Training Annex",
+          "address": "Dilshad Garden, Shahdara, Delhi - 110095",
+          "contact": "011-22586262"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://dshm.delhi.gov.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-iti-electrician-sc",
+      "name": "Delhi Government Industrial Training Institute (ITI) Craftsmen Training Scheme for SC",
+      "level": "state",
+      "department": "Department of Training and Technical Education (DTTE), GNCTD",
+      "description": "Formal 1-2 year technical NCVT trade courses in ITIs across Delhi with zero tuition fees, free engineering drawing kits, and priority hostel accommodation for SC candidates.",
+      "eligibility": {
+        "min_age": 14,
+        "max_age": 40,
+        "income_limit": null,
+        "category": [
+          "SC",
+          "ALL"
+        ],
+        "education": "10th Standard",
+        "gender": "all",
+        "residency": "Delhi",
+        "other_criteria": [
+          "10th pass with Mathematics & Science for engineering trades"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "100% tuition fee exemption for SC candidates",
+        "stipend": "State merit-cum-means stipend of ₹1,000/month for SC trainees",
+        "loan_subsidy": "Pre-approved tool-kit loan via DSFDC upon trade completion",
+        "toolkit_support": "Free workshop safety kit and trade books",
+        "details": "National Trade Certificate (NTC) recognized globally; direct campus placements with Maruti, Tata, DMRC."
+      },
+      "documents_required": [
+        "Aadhaar Card",
+        "Class 10th Board Certificate & Marksheet",
+        "Delhi SC Certificate",
+        "Character certificate from school principal",
+        "Delhi residence proof"
+      ],
+      "how_to_apply": [
+        "Register on DTTE Delhi admission portal: itidelhi.admissions.nic.in",
+        "Fill trade preferences (Electrician, Fitter, RAC, Motor Mechanic, COPA)",
+        "Online counseling seat allotment under SC reservation quota",
+        "Report to allotted Delhi ITI for physical verification"
+      ],
+      "official_url": "https://itidelhi.admissions.nic.in",
+      "helpline": "011-27322927",
+      "nearest_offices": [
+        {
+          "district": "Central Delhi",
+          "name": "ITI Pusa",
+          "address": "Pusa Campus, Near Karol Bagh, New Delhi - 110012",
+          "contact": "011-25841680"
+        },
+        {
+          "district": "South Delhi",
+          "name": "ITI Arab Ki Sarai",
+          "address": "Nizamuddin East, Near Humayun Tomb, New Delhi - 110013",
+          "contact": "011-24351654"
+        },
+        {
+          "district": "North West Delhi",
+          "name": "ITI Jahangirpuri",
+          "address": "D-Block, Jahangirpuri, Delhi - 110033",
+          "contact": "011-27631388"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://itidelhi.admissions.nic.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    },
+    {
+      "id": "delhi-sc-women-empowerment",
+      "name": "Delhi SC Women Self-Help Group (SHG) Livelihood Grant & Micro-Enterprise",
+      "level": "state",
+      "department": "Delhi State Rural & Urban Livelihood Mission (DULM / DSRLM) & MoSJE",
+      "description": "Revolving fund, community investment fund, and collateral-free bank loans for Scheduled Caste women self-help groups in Delhi bastis and resettlement colonies for catering, tailoring, and packing.",
+      "eligibility": {
+        "min_age": 18,
+        "max_age": 60,
+        "income_limit": 200000,
+        "category": [
+          "SC"
+        ],
+        "education": "None",
+        "gender": "female",
+        "residency": "Delhi resident for 3+ years",
+        "other_criteria": [
+          "Member of registered Women Self Help Group in Delhi with at least 70% SC membership"
+        ],
+        "income_rule_type": "hard_cap",
+        "income_priority_below": null
+      },
+      "benefits": {
+        "financial_assistance": "Revolving fund of ₹15,000 + Community Investment Fund up to ₹1,50,000 per SHG",
+        "stipend": "Skill training allowance during trade workshops",
+        "loan_subsidy": "Interest subvention on bank credit up to ₹10 Lakh at 7% effective interest",
+        "toolkit_support": "Commercial sewing machines, spice grinding units, or packaging sealers",
+        "details": "Tie-up with Delhi government school mid-day meal supplies and municipal canteen tenders."
+      },
+      "documents_required": [
+        "Aadhaar Card of all SHG members",
+        "SC Caste Certificates of members",
+        "SHG Bank Account Passbook & Resolution copy",
+        "Proof of Delhi address (Ration card / Voter card)"
+      ],
+      "how_to_apply": [
+        "Contact Area Community Organizer (CO) or District Social Welfare Office in Delhi",
+        "Register SHG under National Urban Livelihood Mission (NULM Delhi)",
+        "Opening of zero balance SHG savings account in nationalized bank",
+        "Apply for grading and credit linkage after 3 months of regular thrift savings"
+      ],
+      "official_url": "https://nulm.gov.in",
+      "helpline": "011-23378418",
+      "nearest_offices": [
+        {
+          "district": "North East Delhi",
+          "name": "DULM Community Facilitation Center",
+          "address": "Seelampur Commercial Complex, Welcome, Delhi - 110053",
+          "contact": "011-22824310"
+        },
+        {
+          "district": "South West Delhi",
+          "name": "DSRLM Office (Dwarka)",
+          "address": "Sector 9, Near District Court, Dwarka, New Delhi - 110077",
+          "contact": "011-28081230"
+        }
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source_url": "https://nulm.gov.in",
+      "notes": "Curated public government scheme information; requires formal departmental verification.",
+      "active": true
+    }
+  ]
+}

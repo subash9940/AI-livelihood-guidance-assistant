@@ -1,0 +1,287 @@
+{
+  "generated_at": "2026-09-29T14:17:29.487790Z",
+  "total_urls_checked": 24,
+  "total_http_200": 15,
+  "results": [
+    {
+      "url": "https://pmajay.dosje.gov.in",
+      "associated_entities": [
+        "scheme:pm-ajay-gia",
+        "scheme:pm-ajay-gia"
+      ],
+      "status_code": null,
+      "http_200": false,
+      "error": "HTTPSConnectionPool(host='pmajay.dosje.gov.in', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:997)')))",
+      "checked_at": "2026-09-29T14:16:51.282699Z"
+    },
+    {
+      "url": "https://dsfdc.delhi.gov.in/sites/default/files/cls_schem_details.pdf",
+      "associated_entities": [
+        "scheme:dsfdc-composite-loan",
+        "scheme:dsfdc-composite-loan"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:16:52.836945Z"
+    },
+    {
+      "url": "https://edistrict.delhigovt.nic.in",
+      "associated_entities": [
+        "scheme:delhi-dilli-swarojgar-yojna",
+        "scheme:delhi-dilli-swarojgar-yojna",
+        "scheme:delhi-mukhya-mantri-vidyarthi-pratibha",
+        "scheme:delhi-mukhya-mantri-vidyarthi-pratibha"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:16:53.267763Z"
+    },
+    {
+      "url": "https://scholarships.gov.in",
+      "associated_entities": [
+        "scheme:delhi-post-matric-sc",
+        "scheme:delhi-post-matric-sc"
+      ],
+      "status_code": 404,
+      "http_200": false,
+      "error": "HTTP 404",
+      "checked_at": "2026-09-29T14:17:01.183121Z"
+    },
+    {
+      "url": "https://nsfdc.nic.in",
+      "associated_entities": [
+        "scheme:delhi-nsfdc-elst",
+        "scheme:delhi-nsfdc-elst"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:01.640616Z"
+    },
+    {
+      "url": "https://financialservices.gov.in/node/3468",
+      "associated_entities": [
+        "scheme:stand-up-india",
+        "scheme:stand-up-india"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:02.412623Z"
+    },
+    {
+      "url": "https://www.pmkvyofficial.org",
+      "associated_entities": [
+        "scheme:delhi-pmkvy-4",
+        "scheme:delhi-pmkvy-4",
+        "centre:tc-del-04",
+        "centre:tc-del-05",
+        "centre:tc-del-10",
+        "centre:tc-del-16",
+        "centre:tc-del-21"
+      ],
+      "status_code": null,
+      "http_200": false,
+      "error": "HTTPSConnectionPool(host='www.pmkvyofficial.org', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='www.pmkvyofficial.org', port=443): Failed to resolve 'www.pmkvyofficial.org' ([Errno 11001] getaddrinfo failed)\"))",
+      "checked_at": "2026-09-29T14:17:02.737940Z"
+    },
+    {
+      "url": "https://www.kviconline.gov.in/pmegpeportal",
+      "associated_entities": [
+        "scheme:delhi-pmegp",
+        "scheme:delhi-pmegp"
+      ],
+      "status_code": null,
+      "http_200": false,
+      "error": "HTTPSConnectionPool(host='www.kviconline.gov.in', port=443): Max retries exceeded with url: /pmegpeportal (Caused by NameResolutionError(\"HTTPSConnection(host='www.kviconline.gov.in', port=443): Failed to resolve 'www.kviconline.gov.in' ([Errno 11002] getaddrinfo failed)\"))",
+      "checked_at": "2026-09-29T14:17:03.072570Z"
+    },
+    {
+      "url": "https://dseu.ac.in",
+      "associated_entities": [
+        "scheme:delhi-dseu-skill-programs",
+        "scheme:delhi-dseu-skill-programs",
+        "centre:tc-del-06",
+        "centre:tc-del-11",
+        "centre:tc-del-20"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:13.249864Z"
+    },
+    {
+      "url": "https://delhi.gov.in/dept-industries",
+      "associated_entities": [
+        "scheme:delhi-dkvib-swarojgar",
+        "scheme:delhi-dkvib-swarojgar"
+      ],
+      "status_code": 404,
+      "http_200": false,
+      "error": "HTTP 404",
+      "checked_at": "2026-09-29T14:17:14.568254Z"
+    },
+    {
+      "url": "https://pmvishwakarma.gov.in",
+      "associated_entities": [
+        "scheme:delhi-pm-vishwakarma",
+        "scheme:delhi-pm-vishwakarma"
+      ],
+      "status_code": 404,
+      "http_200": false,
+      "error": "HTTP 404",
+      "checked_at": "2026-09-29T14:17:15.323771Z"
+    },
+    {
+      "url": "http://ddugky.gov.in",
+      "associated_entities": [
+        "scheme:delhi-ddugky",
+        "scheme:delhi-ddugky"
+      ],
+      "status_code": null,
+      "http_200": false,
+      "error": "HTTPConnectionPool(host='ddugky.gov.in', port=80): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPConnection(host='ddugky.gov.in', port=80): Failed to resolve 'ddugky.gov.in' ([Errno 11001] getaddrinfo failed)\"))",
+      "checked_at": "2026-09-29T14:17:15.699209Z"
+    },
+    {
+      "url": "https://scstwelfare.delhi.gov.in",
+      "associated_entities": [
+        "scheme:delhi-dr-ambedkar-state-award",
+        "scheme:delhi-dr-ambedkar-state-award",
+        "policy:pol-delhi-scsp"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:15.935107Z"
+    },
+    {
+      "url": "https://pmsuryaghar.gov.in",
+      "associated_entities": [
+        "scheme:delhi-pm-surya-ghar",
+        "scheme:delhi-pm-surya-ghar"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:16.629019Z"
+    },
+    {
+      "url": "https://dshm.delhi.gov.in",
+      "associated_entities": [
+        "scheme:delhi-sc-nursing-gda",
+        "scheme:delhi-sc-nursing-gda"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:16.894176Z"
+    },
+    {
+      "url": "https://itidelhi.admissions.nic.in",
+      "associated_entities": [
+        "scheme:delhi-iti-electrician-sc",
+        "scheme:delhi-iti-electrician-sc",
+        "centre:tc-del-01",
+        "centre:tc-del-07",
+        "centre:tc-del-09",
+        "centre:tc-del-12",
+        "centre:tc-del-14",
+        "centre:tc-del-17",
+        "centre:tc-del-19"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:17.317300Z"
+    },
+    {
+      "url": "https://nulm.gov.in",
+      "associated_entities": [
+        "scheme:delhi-sc-women-empowerment",
+        "scheme:delhi-sc-women-empowerment"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:17.935026Z"
+    },
+    {
+      "url": "https://jss.gov.in",
+      "associated_entities": [
+        "centre:tc-del-02",
+        "centre:tc-del-03",
+        "centre:tc-del-13"
+      ],
+      "status_code": null,
+      "http_200": false,
+      "error": "HTTPSConnectionPool(host='jss.gov.in', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'jss.gov.in'. (_ssl.c:997)\")))",
+      "checked_at": "2026-09-29T14:17:18.372996Z"
+    },
+    {
+      "url": "https://www.skillindiadigital.gov.in",
+      "associated_entities": [
+        "centre:tc-del-08",
+        "centre:tc-del-15",
+        "centre:tc-del-18",
+        "centre:tc-del-22"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:18.784959Z"
+    },
+    {
+      "url": "https://socialjustice.gov.in/schemes/pm-ajay",
+      "associated_entities": [
+        "policy:pol-pmajay-gia"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:19.029714Z"
+    },
+    {
+      "url": "https://ncvet.gov.in/nsqf",
+      "associated_entities": [
+        "policy:pol-nsqf-ncrf"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:22.434746Z"
+    },
+    {
+      "url": "https://www.standupmitra.in",
+      "associated_entities": [
+        "policy:pol-standup-india-nsfdc"
+      ],
+      "status_code": 404,
+      "http_200": false,
+      "error": "HTTP 404",
+      "checked_at": "2026-09-29T14:17:27.027675Z"
+    },
+    {
+      "url": "https://dseu.ac.in/overview",
+      "associated_entities": [
+        "policy:pol-dseu-act"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:27.627947Z"
+    },
+    {
+      "url": "https://www.ncs.gov.in",
+      "associated_entities": [
+        "policy:pol-ncs-guidelines"
+      ],
+      "status_code": 200,
+      "http_200": true,
+      "error": null,
+      "checked_at": "2026-09-29T14:17:28.923958Z"
+    }
+  ]
+}

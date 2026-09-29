@@ -160,23 +160,34 @@ def get_regional_schemes(state_or_location: Optional[str]) -> List[Dict[str, Any
     if not cleaned:
         return []
 
+    found = []
     # 1. Direct case-insensitive match against registered states
     if cleaned in _NORMALIZED_SCHEMES:
-        return _NORMALIZED_SCHEMES[cleaned]
+        found = _NORMALIZED_SCHEMES[cleaned]
 
     # 2. Check if a registered state name is contained within the string (e.g. "Pune, Maharashtra")
-    for state_key, schemes in _NORMALIZED_SCHEMES.items():
-        if state_key in cleaned:
-            return schemes
+    if not found:
+        for state_key, schemes in _NORMALIZED_SCHEMES.items():
+            if state_key in cleaned:
+                found = schemes
+                break
 
     # 3. Known district to state mapping
-    if cleaned in _DISTRICT_TO_STATE:
+    if not found and cleaned in _DISTRICT_TO_STATE:
         mapped_state = _DISTRICT_TO_STATE[cleaned]
         if mapped_state in _NORMALIZED_SCHEMES:
-            return _NORMALIZED_SCHEMES[mapped_state]
+            found = _NORMALIZED_SCHEMES[mapped_state]
 
-    # If state isn't in dictionary, return empty list (not an error, not a guess)
-    return []
+    res = []
+    for s in found:
+        item = dict(s)
+        item["verification_status"] = "unverified"
+        item["last_verified"] = None
+        item["verified_by"] = None
+        item["source_url"] = item.get("source_url") or "https://socialjustice.gov.in"
+        item["notes"] = "Sample data - verify on official site"
+        res.append(item)
+    return res
 
 def get_schemes_for_profile(profile: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """

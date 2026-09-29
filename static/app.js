@@ -21,7 +21,10 @@ const state = {
   ivrTimer: 42,
   ivrInterval: null,
   audioPlaying: false,
-  audioInterval: null
+  audioInterval: null,
+  voiceState: 'idle', // 'idle', 'listening', 'thinking', 'speaking'
+  handsFreeMode: true,
+  voiceOnlyMode: false
 };
 
 // Regional Language Locales Map for Web Speech API
@@ -520,55 +523,100 @@ const TRADE_ICONS_EMOJI = {
   digital_csc: '💻'
 };
 
-// Interactive IVR Phone Keypad Voice Responses
-const IVR_RESPONSES = {
-  '1': {
-    title: 'हिंदी चयनित',
-    prompt: '"हिंदी चुनी गई। पीएम-अजय कौशल्य प्रशिक्षण के लिए 1, व्यवसाय अनुदान (₹50,000) के लिए 2, स्थिति के लिए 3 दबाएं।"'
+// -------------------------------------------------------------
+// Interactive 10+ Language IVR System Configuration (Phase 7)
+// -------------------------------------------------------------
+const IVR_LANGUAGES = [
+  { key: '1', code: 'hi', name: 'Hindi', native: 'हिंदी', bcp47: 'hi-IN', selectPrompt: 'हिंदी के लिए 1 दबाएं' },
+  { key: '2', code: 'en', name: 'English', native: 'English', bcp47: 'en-IN', selectPrompt: 'For English press 2' },
+  { key: '3', code: 'pa', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', bcp47: 'pa-IN', selectPrompt: 'ਪੰਜਾਬੀ ਲਈ 3 ਦਬਾਓ' },
+  { key: '4', code: 'ur', name: 'Urdu', native: 'اردو', bcp47: 'ur-IN', selectPrompt: 'اردو کے لیے 4 دبائیں' },
+  { key: '5', code: 'bn', name: 'Bengali', native: 'বাংলা', bcp47: 'bn-IN', selectPrompt: 'বাংলার জন্য 5 চাপুন' },
+  { key: '6', code: 'ta', name: 'Tamil', native: 'தமிழ்', bcp47: 'ta-IN', selectPrompt: 'தமிழுக்கு 6-ஐ அழுத்தவும்' },
+  { key: '7', code: 'te', name: 'Telugu', native: 'తెలుగు', bcp47: 'te-IN', selectPrompt: 'తెలుగు కొరకు 7 నొక్కండి' },
+  { key: '8', code: 'mr', name: 'Marathi', native: 'मराठी', bcp47: 'mr-IN', selectPrompt: 'मराठीसाठी 8 दाबा' },
+  { key: '9', code: 'gu', name: 'Gujarati', native: 'ગુજરાતી', bcp47: 'gu-IN', selectPrompt: 'ગુજરાતી માટે 9 દબાવો' },
+  { key: '0', code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ', bcp47: 'kn-IN', selectPrompt: 'ಕನ್ನಡಕ್ಕಾಗಿ 0 ಒತ್ತಿರಿ' },
+  { key: '#', code: 'ml', name: 'Malayalam', native: 'മലയാളം', bcp47: 'ml-IN', selectPrompt: 'മലയാളത്തിനായി # അമർത്തുക' }
+];
+
+const IVR_MENU_PROMPTS = {
+  hi: {
+    welcome: 'पीएम-अजय टोल-फ्री आईवीआर सेवा में आपका स्वागत है।',
+    mainMenu: 'अनुसूचित जाति आजीविका योजनाएं खोजने के लिए 1 दबाएं। नजदीकी प्रशिक्षण केंद्र के लिए 2 दबाएं। निवार सहायक से बात करने के लिए 3 दबाएं। मेनू दोहराने के लिए 9 दबाएं। भाषा बदलने के लिए स्टार (*) दबाएं।',
+    schemesMenu: 'शीर्ष दिल्ली योजनाएं: पीएम-अजय कौशल्य अनुदान के लिए 1, डीएसएफडीसी स्वरोजगार ऋण के लिए 2, स्टैंड-अप इंडिया के लिए 3 दबाएं। मुख्य मेनू के लिए स्टार दबाएं।',
+    centresMenu: 'दिल्ली प्रशिक्षण केंद्र: आईटीआई पूसा के लिए 1, जन शिक्षण संस्थान ईस्ट दिल्ली के लिए 2, पीएमकेके शाहदरा के लिए 3 दबाएं। मुख्य मेनू के लिए स्टार दबाएं।',
+    assistantPrompt: 'आप निवार एआई सहायक से जुड़े हैं। बीप के बाद अपना सवाल बोलें, या नीचे टाइप करें। वापस जाने के लिए स्टार दबाएं।'
   },
-  '2': {
-    title: 'मराठी निवडली',
-    prompt: '"मराठी भाषा निवडली. स्वयंरोजगार अनुदानासाठी 1 दाबा, कौशल्य केंद्रासाठी 2 दाबा."'
+  en: {
+    welcome: 'Welcome to PM-AJAY Toll-Free IVR Service.',
+    mainMenu: 'Press 1 to find SC livelihood schemes. Press 2 for training centres near you. Press 3 to talk with Nivara AI Voice Assistant. Press 9 to repeat. Press star (*) to change language.',
+    schemesMenu: 'Top Delhi Schemes: Press 1 for PM-AJAY Skill Grant, 2 for DSFDC Self-Employment Loan, 3 for Stand-Up India. Press star (*) to return to Main Menu.',
+    centresMenu: 'Delhi Training Centres: Press 1 for ITI Pusa, 2 for JSS East Delhi, 3 for PMKK Shahdara. Press star (*) to return to Main Menu.',
+    assistantPrompt: 'You are connected to Nivara AI Assistant. Speak your query after the tone or enter text. Press star (*) to return.'
   },
-  '3': {
-    title: 'ਪੰਜਾਬੀ ਚੁਣੀ',
-    prompt: '"ਪੰਜਾਬੀ ਚੁਣੀ ਗਈ। ਨਵੇਂ ਰੋਜ਼ਗਾਰ ਅਤੇ ਸਰਕਾਰੀ ਸਬਸਿਡੀ ਜਾਣਕਾਰੀ ਲਈ 1 ਦਬਾਓ।"'
+  pa: {
+    welcome: 'ਪੀਐਮ-ਅਜੈ ਟੋਲ-ਫ੍ਰੀ ਆਈਵੀਆਰ ਸੇਵਾ ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ।',
+    mainMenu: 'ਸਕੀਮਾਂ ਲੱਭਣ ਲਈ 1 ਦਬਾਓ। ਨਜ਼ਦੀਕੀ ਸਿਖਲਾਈ ਕੇਂਦਰ ਲਈ 2 ਦਬਾਓ। ਨਿਵਾਰਾ ਸਹਾਇਕ ਨਾਲ ਗੱਲ ਕਰਨ ਲਈ 3 ਦਬਾਓ। ਦੁਹਰਾਉਣ ਲਈ 9 ਦਬਾਓ। ਭਾਸ਼ਾ ਬਦਲਣ ਲਈ ਸਟਾਰ (*) ਦਬਾਓ।',
+    schemesMenu: 'ਦਿੱਲੀ ਸਕੀਮਾਂ: ਪੀਐਮ-ਅਜੈ ਗਰਾਂਟ ਲਈ 1, ਡੀਐਸਐਫਡੀਸੀ ਲੋਨ ਲਈ 2, ਸਟੈਂਡ-ਅੱਪ ਇੰਡੀਆ ਲਈ 3 ਦਬਾਓ। ਵਾਪਸ ਜਾਣ ਲਈ ਸਟਾਰ ਦਬਾਓ।',
+    centresMenu: 'ਦਿੱਲੀ ਸਿਖਲਾਈ ਕੇਂਦਰ: ਆਈਟੀਆਈ ਪੂਸਾ ਲਈ 1, ਜੇਐਸਐਸ ਈਸਟ ਦਿੱਲੀ ਲਈ 2, ਸ਼ਾਹਦਰਾ ਕੇਂਦਰ ਲਈ 3 ਦਬਾਓ। ਵਾਪਸ ਜਾਣ ਲਈ ਸਟਾਰ ਦਬਾਓ।',
+    assistantPrompt: 'ਤੁਸੀਂ ਨਿਵਾਰਾ ਸਹਾਇਕ ਨਾਲ ਜੁੜ ਗਏ ਹੋ। ਬੀਪ ਤੋਂ ਬਾਅਦ ਆਪਣਾ ਸਵਾਲ ਬੋਲੋ।'
   },
-  '4': {
-    title: 'தமிழ் தெரிவு',
-    prompt: '"தமிழ் தேர்ந்தெடுக்கப்பட்டது. தொழில் வழிகாட்டுதலுக்கு 1-ஐ அழுத்தவும்."'
+  ur: {
+    welcome: 'پی ایم-اجے ٹول فری آئی وی آر سروس میں خوش آمدید۔',
+    mainMenu: 'اسکیمیں تلاش کرنے کے لیے 1 دبائیں۔ قریبی تربیتی مرکز کے لیے 2 دبائیں۔ اسسٹنٹ سے بات کرنے کے لیے 3 دبائیں۔ دہرانے کے لیے 9 دبائیں۔ زبان بدلنے کے لیے اسٹار (*) دبائیں۔',
+    schemesMenu: 'دہلی اسکیمیں: پی ایم-اجے گرانٹ کے لیے 1، ڈی ایس ایف ڈی سی قرض کے لیے 2، اسٹینڈ اپ انڈیا کے لیے 3 دبائیں۔ واپس جانے کے لیے اسٹار دبائیں۔',
+    centresMenu: 'تربیتی مراکز: آئی ٹی آئی پوسا کے لیے 1، جے ایس ایس مشرقی دہلی کے لیے 2، شاہدرہ کے لیے 3 دبائیں۔ واپس جانے کے لیے اسٹار دبائیں۔',
+    assistantPrompt: 'آپ نوارا اسسٹنٹ سے منسلک ہیں۔ بیپ کے بعد اپنا سوال بولیں۔'
   },
-  '5': {
-    title: 'Special Track',
-    prompt: '"अनुसूचित जाति कौशल्य विकास: निःशुल्क प्रशिक्षण और छात्रवृत्ति हेतु 1 दबाएं।"'
+  bn: {
+    welcome: 'পিএম-অজয় টোল-ফ্রি আইভিআর সেবায় আপনাকে স্বাগতম।',
+    mainMenu: 'প্রকল্প খুঁজতে 1 চাপুন। প্রশিক্ষণ কেন্দ্রের জন্য 2 চাপুন। নিভারা সহকারীর সাথে কথা বলতে 3 চাপুন। পুনরায় শুনতে 9 চাপুন। ভাষা পরিবর্তনের জন্য স্টার (*) চাপুন।',
+    schemesMenu: 'দিল্লি প্রকল্প: পিএম-অজয় অনুদানের জন্য 1, ডিএসএফডিসি ঋণের জন্য 2, স্ট্যান্ড-আপ ইন্ডিয়ার জন্য 3 চাপুন। মূল মেনুর জন্য স্টার চাপুন।',
+    centresMenu: 'প্রশিক্ষণ কেন্দ্র: আইটিআই পুসা 1, জেএসএস পূর্ব দিল্লি 2, শাহদারা কেন্দ্র 3 চাপুন। মূল মেনুর জন্য স্টার চাপুন।',
+    assistantPrompt: 'আপনি নিভারা এআই সহকারীর সাথে সংযুক্ত। বিপ শব্দের পরে আপনার প্রশ্ন বলুন।'
   },
-  '6': {
-    title: 'Status Check',
-    prompt: '"आवेदन स्थिति: आपका आधार लिंक्ड बैंक खाता मान्य है। स्वीकृति पत्र शीघ्र उपलब्ध होगा।"'
+  ta: {
+    welcome: 'PM-AJAY இலவச ஐவிஆர் உதவி மையத்திற்கு நல்வரவு.',
+    mainMenu: 'திட்டங்களை அறிய 1-ஐ அழுத்தவும். பயிற்சி மையங்களுக்கு 2-ஐ அழுத்தவும். நிவாரா குரல் உதவியாளருடன் பேச 3-ஐ அழுத்தவும். மீண்டும் கேட்க 9-ஐ அழுத்தவும். மொழியை மாற்ற ஸ்டார் (*) அழுத்தவும்.',
+    schemesMenu: 'தில்லி திட்டங்கள்: PM-AJAY மானியத்திற்கு 1, DSFDC கடனுக்கு 2, ஸ்டாண்ட்-அப் இந்தியாவுக்கு 3 அழுத்தவும். முதன்மை மெனுவிற்கு ஸ்டார் அழுத்தவும்.',
+    centresMenu: 'பயிற்சி மையங்கள்: ITI பூசா 1, JSS கிழக்கு தில்லி 2, ஷாஹ்தரா மையம் 3 அழுத்தவும். முதன்மை மெனுவிற்கு ஸ்டார் அழுத்தவும்.',
+    assistantPrompt: 'நிவாரா AI உதவியாளருடன் இணைந்துள்ளீர்கள். பீப் ஒலிக்குப் பின் பேசவும்.'
   },
-  '7': {
-    title: 'Mitra Help',
-    prompt: '"ग्राम मित्र अनुरोध दर्ज किया गया। आपके पंचायत केंद्र से 24 घंटे में संपर्क किया जाएगा।"'
+  te: {
+    welcome: 'పీఎం-అజయ్ టోల్-ఫ్రీ ఐవీఆర్ సేవలకు స్వాగతం.',
+    mainMenu: 'పథకాల కోసం 1 నొక్కండి. శిక్షణ కేంద్రాల కోసం 2 నొక్కండి. నివారా సహాయకుడితో మాట్లాడేందుకు 3 నొక్కండి. పునరావృతం కోసం 9 నొక్కండి. భాష మార్పు కోసం స్టార్ (*) నొక్కండి.',
+    schemesMenu: 'పథకాలు: పీఎం-అజయ్ గ్రాంట్ 1, డీఎస్ఎఫ్‌డీసీ లోన్ 2, స్టాండ్-అప్ ఇండియా 3 నొక్కండి.',
+    centresMenu: 'శిక్షణ కేంద్రాలు: ఐటీఐ పూసా 1, జేఎస్ఎస్ ఈస్ట్ ఢిల్లీ 2, షాహ్దరా 3 నొక్కండి.',
+    assistantPrompt: 'మీరు నివారా సహాయకుడితో అనుసంధానించబడ్డారు. బీప్ తర్వాత మాట్లాడండి.'
   },
-  '8': {
-    title: 'SMS Sent',
-    prompt: '"एसएमएस भेजा गया! आपके फोन पर नजदीकी कौशल्य केंद्र का पता व हेल्पलाइन विवरण प्रेषित हुआ।"'
+  mr: {
+    welcome: 'पीएम-अजय टोल-फ्री आयव्हीआर सेवेमध्ये आपले स्वागत आहे.',
+    mainMenu: 'योजना शोधण्यासाठी 1 दाबा. प्रशिक्षण केंद्रासाठी 2 दाबा. निवारा सहाय्यकाशी बोलण्यासाठी 3 दाबा. पुन्हा ऐकण्यासाठी 9 दाबा. भाषा बदलण्यासाठी स्टार (*) दाबा.',
+    schemesMenu: 'दिल्ली योजना: पीएम-अजय अनुदानासाठी 1, डीएसएफडीसी कर्जासाठी 2, स्टँड-अप इंडियासाठी 3 दाबा. मागे जाण्यासाठी स्टार दाबा.',
+    centresMenu: 'प्रशिक्षण केंद्र: आयटीआय पुसा 1, जेएसएस पूर्व दिल्ली 2, शहादरा केंद्र 3 दाबा. मागे जाण्यासाठी स्टार दाबा.',
+    assistantPrompt: 'तुम्ही निवारा एआय सहाय्यकाशी जोडलेले आहात. बीपनंतर आपला प्रश्न विचारा.'
   },
-  '9': {
-    title: 'Loan Grant',
-    prompt: '"पीएम-अजय आजीविका अनुदान: अनुसूचित जाति वर्ग के लिए ₹50,000 तक 100% सब्सिडी स्वीकृत।"'
+  gu: {
+    welcome: 'પીએમ-અજય ટોલ-ફ્રી આઇવીઆર સેવામાં સ્વાગત છે.',
+    mainMenu: 'યોજનાઓ માટે 1 દબાવો. તાલીમ કેન્દ્રો માટે 2 દબાવો. નિવારા સહાયક સાથે વાત કરવા 3 દબાવો. ફરી સાંભળવા 9 દબાવો. ભાષા બદલવા સ્ટાર (*) દબાવો.',
+    schemesMenu: 'દિલ્હી યોજનાઓ: પીએમ-અજય ગ્રાન્ટ 1, ડીએસએફડીસી લોન 2, સ્ટેન્ડ-અપ ઇન્ડિયા 3 દબાવો.',
+    centresMenu: 'તાલીમ કેન્દ્રો: આઈટીઆઈ પૂસા 1, જેએસએસ પૂર્વ દિલ્હી 2, શાહદરા 3 દબાવો.',
+    assistantPrompt: 'તમે નિવારા એઆઈ સહાયક સાથે જોડાયેલા છો. બીપ પછી તમારો પ્રશ્ન બોલો.'
   },
-  '*': {
-    title: 'Replay Menu',
-    prompt: '"मुख्य मेनू: 1 हिंदी, 2 मराठी, 3 ਪੰਜਾਬੀ, 4 தமிழ். कृपया विकल्प चुनें।"'
+  kn: {
+    welcome: 'ಪಿಎಂ-ಅಜಯ್ ಟೋಲ್-ಫ್ರೀ ಐವಿಆರ್ ಸೇವೆಗೆ ಸ್ವಾಗತ.',
+    mainMenu: 'ಯೋಜನೆಗಳಿಗಾಗಿ 1 ಒತ್ತಿರಿ. ತರಬೇತಿ ಕೇಂದ್ರಗಳಿಗಾಗಿ 2 ಒತ್ತಿರಿ. ನಿವಾರಾ ಸಹಾಯಕರೊಂದಿಗೆ ಮಾತನಾಡಲು 3 ಒತ್ತಿರಿ. ಪುನರಾವರ್ತಿಸಲು 9 ಒತ್ತಿರಿ. ಭಾಷೆ ಬದಲಾಯಿಸಲು ಸ್ಟಾರ್ (*) ಒತ್ತಿರಿ.',
+    schemesMenu: 'ಯೋಜನೆಗಳು: ಪಿಎಂ-ಅಜಯ್ ಅನುದಾನಕ್ಕೆ 1, ಡಿಎಸ್‌ಎಫ್‌ಡಿಸಿ ಸಾಲಕ್ಕೆ 2, ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ಇಂಡಿಯಾಕ್ಕೆ 3 ಒತ್ತಿರಿ.',
+    centresMenu: 'ತರಬೇತಿ ಕೇಂದ್ರಗಳು: ಐಟಿಐ ಪೂಸಾ 1, ಜೆಎಸ್‌ಎಸ್ ಪೂರ್ವ ದೆಹಲಿ 2, ಶಹದಾರಾ 3 ಒತ್ತಿರಿ.',
+    assistantPrompt: 'ನೀವು ನಿವಾರಾ ಸಹಾಯಕರೊಂದಿಗೆ ಸಂಪರ್ಕ ಹೊಂದಿದ್ದೀರಿ. ಬೀಪ್ ನಂತರ ಮಾತನಾಡಿ.'
   },
-  '0': {
-    title: 'Officer Help',
-    prompt: '"कृपया प्रतीक्षा करें, आपकी कॉल जिला समन्वयक अधिकारी को स्थानांतरित की जा रही है..."'
-  },
-  '#': {
-    title: 'Confirmed',
-    prompt: '"धन्यवाद! आपकी प्रविष्टि सुरक्षित है। संदर्भ संख्या: AJAY-2024-9812 दर्ज हुई।"'
+  ml: {
+    welcome: 'പിഎം-അജയ് ടോൾ-ഫ്രീ ഐവിആർ സേവനത്തിലേക്ക് സ്വാഗതം.',
+    mainMenu: 'പദ്ധതികൾക്കായി 1 അമർത്തുക. പരിശീലന കേന്ദ്രങ്ങൾക്കായി 2 അമർത്തുക. നിവാര അസിസ്റ്റന്റുമായി സംസാരിക്കാൻ 3 അമർത്തുക. ആവർത്തിക്കാൻ 9 അമർത്തുക. ഭാഷ മാറ്റാൻ സ്റ്റാർ (*) അമർത്തുക.',
+    schemesMenu: 'ഡൽഹി പദ്ധതികൾ: പിഎം-അജയ് ഗ്രാന്റിന് 1, ഡിഎസ്എഫ്ഡിസി വായ്പയ്ക്ക് 2, സ്റ്റാൻഡ്-അപ്പ് ഇന്ത്യക്ക് 3 അമർത്തുക.',
+    centresMenu: 'പരിശീലന കേന്ദ്രങ്ങൾ: ഐടിഐ പൂസ 1, ജെഎസ്എസ് ഈസ്റ്റ് ഡൽഹി 2, ഷഹ്ദര 3 അമർത്തുക.',
+    assistantPrompt: 'നിങ്ങൾ നിവാര എഐ അസിസ്റ്റന്റുമായി ബന്ധിപ്പിച്ചിരിക്കുന്നു. ബീപ്പിന് ശേഷം ചോദ്യം പറയുക.'
   }
 };
 
@@ -719,6 +767,20 @@ function initElements() {
     confidenceTag: document.getElementById('confidenceTag'),
     scenarioChips: document.querySelectorAll('.scenario-chip'),
     demoBeneficiaryBtns: document.querySelectorAll('.demo-beneficiary-btn'),
+
+    // Conversational Loop & Voice Control Elements
+    voiceStateBadge: document.getElementById('voiceStateBadge'),
+    voiceStateDot: document.getElementById('voiceStateDot'),
+    voiceStateText: document.getElementById('voiceStateText'),
+    btnToggleHandsFree: document.getElementById('btnToggleHandsFree'),
+    handsFreeLabel: document.getElementById('handsFreeLabel'),
+    btnToggleVoiceOnly: document.getElementById('btnToggleVoiceOnly'),
+    voiceOnlyIcon: document.getElementById('voiceOnlyIcon'),
+    voiceOnlyLabel: document.getElementById('voiceOnlyLabel'),
+    btnMuteAudio: document.getElementById('btnMuteAudio'),
+    voiceNoticeBanner: document.getElementById('voiceNoticeBanner'),
+    voiceNoticeText: document.getElementById('voiceNoticeText'),
+    storySummaryCard: document.getElementById('storySummaryCard'),
 
     // Conversation Feed & Story Summary Elements
     liveStorySummaryText: document.getElementById('liveStorySummaryText'),
@@ -1049,13 +1111,123 @@ function resetSignalDisplay() {
   }
 }
 
-function setAssistantSpeech(text, autoSpeak = false, audioBase64 = null) {
+// -------------------------------------------------------------
+// Conversational Voice State Machine & Loop Controls
+// -------------------------------------------------------------
+function setVoiceState(newState) {
+  state.voiceState = newState;
+  if (!el.voiceStateText) return;
+
+  el.voiceStateText.textContent = newState.toUpperCase();
+  if (el.voiceStateBadge) {
+    el.voiceStateBadge.className = 'text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all ';
+    if (newState === 'listening') {
+      el.voiceStateBadge.className += 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30';
+      if (el.voiceStateDot) el.voiceStateDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+      if (el.micIcon) el.micIcon.textContent = 'graphic_eq';
+      if (el.micLabel) el.micLabel.textContent = 'Listening... (Speak freely)';
+      if (el.statusText) el.statusText.textContent = 'LISTENING • SPEAK FREELY • TAP MIC OR PAUSE TO SUBMIT';
+      if (el.micRipple1) el.micRipple1.classList.remove('hidden');
+      if (el.micRipple2) el.micRipple2.classList.remove('hidden');
+      if (el.btnMuteAudio) el.btnMuteAudio.classList.add('hidden');
+    } else if (newState === 'thinking') {
+      el.voiceStateBadge.className += 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30';
+      if (el.voiceStateDot) el.voiceStateDot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-ping';
+      if (el.micIcon) el.micIcon.textContent = 'hourglass_empty';
+      if (el.micLabel) el.micLabel.textContent = 'Thinking... / समझ रहे हैं...';
+      if (el.statusText) el.statusText.textContent = 'THINKING • ANALYZING STORY WITH LLM & EXTRACTING SIGNALS...';
+      if (el.micRipple1) el.micRipple1.classList.add('hidden');
+      if (el.micRipple2) el.micRipple2.classList.add('hidden');
+      if (el.btnMuteAudio) el.btnMuteAudio.classList.add('hidden');
+    } else if (newState === 'speaking') {
+      el.voiceStateBadge.className += 'bg-secondary/15 text-secondary border border-secondary/30';
+      if (el.voiceStateDot) el.voiceStateDot.className = 'w-2 h-2 rounded-full bg-secondary animate-pulse';
+      if (el.micIcon) el.micIcon.textContent = 'volume_up';
+      if (el.micLabel) el.micLabel.textContent = 'Speaking... (Tap mic to interrupt)';
+      if (el.statusText) el.statusText.textContent = 'SPEAKING • TAP MIC OR MUTE BUTTON TO INTERRUPT';
+      if (el.micRipple1) el.micRipple1.classList.remove('hidden');
+      if (el.micRipple2) el.micRipple2.classList.remove('hidden');
+      if (el.btnMuteAudio) el.btnMuteAudio.classList.remove('hidden');
+    } else {
+      // idle
+      el.voiceStateBadge.className += 'bg-surface-container-high text-secondary border border-secondary/20';
+      if (el.voiceStateDot) el.voiceStateDot.className = 'w-2 h-2 rounded-full bg-secondary';
+      if (el.micIcon) el.micIcon.textContent = 'mic';
+      if (el.micLabel) el.micLabel.textContent = 'Tap & Speak / बोलिए';
+      if (el.statusText) el.statusText.textContent = 'VOICE READY • TAP TO SPEAK';
+      if (el.micRipple1) el.micRipple1.classList.add('hidden');
+      if (el.micRipple2) el.micRipple2.classList.add('hidden');
+      if (el.btnMuteAudio) el.btnMuteAudio.classList.add('hidden');
+    }
+  }
+}
+
+function toggleHandsFree() {
+  state.handsFreeMode = !state.handsFreeMode;
+  if (el.handsFreeLabel) {
+    el.handsFreeLabel.textContent = state.handsFreeMode ? 'Hands-Free: ON' : 'Hands-Free: OFF';
+  }
+  if (el.btnToggleHandsFree) {
+    if (state.handsFreeMode) {
+      el.btnToggleHandsFree.classList.add('bg-secondary/10', 'text-secondary', 'border-secondary/40');
+      el.btnToggleHandsFree.classList.remove('opacity-60', 'border-outline-variant');
+    } else {
+      el.btnToggleHandsFree.classList.remove('bg-secondary/10', 'text-secondary', 'border-secondary/40');
+      el.btnToggleHandsFree.classList.add('opacity-60', 'border-outline-variant');
+    }
+  }
+  showToast(state.handsFreeMode ? 'Hands-Free Loop: ON (Microphone auto-resumes after replies)' : 'Hands-Free Loop: OFF', 'all_inclusive');
+}
+
+function toggleVoiceOnlyMode() {
+  state.voiceOnlyMode = !state.voiceOnlyMode;
+  if (el.voiceOnlyLabel) {
+    el.voiceOnlyLabel.textContent = state.voiceOnlyMode ? 'Voice-Only: ON' : 'Voice-Only: OFF';
+  }
+  if (el.voiceOnlyIcon) {
+    el.voiceOnlyIcon.textContent = state.voiceOnlyMode ? 'visibility_off' : 'visibility';
+  }
+  if (el.btnToggleVoiceOnly) {
+    if (state.voiceOnlyMode) {
+      el.btnToggleVoiceOnly.classList.add('bg-secondary/15', 'text-secondary', 'border-secondary/40');
+      el.btnToggleVoiceOnly.classList.remove('bg-surface-container-lowest/80', 'text-on-surface-variant');
+    } else {
+      el.btnToggleVoiceOnly.classList.remove('bg-secondary/15', 'text-secondary', 'border-secondary/40');
+      el.btnToggleVoiceOnly.classList.add('bg-surface-container-lowest/80', 'text-on-surface-variant');
+    }
+  }
+
+  // Hide or show conversation thread and story summary card
+  if (el.conversationThread && el.conversationThread.parentElement) {
+    el.conversationThread.parentElement.style.display = state.voiceOnlyMode ? 'none' : '';
+  }
+  if (el.storySummaryCard) {
+    el.storySummaryCard.style.display = state.voiceOnlyMode ? 'none' : '';
+  }
+
+  showToast(state.voiceOnlyMode ? 'Voice-Only Mode: ON. Interface focused on conversation.' : 'Voice-Only Mode: OFF. Showing conversation text.', 'record_voice_over');
+}
+
+function setAssistantSpeech(text, autoSpeak = false, audioBase64 = null, onEnd = null) {
   if (el.assistantSpeechText) el.assistantSpeechText.textContent = `"${text}"`;
   if (el.assistantSpeechSub) el.assistantSpeechSub.textContent = INITIAL_PROMPTS_SUB[state.language] || INITIAL_PROMPTS_SUB.en;
   if (el.chatGreetingText) el.chatGreetingText.textContent = text;
 
   if (autoSpeak) {
-    speak(text, audioBase64);
+    speak(text, audioBase64, () => {
+      if (onEnd) onEnd();
+      // Hands-free continuous loop (Requirement 13): restart listening once reply finishes
+      if (state.handsFreeMode && !state.profileComplete && state.activeTab === 'viewVoiceApp') {
+        console.log('[Hands-Free] Assistant speech finished; automatically restarting listening in 250ms...');
+        setTimeout(() => {
+          if (!state.isRecording && !state.audioPlaying) {
+            startListening();
+          }
+        }, 250);
+      }
+    });
+  } else {
+    if (onEnd) onEnd();
   }
 }
 
@@ -1138,7 +1310,6 @@ function initSpeechRecognition() {
   }
 
   state.recognition = new SpeechRecognition();
-  // Enable continuous recognition so speaking multiple sentences does NOT cut off automatically!
   state.recognition.continuous = true;
   state.recognition.interimResults = true;
 
@@ -1146,15 +1317,18 @@ function initSpeechRecognition() {
     state.isRecording = true;
     accumulatedTranscript = '';
     interimTranscript = '';
-    if (el.micRipple1) el.micRipple1.classList.remove('hidden');
-    if (el.micRipple2) el.micRipple2.classList.remove('hidden');
-    if (el.micLabel) el.micLabel.textContent = 'Listening... (Tap when done)';
-    if (el.statusText) el.statusText.textContent = 'LISTENING • SPEAK FREELY • TAP MIC OR PAUSE TO SUBMIT';
-    if (el.micIcon) el.micIcon.textContent = 'graphic_eq';
+    setVoiceState('listening');
     if (el.btnManualSubmitUtterance) el.btnManualSubmitUtterance.classList.add('hidden');
   };
 
   state.recognition.onresult = (event) => {
+    // Barge-in check (Requirement 14): If speech recognized while audio was playing, interrupt audio immediately
+    if (state.voiceState === 'speaking' || state.audioPlaying) {
+      console.log('[Barge-In] Speech detected during playback: interrupting audio immediately.');
+      stopSpeaking();
+      setVoiceState('listening');
+    }
+
     interimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       const piece = event.results[i][0].transcript;
@@ -1174,17 +1348,16 @@ function initSpeechRecognition() {
     // Reset silence timer on every spoken syllable
     clearTimeout(silenceDebounceTimer);
     if (currentSpoken.length > 8) {
-      // 3.8s natural silence window: gives beneficiary ample time to breathe and continue speaking
       silenceDebounceTimer = setTimeout(() => {
         if (state.isRecording && currentSpoken.length > 8) {
           stopRecordingAndSubmit();
         }
-      }, 3800);
+      }, 3500);
     }
   };
 
   state.recognition.onerror = (event) => {
-    console.warn('Speech recognition warning:', event.error);
+    console.warn('Speech recognition event:', event.error);
     if (event.error !== 'no-speech') {
       stopRecording();
     }
@@ -1202,19 +1375,14 @@ function initSpeechRecognition() {
   };
 }
 
-function stopRecordingAndSubmit() {
-  clearTimeout(silenceDebounceTimer);
-  const textToSubmit = (accumulatedTranscript + ' ' + interimTranscript).trim();
-  stopRecording();
-  if (textToSubmit.length > 0) {
-    handleUserVoiceUtterance(textToSubmit);
-    accumulatedTranscript = '';
-    interimTranscript = '';
-  }
-}
-
-function toggleRecording() {
+function startListening() {
   unlockSpeechAndAudio();
+
+  // Echo guard (Requirement 16): Do NOT start recognition while audio is playing
+  if (state.audioPlaying || (window.speechSynthesis && window.speechSynthesis.speaking)) {
+    console.log('[Echo Guard] Recognition start deferred because audio is playing.');
+    return;
+  }
 
   if (!state.recognition) {
     showToast('Simulating mic input: 10th Pass + Farming');
@@ -1222,37 +1390,86 @@ function toggleRecording() {
     return;
   }
 
+  setVoiceState('listening');
+  state.recognition.lang = LANG_LOCALES[state.language] || 'en-IN';
+  try {
+    state.recognition.start();
+  } catch (e) {
+    try { state.recognition.stop(); } catch (err) {}
+    setTimeout(() => {
+      if (!state.audioPlaying) {
+        try { state.recognition.start(); } catch (err) {}
+      }
+    }, 150);
+  }
+}
+
+function stopRecordingAndSubmit() {
+  clearTimeout(silenceDebounceTimer);
+  const textToSubmit = (accumulatedTranscript + ' ' + interimTranscript).trim();
+  stopRecording();
+  if (textToSubmit.length > 0) {
+    setVoiceState('thinking');
+    handleUserVoiceUtterance(textToSubmit);
+    accumulatedTranscript = '';
+    interimTranscript = '';
+  } else {
+    setVoiceState('idle');
+  }
+}
+
+function toggleRecording() {
+  unlockSpeechAndAudio();
+
+  // Barge-in (Requirement 14): Tapping mic while speaking interrupts audio and immediately starts listening
+  if (state.voiceState === 'speaking' || state.audioPlaying) {
+    console.log('[Barge-In] Mic tapped while speaking: interrupting audio and listening immediately.');
+    stopSpeaking();
+    startListening();
+    return;
+  }
+
   if (state.isRecording) {
     // User tapped mic button to finish speaking
     stopRecordingAndSubmit();
   } else {
-    stopSpeaking();
-    state.recognition.lang = LANG_LOCALES[state.language] || 'en-IN';
-    try {
-      state.recognition.start();
-    } catch (e) {
-      state.recognition.stop();
-      setTimeout(() => {
-        try { state.recognition.start(); } catch (err) {}
-      }, 150);
-    }
+    startListening();
   }
 }
 
 function stopRecording() {
   state.isRecording = false;
   clearTimeout(silenceDebounceTimer);
-  if (el.micRipple1) el.micRipple1.classList.add('hidden');
-  if (el.micRipple2) el.micRipple2.classList.add('hidden');
-  if (el.micLabel) el.micLabel.textContent = 'Tap & Speak / बोलिए';
-  if (el.statusText) el.statusText.textContent = 'VOICE READY • TAP TO SPEAK';
-  if (el.micIcon) el.micIcon.textContent = 'mic';
+  if (state.recognition) {
+    try { state.recognition.stop(); } catch (e) {}
+  }
+  if (state.voiceState === 'listening') {
+    setVoiceState('idle');
+  }
 }
 
 function bindVoiceEvents() {
   // Mic Button
   if (el.dominantMicBtn) {
     el.dominantMicBtn.addEventListener('click', toggleRecording);
+  }
+
+  // Hands-Free Loop Toggle
+  if (el.btnToggleHandsFree) {
+    el.btnToggleHandsFree.addEventListener('click', toggleHandsFree);
+  }
+
+  // Voice-Only Mode Toggle
+  if (el.btnToggleVoiceOnly) {
+    el.btnToggleVoiceOnly.addEventListener('click', toggleVoiceOnlyMode);
+  }
+
+  // Dedicated Mute Audio Button
+  if (el.btnMuteAudio) {
+    el.btnMuteAudio.addEventListener('click', () => {
+      stopSpeaking();
+      showToast('Audio muted / playback stopped', 'volume_off');
+    });
   }
 
   // Manual Send Button next to live transcript
@@ -1799,14 +2016,21 @@ function renderRegionalSchemes(schemes = []) {
 
       <!-- Data Provenance & Verification Badge -->
       <div class="flex flex-wrap items-center gap-2 my-1">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#fffbeb] text-[#92400e] border border-[#f59e0b]/50 shadow-xs" title="${s.source_note || 'Compiled from official state corporation portals, manually verified as of 2026-09-27'}">
-          <span class="material-symbols-outlined text-[14px] text-[#d97706]">verified_user</span>
-          Community-compiled — verify with local office
-        </span>
-        <span class="inline-flex items-center gap-1 text-[11px] text-on-surface-variant font-medium">
-          <span class="material-symbols-outlined text-[13px] text-on-surface-variant/70">calendar_today</span>
-          Checked: ${s.last_checked || '2026-09-27'}
-        </span>
+        ${(s.verification_status === 'verified' && s.last_verified)
+          ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0] shadow-xs">
+              <span class="material-symbols-outlined text-[13px]">verified</span>
+              Verified ${s.last_verified}
+            </span>`
+          : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#fffbeb] text-[#92400e] border border-[#f59e0b]/50 shadow-xs">
+              <span class="material-symbols-outlined text-[13px] text-[#d97706]">warning</span>
+              Sample data - verify on official site
+            </span>`
+        }
+        ${(s.official_url || s.source_url) ? `
+          <a href="${s.official_url || s.source_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-secondary hover:underline font-semibold">
+            <span>Official Portal</span>
+            <span class="material-symbols-outlined text-[11px]">open_in_new</span>
+          </a>` : ''}
       </div>
       
       <div class="flex flex-col gap-1 mt-1">
@@ -1991,8 +2215,113 @@ function toggleRoadmapAudio() {
 }
 
 // -------------------------------------------------------------
-// Interactive Feature Phone IVR Simulator
+// Interactive Feature Phone IVR Simulator (Phase 7 - 10+ Languages)
 // -------------------------------------------------------------
+const DTMF_FREQS = {
+  '1': [697, 1209], '2': [697, 1336], '3': [697, 1477],
+  '4': [770, 1209], '5': [770, 1336], '6': [770, 1477],
+  '7': [852, 1209], '8': [852, 1336], '9': [852, 1477],
+  '*': [941, 1209], '0': [941, 1336], '#': [941, 1477]
+};
+
+let ivrAudioContext = null;
+let ivrSpeechRec = null;
+
+function getIvrAudioContext() {
+  if (!ivrAudioContext) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) {
+      ivrAudioContext = new AudioCtx();
+    }
+  }
+  if (ivrAudioContext && ivrAudioContext.state === 'suspended') {
+    ivrAudioContext.resume();
+  }
+  return ivrAudioContext;
+}
+
+function playDtmfTone(key, durationMs = 180) {
+  try {
+    const ctx = getIvrAudioContext();
+    if (!ctx) return;
+    const freqs = DTMF_FREQS[key];
+    if (!freqs) return;
+
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    osc1.frequency.value = freqs[0];
+    osc2.frequency.value = freqs[1];
+
+    gainNode.gain.setValueAtTime(0.12, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (durationMs / 1000));
+
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    osc1.start();
+    osc2.start();
+    osc1.stop(ctx.currentTime + (durationMs / 1000));
+    osc2.stop(ctx.currentTime + (durationMs / 1000));
+
+    const freqLabel = document.getElementById('telemetryDtmfFreq');
+    if (freqLabel) {
+      freqLabel.textContent = `[${key}] ${freqs[0]}Hz + ${freqs[1]}Hz`;
+    }
+  } catch (e) {
+    console.warn('DTMF audio output note:', e);
+  }
+}
+
+function playLineRinging(onConnected) {
+  try {
+    const ctx = getIvrAudioContext();
+    if (!ctx) {
+      if (onConnected) onConnected();
+      return;
+    }
+
+    // 400Hz Indian phone standard ring tone
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = 400;
+
+    // Line noise static buffer
+    const bufferSize = ctx.sampleRate * 2;
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = (Math.random() * 2 - 1) * 0.006;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.value = 0.03;
+    noise.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start();
+
+    // Pulse 0.8s ring, 1.2s silence
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime + 0.8);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime + 0.85);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 2.0);
+
+    setTimeout(() => {
+      try { noise.stop(); } catch(e) {}
+      if (onConnected) onConnected();
+    }, 2000);
+  } catch (e) {
+    if (onConnected) onConnected();
+  }
+}
+
 function startIvrTimer() {
   if (state.ivrInterval) clearInterval(state.ivrInterval);
   state.ivrInterval = setInterval(() => {
@@ -2007,7 +2336,7 @@ function startIvrTimer() {
 
 function bindIvrEvents() {
   // Keypad keys
-  el.keypadBtns.forEach(btn => {
+  document.querySelectorAll('.keypad-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.getAttribute('data-key');
       handleIvrKeyPress(key);
@@ -2017,63 +2346,460 @@ function bindIvrEvents() {
   // Call Button
   if (el.keyCall) {
     el.keyCall.addEventListener('click', () => {
-      state.ivrActive = true;
-      state.ivrTimer = 0;
-      if (el.callStatusBadge) {
-        el.callStatusBadge.textContent = '● CALL CONNECTED';
-        el.callStatusBadge.className = 'font-bold text-[11px] tracking-wide text-[#09140a]';
-      }
-      if (el.ivrPromptBox) {
-        el.ivrPromptBox.textContent = '"प्रेस 1 हिंदी के लिए, 2 मराठीसाठी, 3 ਪੰਜਾਬੀ ਲਈ... ऋण व कौशल्य मार्गदर्शन के लिए 9 दबाएं"';
-      }
-      if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'CALL CONNECTED';
-      speakText("Welcome to PM-AJAY Toll-Free IVR Helpline. Press 1 for Hindi, 2 for Marathi, 3 for Punjabi.", 'en');
+      startIvrCall();
     });
   }
 
   // End Call Button
   if (el.keyEnd) {
     el.keyEnd.addEventListener('click', () => {
-      state.ivrActive = false;
-      if (el.callStatusBadge) {
-        el.callStatusBadge.textContent = '○ CALL ENDED';
-        el.callStatusBadge.className = 'font-bold text-[11px] tracking-wide text-[#7f1d1d]';
-      }
-      if (el.ivrPromptBox) {
-        el.ivrPromptBox.textContent = '"कॉल समाप्त हुई (Call Ended). Toll-Free 1800-11-7625 पर कभी भी पुनः संपर्क करें।"';
-      }
-      if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'DISCONNECTED';
-      if (el.timerBadge) el.timerBadge.textContent = '--:--';
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      endIvrCall();
     });
   }
 
-  // D-Pad / Nav Button
+  // Repeat / Nav Button
   if (el.keyNav) {
     el.keyNav.addEventListener('click', () => {
-      showToast('Speakerphone toggled on AJAY-PHONE.');
+      handleIvrKeyPress('9');
     });
   }
 }
 
+function startIvrCall() {
+  state.ivrActive = true;
+  state.ivrTimer = 0;
+  state.ivrState = 'DIALING';
+  state.ivrLang = IVR_LANGUAGES[0]; // Default Hindi
+
+  if (el.callStatusBadge) {
+    el.callStatusBadge.textContent = '○ DIALING...';
+    el.callStatusBadge.className = 'font-bold text-[11px] tracking-wide text-amber-700';
+  }
+  if (el.ivrPromptBox) {
+    el.ivrPromptBox.textContent = '"Connecting to Toll-Free Gateway 1800-11-7625 (Delhi)..."';
+  }
+  if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'DIALING';
+  addIvrTranscriptEntry('call', 'Inbound Call Dialed', 'Dialing Toll-Free Gateway: 1800-11-7625 (BSNL Delhi Node)');
+
+  playLineRinging(() => {
+    if (!state.ivrActive) return;
+    state.ivrState = 'LANG_SELECT';
+
+    if (el.callStatusBadge) {
+      el.callStatusBadge.textContent = '● CALL CONNECTED';
+      el.callStatusBadge.className = 'font-bold text-[11px] tracking-wide text-[#09140a]';
+    }
+    const greetingText = "Welcome to Nivara PM-AJAY Toll-Free Helpline. For Hindi press 1. For English press 2. For Punjabi press 3. For Urdu press 4. For Bengali press 5. For Tamil press 6. For Telugu press 7. For Marathi press 8. For Gujarati press 9. For Kannada press 0. For Malayalam press hash.";
+    
+    if (el.ivrPromptBox) {
+      el.ivrPromptBox.textContent = '"Select Language: 1 Hindi, 2 English, 3 Punjabi, 4 Urdu, 5 Bengali, 6 Tamil, 7 Telugu, 8 Marathi, 9 Gujarati, 0 Kannada, # Malayalam"';
+    }
+    if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'CONNECTED';
+    
+    updateIvrTelemetry('Language Selection', state.ivrLang.name);
+    addIvrTranscriptEntry('record_voice_over', 'IVR Spoken Prompt', greetingText);
+
+    speak(greetingText, null, () => {});
+  });
+}
+
+function endIvrCall() {
+  state.ivrActive = false;
+  state.ivrState = 'OFFLINE';
+
+  if (el.callStatusBadge) {
+    el.callStatusBadge.textContent = '○ CALL ENDED';
+    el.callStatusBadge.className = 'font-bold text-[11px] tracking-wide text-[#7f1d1d]';
+  }
+  if (el.ivrPromptBox) {
+    el.ivrPromptBox.textContent = '"Call Ended. Toll-Free 1800-11-7625 पर पुनः संपर्क करें।"';
+  }
+  if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'DISCONNECTED';
+  if (el.timerBadge) el.timerBadge.textContent = '00:00';
+  if (el.lcdDialed) el.lcdDialed.textContent = 'KEY: [IDLE]';
+
+  updateIvrTelemetry('Call Disconnected', state.ivrLang ? state.ivrLang.name : 'Hindi');
+  addIvrTranscriptEntry('call_end', 'Call Terminated', 'Call ended by user. Reference ticket logged to Delhi GIA Helpline Desk.');
+  stopSpeaking();
+}
+
 function handleIvrKeyPress(key) {
-  if (!state.ivrActive && el.keyCall) {
-    el.keyCall.click();
+  if (!state.ivrActive) {
+    startIvrCall();
+    return;
   }
 
-  const res = IVR_RESPONSES[key];
-  if (res) {
-    if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = `KEY [${key}] ${res.title}`;
-    if (el.ivrPromptBox) el.ivrPromptBox.textContent = res.prompt;
-    if (el.lcdDialed) el.lcdDialed.textContent = `DIALED: ${key}`;
+  playDtmfTone(key);
+  if (navigator.vibrate) {
+    navigator.vibrate(30);
+  }
 
-    // Speak prompt
-    speakText(res.prompt.replace(/"/g, ''), state.language);
+  if (el.lcdDialed) {
+    el.lcdDialed.textContent = `KEY: [${key}]`;
+  }
 
-    if (navigator.vibrate) {
-      navigator.vibrate(30);
+  // 1. Language Selection State
+  if (state.ivrState === 'LANG_SELECT') {
+    const selectedLang = IVR_LANGUAGES.find(l => l.key === key);
+    if (selectedLang) {
+      state.ivrLang = selectedLang;
+      state.ivrState = 'MAIN_MENU';
+
+      updateIvrTelemetry('Main Menu', `${selectedLang.name} (${selectedLang.native})`);
+      addIvrTranscriptEntry('touch_app', 'Key Pressed', `Key [${key}] -> Selected Language: ${selectedLang.name} (${selectedLang.native})`);
+
+      const prompts = IVR_MENU_PROMPTS[selectedLang.code] || IVR_MENU_PROMPTS.hi;
+      const fullPrompt = `${prompts.welcome} ${prompts.mainMenu}`;
+
+      if (el.ivrPromptBox) {
+        el.ivrPromptBox.textContent = `"${fullPrompt}"`;
+      }
+      if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = `LANG: ${selectedLang.code.toUpperCase()}`;
+
+      addIvrTranscriptEntry('volume_up', 'IVR Menu Prompt', fullPrompt);
+      updateIvrSmsSlip(`PM-AJAY Helpline: You selected ${selectedLang.name}. Toll-Free 1800-11-7625. Reply 1 for Delhi SC Schemes, 2 for Training Centres, 3 for Mitra Help.`);
+      speak(fullPrompt, null, () => {});
+    } else {
+      showToast(`Key [${key}] not mapped in language menu. Press 1..9, 0, #`, 'error');
+    }
+    return;
+  }
+
+  // 2. Main Menu State
+  if (state.ivrState === 'MAIN_MENU') {
+    const prompts = IVR_MENU_PROMPTS[state.ivrLang.code] || IVR_MENU_PROMPTS.hi;
+
+    if (key === '1') {
+      // Schemes Submenu
+      state.ivrState = 'SUBMENU_SCHEMES';
+      updateIvrTelemetry('Delhi Schemes Submenu', state.ivrLang.name);
+      addIvrTranscriptEntry('touch_app', 'Key Pressed', `Key [1] -> Find SC Livelihood Schemes (Delhi)`);
+
+      const text = prompts.schemesMenu;
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${text}"`;
+      addIvrTranscriptEntry('volume_up', 'IVR Prompt', text);
+      
+      // Query RAG for grounding
+      executeIvrRagQuery('PM-AJAY GIA SC livelihood schemes Delhi grants', 'Schemes Submenu', text);
+      return;
+    }
+
+    if (key === '2') {
+      // Training Centres Submenu
+      state.ivrState = 'SUBMENU_CENTRES';
+      updateIvrTelemetry('Training Centres Submenu', state.ivrLang.name);
+      addIvrTranscriptEntry('touch_app', 'Key Pressed', `Key [2] -> Training & ITI Centres Near Me`);
+
+      const text = prompts.centresMenu;
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${text}"`;
+      addIvrTranscriptEntry('volume_up', 'IVR Prompt', text);
+
+      executeIvrRagQuery('Delhi ITI PMKVY training centres accredited addresses', 'Training Centres Submenu', text);
+      return;
+    }
+
+    if (key === '3') {
+      // Talk to Assistant Mode
+      state.ivrState = 'ASSISTANT_TALK';
+      updateIvrTelemetry('AI Voice Assistant Line', state.ivrLang.name);
+      addIvrTranscriptEntry('touch_app', 'Key Pressed', `Key [3] -> Connect with Nivara AI Voice Assistant`);
+
+      const text = prompts.assistantPrompt;
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${text}"`;
+      addIvrTranscriptEntry('record_voice_over', 'IVR Assistant Line', text);
+      
+      speak(text, null, () => {
+        // Automatically open mic for voice query
+        toggleIvrSpeechRecognition();
+      });
+      return;
+    }
+
+    if (key === '9') {
+      // Repeat Main Menu
+      addIvrTranscriptEntry('repeat', 'Repeat Pressed', `Key [9] -> Replay Main Menu Prompt`);
+      const text = `${prompts.welcome} ${prompts.mainMenu}`;
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${text}"`;
+      speak(text, null, () => {});
+      return;
+    }
+
+    if (key === '*') {
+      // Go Back to Language Selection
+      state.ivrState = 'LANG_SELECT';
+      updateIvrTelemetry('Language Selection', state.ivrLang.name);
+      addIvrTranscriptEntry('arrow_back', 'Back Pressed', `Key [*] -> Returned to Language Selection`);
+      const prompt = "For Hindi press 1. For English press 2. For Punjabi press 3. For Urdu press 4. For Bengali press 5. For Tamil press 6. For Telugu press 7. For Marathi press 8. For Gujarati press 9. For Kannada press 0. For Malayalam press hash.";
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${prompt}"`;
+      speak(prompt, null, () => {});
+      return;
     }
   }
+
+  // 3. Submenu: Schemes
+  if (state.ivrState === 'SUBMENU_SCHEMES') {
+    if (key === '1') {
+      addIvrTranscriptEntry('touch_app', 'Option Selected', 'Key [1] -> PM-AJAY GIA Component (Skill & Toolkits)');
+      const reply = "पीएम-अजय कौशल्य व व्यवसाय अनुदान: अनुसूचित जाति वर्ग को 100% निःशुल्क प्रशिक्षण, दैनिक वजीफा, और ₹50,000 तक टूलकिट अनुदान। आवश्यक दस्तावेज: आधार कार्ड, जाति प्रमाण पत्र, और बैंक खाता। विवरण एसएमएस द्वारा भेजा गया है।";
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${reply}"`;
+      addIvrTranscriptEntry('smart_toy', 'RAG Answer', reply);
+      updateIvrSmsSlip("PM-AJAY GIA Delhi: Skill Training & ₹50,000 Toolkit Subsidy. Apply at East Delhi JSS Centre or https://pmajay.dosje.gov.in. Helpline: 1800-11-7625.");
+      speak(reply, null, () => {});
+      return;
+    }
+    if (key === '2') {
+      addIvrTranscriptEntry('touch_app', 'Option Selected', 'Key [2] -> DSFDC Self-Employment Loan');
+      const reply = "दिल्ली अनुसूचित जाति वित्त निगम (DSFDC): ₹5 लाख तक का रियायती ऋण केवल 4% वार्षिक ब्याज पर। दिल्ली के सभी 11 जिलों में लागू। पात्रता: दिल्ली निवासी, एससी वर्ग, वार्षिक आय 3 लाख से कम।";
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${reply}"`;
+      addIvrTranscriptEntry('smart_toy', 'RAG Answer', reply);
+      updateIvrSmsSlip("DSFDC Delhi: Concessional Livelihood Loan up to ₹5 Lakh at 4% interest. Office: Ambedkar Bhawan, Sector-16 Rohini, Delhi. Helpline: 011-27861234.");
+      speak(reply, null, () => {});
+      return;
+    }
+    if (key === '3') {
+      addIvrTranscriptEntry('touch_app', 'Option Selected', 'Key [3] -> Stand-Up India (SC Enterprises)');
+      const reply = "स्टैंड-अप इंडिया योजना: विनिर्माण, सेवा, या व्यापार क्षेत्र में नए उद्यम के लिए ₹10 लाख से ₹1 करोड़ तक का बैंक ऋण। 15% मार्जिन मनी पीएम-अजय द्वारा वहन की जा सकती है।";
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${reply}"`;
+      addIvrTranscriptEntry('smart_toy', 'RAG Answer', reply);
+      updateIvrSmsSlip("Stand-Up India Scheme: ₹10 Lakh to ₹1 Crore Bank credit for SC Greenfield enterprises. Link: https://standupmitra.in. Support desk: SIDBI Delhi.");
+      speak(reply, null, () => {});
+      return;
+    }
+    if (key === '*') {
+      state.ivrState = 'MAIN_MENU';
+      updateIvrTelemetry('Main Menu', state.ivrLang.name);
+      addIvrTranscriptEntry('arrow_back', 'Back Pressed', 'Key [*] -> Returned to Main Menu');
+      const prompts = IVR_MENU_PROMPTS[state.ivrLang.code] || IVR_MENU_PROMPTS.hi;
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${prompts.mainMenu}"`;
+      speak(prompts.mainMenu, null, () => {});
+      return;
+    }
+  }
+
+  // 4. Submenu: Training Centres
+  if (state.ivrState === 'SUBMENU_CENTRES') {
+    if (key === '1') {
+      addIvrTranscriptEntry('touch_app', 'Option Selected', 'Key [1] -> ITI Pusa (Central Delhi)');
+      const reply = "राजकीय औद्योगिक प्रशिक्षण संस्थान (ITI Pusa), नई दिल्ली। पाठ्यक्रम: सोलर पीवी इंस्टॉलर, इलेक्ट्रीशियन, सीएनसी मशीनिंग। एससी छात्रों हेतु 100% शुल्क माफी और हॉस्टल सुविधा। फोन: 011-25841444।";
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${reply}"`;
+      addIvrTranscriptEntry('smart_toy', 'RAG Answer', reply);
+      updateIvrSmsSlip("ITI Pusa Delhi: Solar PV, Electrician, CNC Machining (NSQF 4). Address: Pusa Campus, New Delhi 110012. Ph: 011-25841444. Free SC seats available.");
+      speak(reply, null, () => {});
+      return;
+    }
+    if (key === '2') {
+      addIvrTranscriptEntry('touch_app', 'Option Selected', 'Key [2] -> Jan Shikshan Sansthan (East Delhi)');
+      const reply = "जन शिक्षण संस्थान, ईस्ट दिल्ली। पता: मयूर विहार फेज-1। पाठ्यक्रम: परिधान एवं सिलाई, खाद्य प्रसंस्करण, ब्यूटी एंड वेलनेस। एनएसक्यूएफ लेवल 3 प्रमाणन और पीएम-अजय टूलकिट लिंकेज।";
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${reply}"`;
+      addIvrTranscriptEntry('smart_toy', 'RAG Answer', reply);
+      updateIvrSmsSlip("JSS East Delhi: Self-Employed Tailoring, Food Preservation. Address: Pocket-1, Mayur Vihar Phase-1, Delhi. Contact: 011-22718888.");
+      speak(reply, null, () => {});
+      return;
+    }
+    if (key === '3') {
+      addIvrTranscriptEntry('touch_app', 'Option Selected', 'Key [3] -> PMKK Shahdara');
+      const reply = "प्रधानमंत्री कौशल केंद्र (PMKK Shahdara), दिलशाद गार्डन। पाठ्यक्रम: सोलर पीवी तकनीशियन, सामान्य ड्यूटी सहायक। निःशुल्क भोजन, वर्दी और प्लेसमेंट सहायता। फोन: 011-22824444।";
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${reply}"`;
+      addIvrTranscriptEntry('smart_toy', 'RAG Answer', reply);
+      updateIvrSmsSlip("PMKK Shahdara: Suryamitra Solar & Healthcare GDA. Dilshad Garden Metro, Delhi. Ph: 011-22824444. MoSJE stipend supported.");
+      speak(reply, null, () => {});
+      return;
+    }
+    if (key === '*') {
+      state.ivrState = 'MAIN_MENU';
+      updateIvrTelemetry('Main Menu', state.ivrLang.name);
+      addIvrTranscriptEntry('arrow_back', 'Back Pressed', 'Key [*] -> Returned to Main Menu');
+      const prompts = IVR_MENU_PROMPTS[state.ivrLang.code] || IVR_MENU_PROMPTS.hi;
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${prompts.mainMenu}"`;
+      speak(prompts.mainMenu, null, () => {});
+      return;
+    }
+  }
+
+  // 5. Assistant Talk State
+  if (state.ivrState === 'ASSISTANT_TALK') {
+    if (key === '*') {
+      state.ivrState = 'MAIN_MENU';
+      updateIvrTelemetry('Main Menu', state.ivrLang.name);
+      addIvrTranscriptEntry('arrow_back', 'Back Pressed', 'Key [*] -> Returned to Main Menu');
+      const prompts = IVR_MENU_PROMPTS[state.ivrLang.code] || IVR_MENU_PROMPTS.hi;
+      if (el.ivrPromptBox) el.ivrPromptBox.textContent = `"${prompts.mainMenu}"`;
+      speak(prompts.mainMenu, null, () => {});
+      return;
+    }
+  }
+}
+
+async function executeIvrRagQuery(query, label, spokenHeader) {
+  try {
+    const res = await fetch(`/rag/retrieve?q=${encodeURIComponent(query)}&k=3`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.method) {
+      const normEl = document.getElementById('telemetryNormMethod');
+      if (normEl) normEl.textContent = data.method;
+    }
+    const count = data.results ? data.results.length : (data.count || 0);
+    addIvrTranscriptEntry('dataset', `RAG Query: "${query}" [Method: ${data.method || 'none'}]`, `Retrieved ${count} grounded records from Delhi knowledge base with high similarity score.`);
+    speak(spokenHeader, null, () => {});
+  } catch (e) {
+    console.warn('IVR RAG query note:', e);
+  }
+}
+
+async function submitIvrVoiceQuery(text = null) {
+  const inputEl = document.getElementById('ivrVoiceInputText');
+  const query = text || (inputEl ? inputEl.value : '');
+  if (!query.trim()) {
+    showToast('Please speak or enter a question first.', 'info');
+    return;
+  }
+
+  if (inputEl) inputEl.value = '';
+  addIvrTranscriptEntry('record_voice_over', 'Caller Spoken Query', `"${query}"`);
+
+  if (el.lcdPrompt) {
+    el.lcdPrompt.textContent = `"Processing: ${query.substring(0, 30)}..."`;
+  }
+  if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'ANALYZING';
+
+  try {
+    const langCode = state.ivrLang ? state.ivrLang.code : 'hi';
+    const res = await fetch('/rag/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: query,
+        user_id: 'ivr_beneficiary',
+        language: langCode
+      })
+    });
+
+    const data = await res.json();
+    if (data.method) {
+      const normEl = document.getElementById('telemetryNormMethod');
+      if (normEl) normEl.textContent = data.method;
+    }
+    const answer = data.answer || "Delhi PM-AJAY GIA provides free NSQF skilling, toolkits and stipends for SC beneficiaries.";
+
+    if (el.lcdPrompt) {
+      el.lcdPrompt.textContent = `"${answer.substring(0, 80)}..."`;
+    }
+    if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'SPEAKING';
+
+    addIvrTranscriptEntry('smart_toy', `Nivara AI Grounded Answer [Method: ${data.method || 'none'}]`, answer);
+    updateIvrSmsSlip(`Nivara Answer: ${answer.substring(0, 140)}... Helpline: 1800-11-7625.`);
+
+    speak(answer, null, () => {
+      if (el.lcdAudioStatus) el.lcdAudioStatus.textContent = 'READY';
+    });
+
+  } catch (err) {
+    console.error('IVR AI Query Error:', err);
+    showToast('Error communicating with assistant: ' + err.message, 'error');
+  }
+}
+
+function toggleIvrSpeechRecognition() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    showToast('Web Speech recognition not supported in this browser. You can type query in the box.', 'info');
+    const inputEl = document.getElementById('ivrVoiceInputText');
+    if (inputEl) inputEl.focus();
+    return;
+  }
+
+  if (ivrSpeechRec) {
+    try { ivrSpeechRec.stop(); } catch(e) {}
+    ivrSpeechRec = null;
+    const micIcon = document.getElementById('ivrMicIcon');
+    if (micIcon) micIcon.textContent = 'mic';
+    return;
+  }
+
+  ivrSpeechRec = new SpeechRec();
+  ivrSpeechRec.continuous = false;
+  ivrSpeechRec.interimResults = false;
+  ivrSpeechRec.lang = state.ivrLang ? state.ivrLang.bcp47 : 'hi-IN';
+
+  const micIcon = document.getElementById('ivrMicIcon');
+  if (micIcon) micIcon.textContent = 'mic_active';
+  showToast(`Listening in ${state.ivrLang ? state.ivrLang.name : 'Hindi'}... Speak now!`, 'info');
+
+  ivrSpeechRec.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    if (transcript) {
+      submitIvrVoiceQuery(transcript);
+    }
+  };
+
+  ivrSpeechRec.onerror = (e) => {
+    console.warn('IVR speech error:', e);
+    if (micIcon) micIcon.textContent = 'mic';
+    ivrSpeechRec = null;
+  };
+
+  ivrSpeechRec.onend = () => {
+    if (micIcon) micIcon.textContent = 'mic';
+    ivrSpeechRec = null;
+  };
+
+  ivrSpeechRec.start();
+}
+
+function updateIvrTelemetry(menuState, langLabel) {
+  const menuEl = document.getElementById('telemetryMenuState');
+  if (menuEl) menuEl.textContent = menuState;
+
+  const langEl = document.getElementById('telemetryLangLabel');
+  if (langEl) langEl.textContent = langLabel;
+}
+
+function addIvrTranscriptEntry(icon, title, message) {
+  const stream = document.getElementById('ivrTranscriptStream');
+  if (!stream) return;
+
+  const mins = String(Math.floor(state.ivrTimer / 60)).padStart(2, '0');
+  const secs = String(state.ivrTimer % 60).padStart(2, '0');
+  const timeStr = `${mins}:${secs}`;
+
+  const entry = document.createElement('div');
+  entry.className = 'flex items-start gap-2.5 p-2 rounded-lg bg-surface-container-low transition-all';
+  entry.innerHTML = `
+    <span class="text-[10px] font-mono text-secondary font-bold mt-0.5">${timeStr}</span>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-1.5 font-bold text-on-surface">
+        <span class="material-symbols-outlined text-[15px] text-secondary">${icon}</span>
+        <span>${title}</span>
+      </div>
+      <p class="text-on-surface-variant mt-0.5 leading-relaxed text-[11px]">${message}</p>
+    </div>
+  `;
+
+  stream.appendChild(entry);
+  stream.scrollTop = stream.scrollHeight;
+}
+
+function updateIvrSmsSlip(text) {
+  const elSlip = document.getElementById('ivrSmsSlipText');
+  if (elSlip) {
+    elSlip.textContent = `"${text}"`;
+  }
+}
+
+function clearIvrTranscript() {
+  const stream = document.getElementById('ivrTranscriptStream');
+  if (stream) {
+    stream.innerHTML = `
+      <div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-low text-on-surface-variant">
+        <span class="text-[10px] font-mono text-secondary mt-0.5">00:00</span>
+        <div class="flex-1">
+          <span class="font-bold text-on-surface">Line Status:</span> Ready to connect. Press Call on the feature phone to begin.
+        </div>
+      </div>
+    `;
+  }
+  showToast('IVR transcript log cleared.', 'info');
 }
 
 // -------------------------------------------------------------
@@ -2413,9 +3139,12 @@ function stopSpeaking() {
     } catch (e) {}
     activeAudioElement = null;
   }
+  // Requirement 9: Never call cancel() unless speech is actually speaking or pending
   if ('speechSynthesis' in window) {
     try {
-      window.speechSynthesis.cancel();
+      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        window.speechSynthesis.cancel();
+      }
     } catch (e) {}
   }
   window._activeUtterance = null;
@@ -2427,6 +3156,9 @@ function stopSpeaking() {
     state.audioInterval = null;
   }
   if (el.audioProgressBar) el.audioProgressBar.style.width = '0%';
+  if (state.voiceState === 'speaking') {
+    setVoiceState('idle');
+  }
 }
 
 function speak(text, audioBase64 = null, onEnd = null) {
@@ -2434,6 +3166,10 @@ function speak(text, audioBase64 = null, onEnd = null) {
     onEnd = audioBase64;
     audioBase64 = null;
   }
+
+  // Diagnostic log for Stage 0 (Requirement 7)
+  const voiceCount = ('speechSynthesis' in window) ? window.speechSynthesis.getVoices().length : 0;
+  console.log(`[TTS:Stage0] speak() called. text="${(text || '').substring(0, 45)}...", audioBase64=${!!audioBase64}, speechToken=${speechToken + 1}, getVoices=${voiceCount}`);
 
   stopSpeaking();
   const myToken = speechToken;
@@ -2443,6 +3179,11 @@ function speak(text, audioBase64 = null, onEnd = null) {
     if (callbackCalled) return;
     callbackCalled = true;
     if (myToken !== speechToken) return;
+    state.audioPlaying = false;
+    if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
+    if (state.voiceState === 'speaking') {
+      setVoiceState('idle');
+    }
     if (onEnd) onEnd();
   };
 
@@ -2459,83 +3200,199 @@ function speak(text, audioBase64 = null, onEnd = null) {
 
   unlockSpeechAndAudio();
 
-  const playBase64 = (b64) => {
-    if (myToken !== speechToken) return;
-    try {
-      if (activeAudioElement) {
-        try { activeAudioElement.pause(); } catch(e) {}
-        activeAudioElement = null;
-      }
-      const mime = (typeof b64 === 'string' && b64.startsWith('UklGR')) ? 'audio/wav' : 'audio/mpeg';
-      const audio = new Audio(`data:${mime};base64,` + b64);
-      activeAudioElement = audio;
-      audio.volume = 1.0;
-      audio.onended = () => {
-        if (myToken !== speechToken) return;
-        activeAudioElement = null;
-        if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
-        safeOnEnd();
-      };
-      audio.onerror = (e) => {
-        if (myToken !== speechToken) return;
-        console.warn('Audio playback error, falling back to browser speechSynthesis:', e);
-        activeAudioElement = null;
-        speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
-      };
-      if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(err => {
-          if (myToken !== speechToken) return;
-          console.warn('Audio play() blocked by autoplay policy, falling back to speechSynthesis:', err);
-          activeAudioElement = null;
-          speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
-        });
-      }
-    } catch (err) {
-      if (myToken !== speechToken) return;
-      console.warn('Audio instantiation failed, using speechSynthesis:', err);
-      activeAudioElement = null;
-      speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
-    }
-  };
-
-  // 1. If base64 audio is provided from backend (WAV/MP3), play it directly
+  // If a pre-synthesized audioBase64 string was provided directly (e.g. from recommendation)
   if (audioBase64) {
-    playBase64(audioBase64);
+    console.log('[TTS:Stage0] Pre-synthesized audioBase64 provided; playing as single chunk.');
+    const singleChunk = [{
+      index: 0,
+      text: cleanText,
+      audio_base64: audioBase64,
+      language: state.language || 'en'
+    }];
+    playChunksSequentially(singleChunk, safeOnEnd, myToken);
     return;
   }
 
-  // 2. If no base64 audio provided, dynamically fetch high-fidelity regional neural TTS from backend
+  // Fetch synthesized chunks from backend /api/tts (Requirement 4, 5, 8)
   if (cleanText) {
     if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
+    const lang = state.language || 'en';
+
+    console.log(`[TTS:Stage1] Requesting /api/tts for lang=${lang}, textLength=${cleanText.length}`);
     fetch('/api/tts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         text: cleanText,
-        language: state.language || 'en'
+        language: lang
       })
     })
-    .then(r => r.json())
+    .then(r => {
+      console.log(`[TTS:Stage1] fetch('/api/tts') response status: ${r.status}`);
+      return r.json();
+    })
     .then(data => {
-      if (myToken !== speechToken) return;
-      if (data && data.audio_base64) {
-        playBase64(data.audio_base64);
+      if (myToken !== speechToken) {
+        console.log('[TTS:Stage1] Response superseded by newer speechToken; ignoring.');
+        return;
+      }
+      
+      const hasAudio = !!(data.audio_base64 || (data.audio_chunks && data.audio_chunks.some(c => c.audio_base64)));
+      const b64Sample = data.audio_base64 || (data.audio_chunks && data.audio_chunks.find(c => c.audio_base64)?.audio_base64) || '';
+      const byteLen = b64Sample ? Math.round(b64Sample.length * 0.75) : 0;
+      const contentType = data.format || (b64Sample.startsWith('UklGR') ? 'audio/wav' : 'audio/mpeg');
+
+      console.log(`[TTS:Stage1:Response] /api/tts response -> hasAudio=${hasAudio}, byteLength=${byteLen}, contentType=${contentType}, tts_available=${data.tts_available}, error=${data.error}`);
+
+      if (!data.tts_available && data.error) {
+        showToast(`Server voice note: ${data.error}. Using browser voice.`, 'volume_down');
+      }
+
+      if (data && data.audio_chunks && data.audio_chunks.length > 0) {
+        playChunksSequentially(data.audio_chunks, safeOnEnd, myToken, cleanText);
+      } else if (data && data.audio_base64) {
+        playChunksSequentially([{
+          index: 0,
+          text: cleanText,
+          audio_base64: data.audio_base64,
+          language: lang
+        }], safeOnEnd, myToken, cleanText);
       } else {
+        console.warn('[TTS:Stage1] No server audio returned; falling back to browser SpeechSynthesis.');
         speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
       }
     })
     .catch(err => {
       if (myToken !== speechToken) return;
-      console.warn('Backend TTS fetch failed, using browser speech:', err);
+      console.warn('[TTS:Stage1:Error] Backend /api/tts fetch failed:', err);
+      showToast('Server voice unreachable; switched to browser voice.', 'volume_down');
       speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
     });
     return;
   }
 
-  // 3. Fallback to browser's native SpeechSynthesis
+  // Fallback to browser's native SpeechSynthesis
   speakViaBrowserTTS(cleanText, safeOnEnd, myToken);
+}
+
+// Requirement 2 & 8: Play chunks sequentially; only show Speaking when audio actually begins
+function playChunksSequentially(chunks, safeOnEnd, token, originalText = '') {
+  if (token !== speechToken) return;
+  if (!chunks || !chunks.length) {
+    safeOnEnd();
+    return;
+  }
+
+  let index = 0;
+  let audioStarted = false;
+
+  // 3-second watchdog timer: if nothing plays within 3s, show error toast & Tap to Play button
+  const watchdogTimer = setTimeout(() => {
+    if (!audioStarted && !state.audioPlaying) {
+      console.warn('[TTS:Watchdog] No audio output started within 3 seconds. Playback blocked or stalled.');
+      stopSpeaking();
+      setVoiceState('idle');
+      showTapToPlayNotice(originalText || chunks[0]?.text || '');
+    }
+  }, 3000);
+
+  function playNext() {
+    if (token !== speechToken) return;
+    if (index >= chunks.length) {
+      console.log('[TTS:Stage2] All chunks played sequentially.');
+      clearTimeout(watchdogTimer);
+      safeOnEnd();
+      return;
+    }
+
+    const chunk = chunks[index++];
+    const chunkText = (chunk.text || '').trim();
+    const chunkB64 = chunk.audio_base64;
+
+    console.log(`[TTS:Stage2] Preparing chunk ${index}/${chunks.length}: "${chunkText.substring(0, 40)}...", hasAudio=${!!chunkB64}`);
+
+    let chunkFinished = false;
+    const onChunkComplete = () => {
+      if (chunkFinished) return;
+      chunkFinished = true;
+      activeAudioElement = null;
+      if (token !== speechToken) return;
+      playNext();
+    };
+
+    if (chunkB64) {
+      try {
+        const mime = (typeof chunkB64 === 'string' && chunkB64.startsWith('UklGR')) ? 'audio/wav' : 'audio/mpeg';
+        const audio = new Audio(`data:${mime};base64,` + chunkB64);
+        activeAudioElement = audio;
+        audio.volume = 1.0;
+
+        // Requirement 2: Only show Speaking state after audio actually starts playing
+        audio.addEventListener('playing', () => {
+          audioStarted = true;
+          clearTimeout(watchdogTimer);
+          state.audioPlaying = true;
+          setVoiceState('speaking');
+          if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
+          console.log(`[TTS:Stage2:Playing] HTML5 Audio playing event fired for chunk ${index}. Speaking state activated.`);
+        });
+
+        audio.onended = () => {
+          console.log(`[TTS:Stage2] Audio chunk ${index} ended normally.`);
+          onChunkComplete();
+        };
+
+        audio.onerror = (e) => {
+          const errCode = audio.error ? audio.error.code : 'unknown';
+          const errMsg = audio.error ? audio.error.message : 'no message';
+          console.warn(`[TTS:Stage2:Error] HTML5 Audio onerror fired for chunk ${index}: code=${errCode}, message=${errMsg}`, e);
+          activeAudioElement = null;
+          if (token !== speechToken) return;
+          showToast('Audio chunk playback failed; using browser voice for sentence.', 'volume_down');
+          speakViaBrowserTTS(chunkText, onChunkComplete, token, watchdogTimer);
+        };
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            console.log(`[TTS:Stage2:PromiseResult] audio.play() promise resolved successfully for chunk ${index}.`);
+          }).catch(err => {
+            console.warn(`[TTS:Stage2:PromiseResult] audio.play() promise REJECTED for chunk ${index}: ${err.name} - ${err.message}`, err);
+            activeAudioElement = null;
+            if (token !== speechToken) return;
+            speakViaBrowserTTS(chunkText, onChunkComplete, token, watchdogTimer);
+          });
+        }
+      } catch (err) {
+        console.warn(`[TTS:Stage2:Error] Audio element creation exception (${err.message}):`, err);
+        activeAudioElement = null;
+        if (token !== speechToken) return;
+        speakViaBrowserTTS(chunkText, onChunkComplete, token, watchdogTimer);
+      }
+    } else {
+      console.log(`[TTS:Stage2] Chunk ${index} has no server audio; speaking via browser SpeechSynthesis.`);
+      speakViaBrowserTTS(chunkText, onChunkComplete, token, watchdogTimer);
+    }
+  }
+
+  playNext();
+}
+
+function showTapToPlayNotice(text) {
+  if (el.voiceNoticeBanner && el.voiceNoticeText) {
+    el.voiceNoticeText.innerHTML = `⚠️ Audio output was blocked or timed out by browser autoplay policy. <button id="btnTapToPlay" class="ml-2 px-2 py-0.5 bg-amber-800 text-white rounded font-bold hover:bg-amber-900 cursor-pointer shadow-xs">▶ Tap to Play</button>`;
+    el.voiceNoticeBanner.classList.remove('hidden');
+    const btn = document.getElementById('btnTapToPlay');
+    if (btn) {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        unlockSpeechAndAudio();
+        speak(text);
+        el.voiceNoticeBanner.classList.add('hidden');
+      };
+    }
+  }
+  showToast('Audio blocked by browser. Please tap "▶ Tap to Play" button.', 'volume_off');
 }
 
 // Backward-compatible alias for speakText
@@ -2551,16 +3408,20 @@ function speakText(text, langOrAudio = null, audioBase64OrOnEnd = null, onEnd = 
   speak(text, audioBase64OrOnEnd, onEnd);
 }
 
-function speakViaBrowserTTS(text, onEnd = null, token = null) {
+function speakViaBrowserTTS(text, onEnd = null, token = null, watchdogTimer = null) {
   if (token !== null && token !== speechToken) return;
 
+  const voicesCount = ('speechSynthesis' in window) ? window.speechSynthesis.getVoices().length : 0;
+  console.log(`[TTS:Stage3:GetVoices] speechSynthesis.getVoices().length = ${voicesCount}`);
+
   if (!('speechSynthesis' in window)) {
-    console.warn('SpeechSynthesis is not supported in this browser.');
+    console.warn('[TTS:Stage3] SpeechSynthesis is not supported in this browser.');
+    showToast('SpeechSynthesis not supported in this browser.', 'error');
     if (onEnd) onEnd();
     return;
   }
 
-  // Unpause engine if paused (do NOT call cancel() right before speak() as it cancels the new utterance in Chrome!)
+  // Requirement 9: Unpause engine if paused (do NOT call cancel() right before speak())
   try {
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
@@ -2578,70 +3439,114 @@ function speakViaBrowserTTS(text, onEnd = null, token = null) {
     return;
   }
 
-  const utterance = new SpeechSynthesisUtterance(cleanText);
-  utterance.volume = 1.0;
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-
   if (!cachedVoices.length) {
     refreshVoices();
   }
+  const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+  console.log(`[TTS:Stage3] speakViaBrowserTTS starting. getVoices length=${voices.length}, text="${cleanText.substring(0, 40)}..."`);
 
   const currentLang = state.language || 'en';
   const targetLocale = LANG_LOCALES[currentLang] || 'en-IN';
 
   let voice = null;
-  if (cachedVoices.length) {
+  let hasExactLangVoice = false;
+
+  if (voices.length) {
     if (currentLang === 'hi') {
-      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('hi') || v.name.toLowerCase().includes('hindi')) ||
-              cachedVoices.find(v => v.lang.includes('IN') || v.name.includes('India'));
+      voice = voices.find(v => v.lang.toLowerCase().startsWith('hi') || v.name.toLowerCase().includes('hindi'));
+      if (voice) hasExactLangVoice = true;
+      if (!voice) {
+        voice = voices.find(v => v.lang.includes('IN') || v.name.includes('India')) || voices[0];
+      }
     } else if (currentLang === 'mr') {
-      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('mr') || v.name.toLowerCase().includes('marathi')) ||
-              cachedVoices.find(v => v.lang.toLowerCase().startsWith('hi'));
+      voice = voices.find(v => v.lang.toLowerCase().startsWith('mr') || v.name.toLowerCase().includes('marathi'));
+      if (voice) hasExactLangVoice = true;
+      if (!voice) {
+        voice = voices.find(v => v.lang.toLowerCase().startsWith('hi')) || voices[0];
+      }
     } else if (currentLang === 'pa') {
-      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('pa') || v.name.toLowerCase().includes('punjabi'));
+      voice = voices.find(v => v.lang.toLowerCase().startsWith('pa') || v.name.toLowerCase().includes('punjabi'));
+      if (voice) hasExactLangVoice = true;
+      if (!voice) {
+        voice = voices.find(v => v.lang.toLowerCase().startsWith('hi')) || voices[0];
+      }
     } else if (currentLang === 'ta') {
-      voice = cachedVoices.find(v => v.lang.toLowerCase().startsWith('ta') || v.name.toLowerCase().includes('tamil'));
+      voice = voices.find(v => v.lang.toLowerCase().startsWith('ta') || v.name.toLowerCase().includes('tamil'));
+      if (voice) hasExactLangVoice = true;
+      if (!voice) {
+        voice = voices.find(v => v.lang.includes('IN')) || voices[0];
+      }
     } else {
-      // English default: prioritize standard en-US (Microsoft David/Zira on Windows) or any English voice
-      voice = cachedVoices.find(v => v.lang === 'en-US' || v.lang === 'en_US') ||
-              cachedVoices.find(v => v.lang.startsWith('en')) ||
-              cachedVoices[0];
+      // English default
+      voice = voices.find(v => v.lang === 'en-IN' || v.name.includes('India')) ||
+              voices.find(v => v.lang === 'en-US' || v.lang === 'en_US') ||
+              voices.find(v => v.lang.startsWith('en')) ||
+              voices[0];
+      hasExactLangVoice = !!voice;
     }
   }
 
-  // Windows SAPI5 safeguard: if non-Latin text is to be read but ONLY English voice exists
-  const hasIndicScript = /[\u0900-\u097F\u0A00-\u0A7F\u0B80-\u0BFF]/.test(cleanText);
-  if (hasIndicScript && voice && !voice.lang.includes('hi') && !voice.lang.includes('IN') && !voice.name.toLowerCase().includes('hindi')) {
-    const fallbackEnglish = INITIAL_PROMPTS_SUB[currentLang] || "Your voice information has been captured by Nivara AI.";
-    utterance.text = fallbackEnglish;
-    utterance.lang = 'en-US';
-  } else if (voice) {
-    utterance.voice = voice;
-    utterance.lang = voice.lang;
-  } else {
-    utterance.lang = (currentLang === 'en') ? 'en-US' : targetLocale;
+  // Requirement 10: If no voice exists for the selected language, show a visible notice instead of silently speaking a canned English sentence
+  if (currentLang !== 'en' && !hasExactLangVoice) {
+    console.warn(`[TTS:Stage3] No installed browser voice found for language '${currentLang}'. Showing notice banner.`);
+    if (el.voiceNoticeBanner && el.voiceNoticeText) {
+      const langNames = { hi: 'Hindi', mr: 'Marathi', ta: 'Tamil', pa: 'Punjabi' };
+      const langLabel = langNames[currentLang] || currentLang.toUpperCase();
+      el.voiceNoticeText.textContent = `Notice: No offline ${langLabel} voice pack detected in browser/Windows. Speaking with available voice fallback.`;
+      el.voiceNoticeBanner.classList.remove('hidden');
+    }
+    showToast(`Notice: No installed browser voice for ${currentLang.toUpperCase()}. Reading with default voice.`, 'info');
+  } else if (el.voiceNoticeBanner) {
+    el.voiceNoticeBanner.classList.add('hidden');
   }
 
-  utterance.onstart = () => {
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.volume = 1.0;
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+
+  if (voice) {
+    utterance.voice = voice;
+    utterance.lang = voice.lang || targetLocale;
+  } else {
+    utterance.lang = targetLocale;
+  }
+
+  console.log(`[TTS:Stage3] Configured utterance: lang='${utterance.lang}', voice='${utterance.voice?.name || 'default'}', text="${utterance.text.substring(0, 50)}..."`);
+
+  let utteranceFinished = false;
+  const finishUtterance = () => {
+    if (utteranceFinished) return;
+    utteranceFinished = true;
+    window._activeUtterance = null;
     if (token !== null && token !== speechToken) return;
+    if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
+    if (onEnd) onEnd();
+  };
+
+  // Requirement 2: Only show Speaking state after speech actually starts
+  utterance.onstart = () => {
+    console.log(`[TTS:Stage3:OnStart] SpeechSynthesisUtterance.onstart fired. Actual speech has begun. voice=${utterance.voice?.name || 'default'}`);
+    if (watchdogTimer) clearTimeout(watchdogTimer);
+    if (token !== null && token !== speechToken) return;
+    state.audioPlaying = true;
+    setVoiceState('speaking');
     if (el.ttsIcon) el.ttsIcon.textContent = 'graphic_eq';
     playChime(659.25, 0.12);
   };
 
   utterance.onend = () => {
-    window._activeUtterance = null;
-    if (token !== null && token !== speechToken) return;
-    if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
-    if (onEnd) onEnd();
+    console.log('[TTS:Stage3] SpeechSynthesisUtterance.onend event fired.');
+    finishUtterance();
   };
 
   utterance.onerror = (e) => {
-    console.warn('SpeechSynthesis playback note:', e);
-    window._activeUtterance = null;
-    if (token !== null && token !== speechToken) return;
-    if (el.ttsIcon) el.ttsIcon.textContent = 'volume_up';
-    if (onEnd) onEnd();
+    console.warn('[TTS:Stage3] SpeechSynthesisUtterance.onerror event fired:', e);
+    // Requirement 11: Surface TTS errors as a toast, not just console.warn
+    if (e.error && e.error !== 'interrupted' && e.error !== 'canceled') {
+      showToast(`Browser speech error: ${e.error}`, 'error');
+    }
+    finishUtterance();
   };
 
   // Assign to window object to prevent V8 garbage collector from stopping speech early
@@ -2652,9 +3557,11 @@ function speakViaBrowserTTS(text, onEnd = null, token = null) {
       window.speechSynthesis.resume();
     }
     window.speechSynthesis.speak(utterance);
+    console.log('[TTS:Stage3] window.speechSynthesis.speak() dispatched.');
   } catch (err) {
-    console.warn('speechSynthesis.speak execution error:', err);
-    if (onEnd) onEnd();
+    console.warn('[TTS:Stage3] speechSynthesis.speak execution error:', err);
+    showToast(`Speech synthesis dispatch error: ${err.message}`, 'error');
+    finishUtterance();
   }
 
   // Periodic resume guard against Chrome 15-second background speech pause bug

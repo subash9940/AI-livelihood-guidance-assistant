@@ -1,0 +1,165 @@
+{
+  "_metadata": {
+    "dataset_type": "curated_sample_data",
+    "dataset_label": "Key Government Policies & Regulatory Frameworks - Delhi SC Livelihood & Skilling",
+    "region": "delhi",
+    "version": "1.0.0",
+    "last_updated": "2026-09-29",
+    "curated_by": "Nivara AI Knowledge Engineering Team for MoSJE / PM-AJAY",
+    "notice": "Official policy excerpts and operational guidelines for PM-AJAY, NSQF, and Delhi NCT vocational frameworks."
+  },
+  "policies": [
+    {
+      "id": "pol-pmajay-gia",
+      "title": "PM-AJAY (Pradhan Mantri Anusuchit Jaati Abhyuday Yojana) - Grants-in-Aid (GIA) Component Operational Guidelines",
+      "authority": "Ministry of Social Justice & Empowerment (MoSJE), Government of India",
+      "year": "2022-2026",
+      "summary": "PM-AJAY was formed by merging three erstwhile central sector schemes: Pradhan Mantri Adarsh Gram Yojana (PMAGY), Special Central Assistance to Scheduled Castes Sub Plan (SCA to SCSP), and Babu Jagjivan Ram Chhatrawas Yojana (BJRCY). The Grants-in-Aid (GIA) component specifically targets comprehensive socio-economic development of SC communities through skill development, infrastructure creation, and direct income-generating schemes.",
+      "key_provisions_sc": [
+        "100% grant assistance for market-driven NSQF skill development training courses for SC youth with mandatory placement tracking.",
+        "Monthly stipend of ₹1,500/month for day scholars and complete residential boarding for residential trainees.",
+        "Tool-kit financial assistance up to ₹10,000 - ₹15,000 provided in-kind or via DBT upon successful qualification.",
+        "Credit linkage facilitation through State Scheduled Castes Finance & Development Corporations (DSFDC in Delhi) with capital subsidies up to ₹50,000 or 50% of project cost.",
+        "Targeted convergence with Common Service Centres (CSC), Jan Shikshan Sansthans (JSS), and District Employment Exchanges."
+      ],
+      "source_url": "https://socialjustice.gov.in/schemes/pm-ajay",
+      "tags": [
+        "PM-AJAY",
+        "MoSJE",
+        "Grants-in-Aid",
+        "SC Skilling",
+        "Livelihood Roadmap",
+        "Stipend"
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "notes": "Statutory policy guidelines excerpt; requires periodic review against official gazette notifications."
+    },
+    {
+      "id": "pol-nsqf-ncrf",
+      "title": "National Skills Qualifications Framework (NSQF) & National Credit Framework (NCrF) Gazette Regulations",
+      "authority": "National Council for Vocational Education and Training (NCVET) & Ministry of Skill Development and Entrepreneurship (MSDE)",
+      "year": "2023",
+      "summary": "The National Skills Qualifications Framework organizes qualifications into a series of levels of knowledge, skills, and aptitude from Level 1 to Level 8. It enables vertical and horizontal mobility between technical/vocational education and general academic streams under NEP 2020 through the National Credit Framework.",
+      "key_provisions_sc": [
+        "Clear progression pathways from uncertified/informal work (RPL - Recognition of Prior Learning) to Level 3, Level 4 (independent technician), and Level 5+ (supervisor/entrepreneur).",
+        "Mandatory competency-based assessment and independent certification by Sector Skill Councils (SSCs) or NCVT.",
+        "Credit accumulation and transfer via the Academic Bank of Credits (ABC) / Skill India Digital Portal.",
+        "Standardized minimum wages linked to NSQF qualification levels in government procurement and private industry."
+      ],
+      "source_url": "https://ncvet.gov.in/nsqf",
+      "tags": [
+        "NSQF",
+        "NCrF",
+        "Competency Framework",
+        "Skill Certification",
+        "NCVET"
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "notes": "Statutory policy guidelines excerpt; requires periodic review against official gazette notifications."
+    },
+    {
+      "id": "pol-delhi-scsp",
+      "title": "Scheduled Caste Sub-Plan (SCSP) Strategy & Delhi State Welfare Directives",
+      "authority": "Department for the Welfare of SC/ST/OBC, Government of NCT of Delhi",
+      "year": "2024",
+      "summary": "Mandates that plan funds proportional to the SC population of NCT of Delhi (approx 16.75% as per Census) must be exclusively allocated and spent on targeted welfare, educational scholarships, modern skilling, and self-employment promotion for Scheduled Caste residents.",
+      "key_provisions_sc": [
+        "Zero tuition fees for SC students across all government ITIs, polytechnics, and DSEU community colleges in Delhi.",
+        "Special corpus funds allocated to DSFDC for low-interest micro-credit (Dilli Swarojgar Yojna).",
+        "Direct Benefit Transfer (DBT) integration with Aadhaar-linked Public Financial Management System (PFMS) to eliminate intermediaries.",
+        "Priority commercial booth / shop allotment for SC entrepreneurs in Delhi DDA and MCD commercial markets."
+      ],
+      "source_url": "https://scstwelfare.delhi.gov.in",
+      "tags": [
+        "Delhi SCSP",
+        "GNCTD",
+        "Welfare Allocation",
+        "Zero Fee ITI",
+        "DSFDC"
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "notes": "Statutory policy guidelines excerpt; requires periodic review against official gazette notifications."
+    },
+    {
+      "id": "pol-standup-india-nsfdc",
+      "title": "Credit Guarantee Scheme for Stand-Up India & NSFDC Concessional Lending Norms",
+      "authority": "Department of Financial Services, Ministry of Finance / National Credit Guarantee Trustee Company (NCGTC)",
+      "year": "2023",
+      "summary": "Establishes institutional credit access for SC, ST, and Women borrowers for greenfield enterprise setup between ₹10 Lakh and ₹1 Crore. Collateral risk is backed by the Credit Guarantee Fund for Stand-Up India (CGFSI).",
+      "key_provisions_sc": [
+        "Mandates every scheduled commercial bank branch across Delhi NCR to extend at least one loan to an SC/ST borrower.",
+        "Margin money requirement reduced from 25% down to 15% with convergence from state subsidy schemes.",
+        "No third-party collateral required up to the loan ceiling, covered by NCGTC guarantee.",
+        "Direct technical and financial handholding provided through SIDBI Stand-Up Mitra centers and lead district managers."
+      ],
+      "source_url": "https://www.standupmitra.in",
+      "tags": [
+        "Credit Guarantee",
+        "Stand-Up India",
+        "NSFDC",
+        "Greenfield Enterprise",
+        "Collateral-Free"
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "notes": "Statutory policy guidelines excerpt; requires periodic review against official gazette notifications."
+    },
+    {
+      "id": "pol-dseu-act",
+      "title": "Delhi Skill and Entrepreneurship University Act & Livelihood Incubation Policy",
+      "authority": "Legislative Assembly of National Capital Territory of Delhi",
+      "year": "2020",
+      "summary": "Established DSEU to deliver world-class skill education, bridge industry-academia divide, and nurture entrepreneurial mindset specifically focusing on socio-economically marginalized youth in Delhi.",
+      "key_provisions_sc": [
+        "Dual vocational model with 50% classroom learning and 50% paid on-the-job training (OJT) in Delhi industrial clusters.",
+        "Reserved seats and 100% financial assistance for low-income SC trainees.",
+        "Incubation support, seed funding, and business mentorship for graduates starting self-employment ventures.",
+        "Apprenticeship contracts under NAPS (National Apprenticeship Promotion Scheme) with monthly stipends."
+      ],
+      "source_url": "https://dseu.ac.in/overview",
+      "tags": [
+        "DSEU",
+        "University Skilling",
+        "Apprenticeship",
+        "On-the-Job Training",
+        "Incubation"
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "notes": "Statutory policy guidelines excerpt; requires periodic review against official gazette notifications."
+    },
+    {
+      "id": "pol-ncs-guidelines",
+      "title": "National Career Service (NCS) Mission & Model Career Centre Framework",
+      "authority": "Ministry of Labour & Employment (MoLE), Government of India",
+      "year": "2022-2025",
+      "summary": "Transformation of traditional National Employment Exchanges into digital, counseling-driven Model Career Centers (MCC). Provides nationwide job matching, local hiring drives, career aptitude testing, and vocational guidance.",
+      "key_provisions_sc": [
+        "Free registration and priority career counseling for SC/ST job seekers at Delhi Model Career Centers.",
+        "Organized Rozgar Melas (job fairs) in Delhi industrial hubs (Okhla, Mayapuri, Narela, Patparganj) with on-the-spot interviews.",
+        "Integration of Aadhaar, DigiLocker, and Skill India credentials to verify qualifications instantly.",
+        "Specialized modules on soft skills, digital literacy, and interview preparation for first-generation job seekers."
+      ],
+      "source_url": "https://www.ncs.gov.in",
+      "tags": [
+        "NCS",
+        "Job Exchange",
+        "Rozgar Mela",
+        "Career Counseling",
+        "Model Career Center"
+      ],
+      "verification_status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "notes": "Statutory policy guidelines excerpt; requires periodic review against official gazette notifications."
+    }
+  ]
+}

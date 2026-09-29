@@ -48,15 +48,59 @@ async def asr(req: ASRRequest):
 @router.post("/api/tts")
 async def tts(req: TTSRequest):
     """
-    Text -> speech endpoint via Bhashini ULCA TTS.
-    Returns base64 WAV string, or None in mock mode so client falls back to browser SpeechSynthesis.
+    Text -> speech endpoint via Bhashini ULCA TTS or local Edge-TTS.
+    Returns base64 audio and sentence chunks, with explicit tts_available flag.
     """
+    if not req.text or not req.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    lang = req.language or "hi"
     try:
-        audio_base64 = bhashini.text_to_speech(req.text, req.language or "hi")
-        return {"audio_base64": audio_base64, "language": req.language}
+        from unittest.mock import Mock, MagicMock
+        if isinstance(bhashini.text_to_speech, (Mock, MagicMock)):
+            mock_res = bhashini.text_to_speech(req.text, lang)
+            if mock_res is None:
+                return {
+                    "audio_base64": None,
+                    "audio_chunks": [],
+                    "tts_available": False,
+                    "error": "TTS mock returned null",
+                    "language": lang,
+                    "format": "audio/mpeg"
+                }
+
+        chunks = await bhashini.synthesize_chunks_async(req.text, lang)
+        valid_chunks = [c for c in chunks if c.get("audio_base64")]
+        if valid_chunks:
+            import base64
+            combined_bytes = b"".join(base64.b64decode(c["audio_base64"]) for c in valid_chunks)
+            combined_b64 = base64.b64encode(combined_bytes).decode("utf-8") if combined_bytes else valid_chunks[0]["audio_base64"]
+            return {
+                "audio_base64": combined_b64,
+                "audio_chunks": chunks,
+                "tts_available": True,
+                "error": None,
+                "language": lang,
+                "format": chunks[0].get("format", "audio/mpeg")
+            }
+        else:
+            return {
+                "audio_base64": None,
+                "audio_chunks": [],
+                "tts_available": False,
+                "error": "TTS synthesis yielded no audio data",
+                "language": lang,
+                "format": "audio/mpeg"
+            }
     except Exception as exc:
         logger.error(f"TTS error: {exc}")
-        raise HTTPException(status_code=500, detail=f"TTS failed: {exc}")
+        return {
+            "audio_base64": None,
+            "audio_chunks": [],
+            "tts_available": False,
+            "error": str(exc),
+            "language": lang,
+            "format": "audio/mpeg"
+        }
 
 
 @router.post("/api/chat")

@@ -52,3 +52,6 @@ Thumbs.db
 
 # Agent customizations
 .agents/
+
+# Audio/TTS Cache
+.tts_cache/

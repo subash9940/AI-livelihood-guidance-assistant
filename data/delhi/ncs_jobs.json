@@ -1,0 +1,777 @@
+{
+  "_metadata": {
+    "dataset_type": "curated_sample_data",
+    "dataset_label": "National Career Service (NCS) Sample Job Registry - Delhi Region",
+    "region": "delhi",
+    "version": "1.0.0",
+    "last_updated": "2026-09-29",
+    "curated_by": "Nivara AI Knowledge Engineering Team",
+    "total_roles": 32,
+    "notice": "Sample data modeled after National Career Service (ncs.gov.in) and Delhi Employment Exchange vacancies."
+  },
+  "jobs": [
+    {
+      "id": "ncs-del-01",
+      "job_role": "Solar PV Installer (Suryamitra)",
+      "nsqf_level": 4,
+      "sector": "Green Jobs & Renewable Energy",
+      "required_skills": [
+        "Solar Panel Mounting",
+        "Inverter Wiring",
+        "Grid Synchronization",
+        "Electrical Safety Protocols",
+        "Roof Load Assessment"
+      ],
+      "avg_wage_range": "₹18,000 - ₹26,000 / month",
+      "delhi_districts_hiring": [
+        "South Delhi (Okhla)",
+        "North West Delhi (Bawana)",
+        "North Delhi (Narela)",
+        "South West Delhi (Dwarka)"
+      ],
+      "minimum_education": "10th Standard + ITI / Suryamitra Certified",
+      "experience_required": "0 - 1 year (Freshers welcome with certification)",
+      "vacancies_sample": 140,
+      "ncs_portal_code": "NCS/DEL/2026/SOL-104",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-02",
+      "job_role": "Two-Wheeler & EV Service Technician",
+      "nsqf_level": 4,
+      "sector": "Automotive & Electric Mobility",
+      "required_skills": [
+        "Electric Motor Diagnostics",
+        "Lithium Battery Inspection",
+        "Brake & Suspension Overhaul",
+        "Wiring Harness Testing",
+        "Digital Multimeter Usage"
+      ],
+      "avg_wage_range": "₹19,000 - ₹28,000 / month",
+      "delhi_districts_hiring": [
+        "West Delhi (Mayapuri)",
+        "Central Delhi (Jhandewalan)",
+        "East Delhi (Patparganj)",
+        "South East Delhi (Mohan Cooperative)"
+      ],
+      "minimum_education": "10th Standard / ITI Motor Mechanic",
+      "experience_required": "0 - 2 years",
+      "vacancies_sample": 210,
+      "ncs_portal_code": "NCS/DEL/2026/AUT-211",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-03",
+      "job_role": "General Duty Assistant (GDA) - Hospital Healthcare",
+      "nsqf_level": 4,
+      "sector": "Healthcare & Allied Services",
+      "required_skills": [
+        "Patient Bedside Care",
+        "Vital Signs Monitoring (BP/Pulse/SpO2)",
+        "Infection Control & Hygiene",
+        "Patient Mobility Assistance",
+        "First Aid"
+      ],
+      "avg_wage_range": "₹17,000 - ₹24,000 / month",
+      "delhi_districts_hiring": [
+        "Central Delhi (Delhi Gate / LNJP Area)",
+        "South Delhi (Saket / AIIMS corridor)",
+        "East Delhi (Dilshad Garden)",
+        "North West Delhi (Rohini)"
+      ],
+      "minimum_education": "10th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 320,
+      "ncs_portal_code": "NCS/DEL/2026/HSC-510",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-04",
+      "job_role": "Domestic Data Entry Operator (DDEO) / CSC Operator",
+      "nsqf_level": 4,
+      "sector": "IT-ITeS & Citizen Services",
+      "required_skills": [
+        "Typing Speed 30+ wpm (Hindi/English)",
+        "MS Excel & Google Sheets",
+        "e-District Delhi Portal Navigation",
+        "Document Scanning & OCR",
+        "Citizen Customer Service"
+      ],
+      "avg_wage_range": "₹16,500 - ₹22,000 / month",
+      "delhi_districts_hiring": [
+        "Central Delhi (Connaught Place)",
+        "West Delhi (Janakpuri)",
+        "North East Delhi (Shahdara)",
+        "South West Delhi (Najafgarh)"
+      ],
+      "minimum_education": "10th Standard / 12th Standard",
+      "experience_required": "Fresher",
+      "vacancies_sample": 280,
+      "ncs_portal_code": "NCS/DEL/2026/IT-221",
+      "qp_code": "none"
+    },
+    {
+      "id": "ncs-del-05",
+      "job_role": "Self-Employed Tailor & Apparel Pattern Maker",
+      "nsqf_level": 4,
+      "sector": "Apparel, Made-Ups & Home Furnishing",
+      "required_skills": [
+        "Garment Measurement & Cutting",
+        "Industrial Sewing Machine Operation",
+        "Pattern Drafting",
+        "Button Holing & Finishing",
+        "Basic Quality Inspection"
+      ],
+      "avg_wage_range": "₹16,000 - ₹25,000 / month (or Piece-rate ₹20,000+)",
+      "delhi_districts_hiring": [
+        "South East Delhi (Okhla Phase I & II)",
+        "North East Delhi (Gandhi Nagar)",
+        "West Delhi (Kirti Nagar)",
+        "Central Delhi (Karol Bagh)"
+      ],
+      "minimum_education": "8th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 450,
+      "ncs_portal_code": "NCS/DEL/2026/APP-194",
+      "qp_code": "AMH/Q1947"
+    },
+    {
+      "id": "ncs-del-06",
+      "job_role": "Food Processing & Preservation Technician",
+      "nsqf_level": 4,
+      "sector": "Food Industry Capacity & Skill (FICSI)",
+      "required_skills": [
+        "Food Safety & FSSAI Standards",
+        "Pickle & Sauce Formulation",
+        "Hermetic Packaging & Vacuum Sealing",
+        "Cold Storage Maintenance",
+        "Ingredient Sorting"
+      ],
+      "avg_wage_range": "₹16,000 - ₹23,000 / month",
+      "delhi_districts_hiring": [
+        "North Delhi (Narela Food Park)",
+        "North West Delhi (Bawana Industrial Area)",
+        "East Delhi (Patparganj)",
+        "South West Delhi (Tikri Kalan)"
+      ],
+      "minimum_education": "8th Standard / 10th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 190,
+      "ncs_portal_code": "NCS/DEL/2026/FIC-010",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-07",
+      "job_role": "Field Technician - Wireman & Domestic Electrical Solutions",
+      "nsqf_level": 4,
+      "sector": "Electronics & Power Distribution",
+      "required_skills": [
+        "Concealed House Wiring",
+        "MCB & Distribution Box Assembly",
+        "Earthing & Surge Protection",
+        "Fault Troubleshooting with Multimeter",
+        "Appliance Maintenance"
+      ],
+      "avg_wage_range": "₹18,500 - ₹27,000 / month",
+      "delhi_districts_hiring": [
+        "West Delhi (Naraina)",
+        "Central Delhi (Daryaganj)",
+        "East Delhi (Laxmi Nagar)",
+        "South Delhi (Badarpur)"
+      ],
+      "minimum_education": "10th Standard / ITI Electrician",
+      "experience_required": "0 - 2 years",
+      "vacancies_sample": 260,
+      "ncs_portal_code": "NCS/DEL/2026/ELE-301",
+      "qp_code": "CON/Q0602"
+    },
+    {
+      "id": "ncs-del-08",
+      "job_role": "Warehouse & Logistics Inventory Associate",
+      "nsqf_level": 3,
+      "sector": "Logistics & Supply Chain",
+      "required_skills": [
+        "Barcode Scanner Handling",
+        "Inbound Stock Verification",
+        "Pick & Pack Operations",
+        "Warehouse Management System (WMS) Entry",
+        "Forklift Safety Basics"
+      ],
+      "avg_wage_range": "₹17,000 - ₹23,500 / month",
+      "delhi_districts_hiring": [
+        "South West Delhi (Bijwasan / Kapashera)",
+        "North Delhi (Alipur)",
+        "North West Delhi (Sanjay Gandhi Transport Nagar)",
+        "West Delhi (Tikri Border)"
+      ],
+      "minimum_education": "10th Standard",
+      "experience_required": "Fresher",
+      "vacancies_sample": 380,
+      "ncs_portal_code": "NCS/DEL/2026/LOG-118",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-09",
+      "job_role": "E-Commerce Delivery Associate (Two-Wheeler / EV)",
+      "nsqf_level": 3,
+      "sector": "Logistics & Last-Mile Delivery",
+      "required_skills": [
+        "Route Navigation using GPS Maps",
+        "Customer Communication & Cash-on-Delivery Handling",
+        "Safe City Driving",
+        "EV Battery Swap Procedures"
+      ],
+      "avg_wage_range": "₹20,000 - ₹32,000 / month (incentive linked)",
+      "delhi_districts_hiring": [
+        "All Delhi Districts (Connaught Place, Saket, Rohini, Laxmi Nagar, Dwarka, Janakpuri)"
+      ],
+      "minimum_education": "8th Standard + Valid Driving License",
+      "experience_required": "Fresher",
+      "vacancies_sample": 600,
+      "ncs_portal_code": "NCS/DEL/2026/LOG-092",
+      "qp_code": "ASC/Q9702"
+    },
+    {
+      "id": "ncs-del-10",
+      "job_role": "Retail Sales Associate (Fashion & Electronics)",
+      "nsqf_level": 4,
+      "sector": "Retail & Customer Service",
+      "required_skills": [
+        "Point of Sale (POS) Billing",
+        "Inventory Display & Visual Merchandising",
+        "Bilingual Product Explanation",
+        "Customer Grievance Resolution"
+      ],
+      "avg_wage_range": "₹17,500 - ₹24,000 / month",
+      "delhi_districts_hiring": [
+        "New Delhi (Connaught Place / Khan Market)",
+        "South Delhi (Select Citywalk Saket / Vasant Kunj)",
+        "West Delhi (Rajouri Garden)",
+        "East Delhi (V3S Mall Laxmi Nagar)"
+      ],
+      "minimum_education": "10th Standard / 12th Standard",
+      "experience_required": "Fresher / 6 months",
+      "vacancies_sample": 310,
+      "ncs_portal_code": "NCS/DEL/2026/RET-401",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-11",
+      "job_role": "Assistant Beauty Therapist & Hair Stylist",
+      "nsqf_level": 3,
+      "sector": "Beauty & Wellness",
+      "required_skills": [
+        "Basic Skincare & Facial Massage",
+        "Hair Cutting & Styling",
+        "Waxing, Manicure & Pedicure",
+        "Hygiene & Sterilization Standards"
+      ],
+      "avg_wage_range": "₹15,000 - ₹22,000 / month + tips",
+      "delhi_districts_hiring": [
+        "South Delhi (Greater Kailash / Lajpat Nagar)",
+        "West Delhi (Janakpuri)",
+        "North West Delhi (Pitampura)",
+        "Central Delhi (Karol Bagh)"
+      ],
+      "minimum_education": "8th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 175,
+      "ncs_portal_code": "NCS/DEL/2026/BW-204",
+      "qp_code": "BWS/Q0102"
+    },
+    {
+      "id": "ncs-del-12",
+      "job_role": "Plumbing General Technician & Pipe Fitter",
+      "nsqf_level": 4,
+      "sector": "Plumbing & Construction Utilities",
+      "required_skills": [
+        "CPVC / GI Pipe Laying",
+        "Sanitaryware Fixture Installation",
+        "Leakage Detection & Pressure Testing",
+        "Water Tank Plumbing & Motor Installation"
+      ],
+      "avg_wage_range": "₹18,000 - ₹26,000 / month",
+      "delhi_districts_hiring": [
+        "South Delhi (Chattarpur)",
+        "North West Delhi (Rohini)",
+        "East Delhi (Mayur Vihar)",
+        "West Delhi (Dwarka Mor)"
+      ],
+      "minimum_education": "8th Standard / ITI Plumber",
+      "experience_required": "0 - 2 years",
+      "vacancies_sample": 220,
+      "ncs_portal_code": "NCS/DEL/2026/PLM-101",
+      "qp_code": "NARQ40040"
+    },
+    {
+      "id": "ncs-del-13",
+      "job_role": "CNC Milling & Turning Operator",
+      "nsqf_level": 4,
+      "sector": "Capital Goods & Precision Engineering",
+      "required_skills": [
+        "G-Code & M-Code Basics",
+        "Vernier Caliper & Micrometer Measurement",
+        "Component Fixturing & Tool Setting",
+        "Blueprint Reading"
+      ],
+      "avg_wage_range": "₹20,000 - ₹29,000 / month",
+      "delhi_districts_hiring": [
+        "West Delhi (Mayapuri Industrial Phase I & II)",
+        "South East Delhi (Okhla Industrial Area)",
+        "North West Delhi (Mangolpuri)",
+        "North Delhi (Wazirpur)"
+      ],
+      "minimum_education": "10th Standard + ITI Machinist / Turner",
+      "experience_required": "1 - 2 years",
+      "vacancies_sample": 160,
+      "ncs_portal_code": "NCS/DEL/2026/CG-302",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-14",
+      "job_role": "Home Health Aide & Elderly Companion",
+      "nsqf_level": 3,
+      "sector": "Healthcare & Elderly Care",
+      "required_skills": [
+        "Assisting with Daily Living Activities",
+        "Medication Reminders",
+        "Basic Blood Sugar & BP Checks",
+        "Empathetic Communication",
+        "Emergency Response Protocol"
+      ],
+      "avg_wage_range": "₹18,000 - ₹25,000 / month (with room/board options)",
+      "delhi_districts_hiring": [
+        "South Delhi (Defence Colony / Hauz Khas)",
+        "South West Delhi (Vasant Vihar)",
+        "East Delhi (Preet Vihar)",
+        "Central Delhi (Civil Lines)"
+      ],
+      "minimum_education": "8th Standard",
+      "experience_required": "Fresher with HSSC certification",
+      "vacancies_sample": 290,
+      "ncs_portal_code": "NCS/DEL/2026/HSC-312",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-15",
+      "job_role": "Commercial Kitchen Assistant & Commis Chef",
+      "nsqf_level": 4,
+      "sector": "Tourism & Hospitality",
+      "required_skills": [
+        "Culinary Mise-en-place",
+        "Vegetable & Meat Cutting Techniques",
+        "Kitchen Hygiene & HACCP",
+        "Tandoor & Curry Station Basics"
+      ],
+      "avg_wage_range": "₹17,000 - ₹24,000 / month + meals",
+      "delhi_districts_hiring": [
+        "Central Delhi (Connaught Place / Paharganj)",
+        "South Delhi (Aerocity Hotel Hub)",
+        "West Delhi (Rajouri Garden)",
+        "New Delhi (Chanakyapuri)"
+      ],
+      "minimum_education": "10th Standard / Hotel Management Certificate",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 240,
+      "ncs_portal_code": "NCS/DEL/2026/TH-405",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-16",
+      "job_role": "Smartphone & Tablet Hardware Repair Technician",
+      "nsqf_level": 4,
+      "sector": "Electronics System Design & Manufacturing (ESDM)",
+      "required_skills": [
+        "SMD Rework Station Soldering",
+        "Display & Touch Screen Replacement",
+        "Charging Port & Battery Replacement",
+        "Software Flashing & OS Recovery"
+      ],
+      "avg_wage_range": "₹18,000 - ₹27,000 / month",
+      "delhi_districts_hiring": [
+        "Central Delhi (Gaffar Market Karol Bagh)",
+        "East Delhi (Laxmi Nagar Vikas Marg)",
+        "South Delhi (Nehru Place IT Market)",
+        "West Delhi (Janakpuri District Center)"
+      ],
+      "minimum_education": "10th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 185,
+      "ncs_portal_code": "NCS/DEL/2026/ELE-412",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-17",
+      "job_role": "Automated Assembly Line Operator (Electronics)",
+      "nsqf_level": 3,
+      "sector": "Electronics & Hardware Assembly",
+      "required_skills": [
+        "Through-Hole Component Insertion",
+        "Visual Inspection for Solder Bridges",
+        "ESD Wrist Strap Protocol",
+        "Pneumatic Screw Driver Usage"
+      ],
+      "avg_wage_range": "₹16,500 - ₹21,500 / month",
+      "delhi_districts_hiring": [
+        "North Delhi (Narela Industrial Area)",
+        "North West Delhi (Bawana Sector 4)",
+        "South East Delhi (Okhla Phase III)",
+        "East Delhi (Patparganj)"
+      ],
+      "minimum_education": "10th Standard",
+      "experience_required": "Fresher",
+      "vacancies_sample": 230,
+      "ncs_portal_code": "NCS/DEL/2026/ELE-208",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-18",
+      "job_role": "Refrigeration & Air Conditioning (RAC) Technician",
+      "nsqf_level": 4,
+      "sector": "Electronics & Capital Maintenance",
+      "required_skills": [
+        "Split & Inverter AC Installation",
+        "Refrigerant Gas Charging (R32/R410A)",
+        "Copper Pipe Brazing",
+        "Compressor & PCB Troubleshooting"
+      ],
+      "avg_wage_range": "₹20,000 - ₹30,000 / month",
+      "delhi_districts_hiring": [
+        "All Delhi Districts (High demand in summer months across NCR)"
+      ],
+      "minimum_education": "10th Standard / ITI RAC",
+      "experience_required": "1 - 2 years",
+      "vacancies_sample": 340,
+      "ncs_portal_code": "NCS/DEL/2026/ELE-450",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-19",
+      "job_role": "Security Guard & Access Control Officer",
+      "nsqf_level": 3,
+      "sector": "Private Security Services (MEPSC)",
+      "required_skills": [
+        "Visitor Log & Register Management",
+        "CCTV Monitor Observation",
+        "Fire Extinguisher Operation",
+        "Crowd & Gate Control",
+        "PSARA Norms"
+      ],
+      "avg_wage_range": "₹16,000 - ₹21,000 / month",
+      "delhi_districts_hiring": [
+        "South Delhi (Nehru Place / Saket)",
+        "Central Delhi (Barakhamba / ITO)",
+        "North West Delhi (Netaji Subhash Place)",
+        "East Delhi (Karkardooma)"
+      ],
+      "minimum_education": "8th Standard / 10th Standard",
+      "experience_required": "Fresher with PSARA Badge",
+      "vacancies_sample": 500,
+      "ncs_portal_code": "NCS/DEL/2026/SEC-102",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-20",
+      "job_role": "Sewing Machine Operator (Export Garment Factory)",
+      "nsqf_level": 3,
+      "sector": "Apparel, Made-Ups & Home Furnishing",
+      "required_skills": [
+        "Single Needle Lockstitch (SNLS)",
+        "Overlock (5-thread) Machine",
+        "Collar & Cuff Attaching",
+        "Workplace Safety & Piece Tracking"
+      ],
+      "avg_wage_range": "₹15,500 - ₹22,000 / month",
+      "delhi_districts_hiring": [
+        "South East Delhi (Okhla Industrial Area)",
+        "North East Delhi (Seelampur / Gandhi Nagar)",
+        "West Delhi (Naraina Industrial Phase I)"
+      ],
+      "minimum_education": "None / 8th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 520,
+      "ncs_portal_code": "NCS/DEL/2026/APP-102",
+      "qp_code": "AMH/Q0305"
+    },
+    {
+      "id": "ncs-del-21",
+      "job_role": "Dairy Products Processing Associate",
+      "nsqf_level": 3,
+      "sector": "Food Industry Capacity & Skill (FICSI)",
+      "required_skills": [
+        "Milk Testing (Fat & SNF)",
+        "Pasteurization Monitoring",
+        "Paneer & Ghee Production",
+        "Sanitization of Dairy Pipes (CIP System)"
+      ],
+      "avg_wage_range": "₹16,000 - ₹22,500 / month",
+      "delhi_districts_hiring": [
+        "North Delhi (Narela)",
+        "South West Delhi (Najafgarh Rural)",
+        "North West Delhi (Kanjhawala)",
+        "East Delhi (Ghazipur Dairy Farm)"
+      ],
+      "minimum_education": "8th Standard",
+      "experience_required": "Fresher",
+      "vacancies_sample": 110,
+      "ncs_portal_code": "NCS/DEL/2026/FIC-204",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-22",
+      "job_role": "EV Charging Station Attendant & Maintenance Junior",
+      "nsqf_level": 4,
+      "sector": "Green Jobs / Electric Mobility",
+      "required_skills": [
+        "CCS2 / Type-2 Charging Connector Protocol",
+        "Station Billing & RFID Validation",
+        "High Voltage Safety Standards",
+        "Basic Cable Inspection"
+      ],
+      "avg_wage_range": "₹17,500 - ₹24,000 / month",
+      "delhi_districts_hiring": [
+        "New Delhi (NDMC EV Hubs)",
+        "South Delhi (Kashmere Gate / DMRC Metro Stations)",
+        "West Delhi (Janakpuri Metro)",
+        "East Delhi (Anand Vihar ISBT)"
+      ],
+      "minimum_education": "10th Standard + Electrical Certificate",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 130,
+      "ncs_portal_code": "NCS/DEL/2026/EV-108",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-23",
+      "job_role": "Junior CAD Draughtsman (Mechanical & Architectural)",
+      "nsqf_level": 5,
+      "sector": "Construction & Engineering Services",
+      "required_skills": [
+        "AutoCAD 2D Drafting",
+        "Orthographic Projections",
+        "Dimensioning & Tolerance Standards",
+        "Municipal Plan Layouts for Delhi MCD"
+      ],
+      "avg_wage_range": "₹22,000 - ₹32,000 / month",
+      "delhi_districts_hiring": [
+        "South Delhi (Bhikaji Cama Place)",
+        "Central Delhi (ITO)",
+        "West Delhi (Janakpuri)",
+        "North West Delhi (Netaji Subhash Place)"
+      ],
+      "minimum_education": "10th Standard + ITI Draughtsman / Diploma",
+      "experience_required": "1 year",
+      "vacancies_sample": 95,
+      "ncs_portal_code": "NCS/DEL/2026/CON-501",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-24",
+      "job_role": "Bakery & Confectionery Specialist",
+      "nsqf_level": 4,
+      "sector": "Food Industry Capacity & Skill (FICSI)",
+      "required_skills": [
+        "Oven Temperature Calibration",
+        "Dough Kneading & Proofing",
+        "Cake Decoration & Icing",
+        "Packaging & Shelf-Life Labeling"
+      ],
+      "avg_wage_range": "₹17,000 - ₹25,000 / month",
+      "delhi_districts_hiring": [
+        "West Delhi (Kirti Nagar / Punjabi Bagh)",
+        "South Delhi (Hauz Khas Village / Shahpur Jat)",
+        "Central Delhi (Connaught Place)"
+      ],
+      "minimum_education": "8th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 145,
+      "ncs_portal_code": "NCS/DEL/2026/FIC-401",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-25",
+      "job_role": "Customer Relationship Tele-Executive (Hindi / English / Regional)",
+      "nsqf_level": 4,
+      "sector": "IT-ITeS & BPO",
+      "required_skills": [
+        "Clear Voice Diction & Active Listening",
+        "CRM Software Logging",
+        "Inbound Call Query Resolution",
+        "Basic Computer Troubleshooting"
+      ],
+      "avg_wage_range": "₹18,000 - ₹26,000 / month",
+      "delhi_districts_hiring": [
+        "West Delhi (Kirti Nagar / Moti Nagar)",
+        "South East Delhi (Mohan Cooperative)",
+        "Central Delhi (Jhandewalan)",
+        "East Delhi (Patparganj)"
+      ],
+      "minimum_education": "12th Standard",
+      "experience_required": "Fresher",
+      "vacancies_sample": 410,
+      "ncs_portal_code": "NCS/DEL/2026/BPO-201",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-26",
+      "job_role": "Automotive Welder & Sheet Metal Fabricator",
+      "nsqf_level": 3,
+      "sector": "Automotive & Manufacturing",
+      "required_skills": [
+        "MIG / MAG Welding",
+        "Spot Welding of Chassis",
+        "Grinding & Burr Removal",
+        "Personal Protective Equipment Compliance"
+      ],
+      "avg_wage_range": "₹18,500 - ₹26,000 / month",
+      "delhi_districts_hiring": [
+        "West Delhi (Mayapuri Phase I)",
+        "North West Delhi (Bawana Industrial Area)",
+        "North Delhi (Narela Sector 5)"
+      ],
+      "minimum_education": "8th Standard / ITI Welder",
+      "experience_required": "1 year",
+      "vacancies_sample": 170,
+      "ncs_portal_code": "NCS/DEL/2026/AUT-132",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-27",
+      "job_role": "Urban Micro-Irrigation & Hydroponic Greenhouse Technician",
+      "nsqf_level": 4,
+      "sector": "Agriculture & Green Skilling",
+      "required_skills": [
+        "Drip Line & Emitter Installation",
+        "Nutrient Solution pH & EC Monitoring",
+        "Solar Water Pump Maintenance",
+        "Greenhouse Climate Regulation"
+      ],
+      "avg_wage_range": "₹18,000 - ₹25,000 / month",
+      "delhi_districts_hiring": [
+        "South West Delhi (Najafgarh / Chhawla Farmhouses)",
+        "North Delhi (Bakhtawarpur / Alipur)",
+        "South Delhi (Chattarpur Green Belts)"
+      ],
+      "minimum_education": "10th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 80,
+      "ncs_portal_code": "NCS/DEL/2026/AGR-402",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-28",
+      "job_role": "Solar PV Rooftop Sales & Site Surveyor",
+      "nsqf_level": 4,
+      "sector": "Green Jobs & Renewable Energy",
+      "required_skills": [
+        "Shadow Analysis using Compass & App",
+        "Client Electricity Bill Assessment",
+        "Consumer Subsidy Guidance under PM Surya Ghar",
+        "Quotation Preparation"
+      ],
+      "avg_wage_range": "₹20,000 - ₹30,000 / month + commission",
+      "delhi_districts_hiring": [
+        "All Delhi Districts (DISCOM vendor offices in Janakpuri, Laxmi Nagar, Rohini, Saket)"
+      ],
+      "minimum_education": "12th Standard / Diploma",
+      "experience_required": "Fresher / 1 year",
+      "vacancies_sample": 160,
+      "ncs_portal_code": "NCS/DEL/2026/SOL-202",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-29",
+      "job_role": "Leather Goods Craftsman & Footwear Pattern Maker",
+      "nsqf_level": 4,
+      "sector": "Leather & Handicrafts Sector Skill Council (LSSC)",
+      "required_skills": [
+        "Leather Skiving & Clicking",
+        "Sole Stitching & Bonding",
+        "Upper Assembly & Finishing",
+        "Safety Footwear Standards"
+      ],
+      "avg_wage_range": "₹17,000 - ₹24,000 / month",
+      "delhi_districts_hiring": [
+        "West Delhi (Mayapuri / Khyala Industrial clusters)",
+        "North Delhi (Wazirpur)",
+        "Central Delhi (Nabi Karim)"
+      ],
+      "minimum_education": "None / 8th Standard",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 125,
+      "ncs_portal_code": "NCS/DEL/2026/LEA-104",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-30",
+      "job_role": "Medical Lab Technician Assistant (Phlebotomist)",
+      "nsqf_level": 4,
+      "sector": "Healthcare & Diagnostics",
+      "required_skills": [
+        "Venipuncture & Blood Sample Collection",
+        "Vacutainer Tube Labeling & Centrifuging",
+        "Biomedical Waste Segregation (BMW Rules)",
+        "Patient Reassurance"
+      ],
+      "avg_wage_range": "₹18,500 - ₹26,500 / month",
+      "delhi_districts_hiring": [
+        "Central Delhi (Pusa Road / Daryaganj)",
+        "South Delhi (Kailash Colony)",
+        "West Delhi (Punjabi Bagh)",
+        "East Delhi (Swasthya Vihar)"
+      ],
+      "minimum_education": "10th Standard / 12th Science / CMLT",
+      "experience_required": "0 - 1 year",
+      "vacancies_sample": 210,
+      "ncs_portal_code": "NCS/DEL/2026/HSC-420",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-31",
+      "job_role": "Commercial Kitchen Food Safety & Hygiene Auditor",
+      "nsqf_level": 5,
+      "sector": "Food Industry Capacity & Skill (FICSI)",
+      "required_skills": [
+        "FSSAI Schedule 4 Checklist Auditing",
+        "Swab Testing & Temperature Logging",
+        "Pest Control Verification",
+        "Food Handler Health Card Tracking"
+      ],
+      "avg_wage_range": "₹22,000 - ₹30,000 / month",
+      "delhi_districts_hiring": [
+        "South Delhi (Aerocity)",
+        "Central Delhi (Connaught Place)",
+        "West Delhi (Rajouri Garden)"
+      ],
+      "minimum_education": "12th Standard / Diploma Food Science",
+      "experience_required": "1 year",
+      "vacancies_sample": 75,
+      "ncs_portal_code": "NCS/DEL/2026/FIC-501",
+      "qp_code": null
+    },
+    {
+      "id": "ncs-del-32",
+      "job_role": "Community Health Facilitator & ASHA / Anganwadi Associate",
+      "nsqf_level": 3,
+      "sector": "Healthcare & Social Welfare",
+      "required_skills": [
+        "Maternal & Child Health Counseling",
+        "Immunization Schedule Tracking",
+        "Nutrition Demonstration",
+        "Ayushman Bharat / e-Sanjeevani Teleconsultation Assistance"
+      ],
+      "avg_wage_range": "₹14,000 - ₹19,000 / month (honorarium + government incentives)",
+      "delhi_districts_hiring": [
+        "North East Delhi (Mustafabad / Seelampur)",
+        "North West Delhi (Bawana / Narela JJ clusters)",
+        "South East Delhi (Madanpur Khadar)",
+        "East Delhi (Trilokpuri)"
+      ],
+      "minimum_education": "8th Standard / 10th Standard",
+      "experience_required": "Community resident",
+      "vacancies_sample": 350,
+      "ncs_portal_code": "NCS/DEL/2026/HSC-105",
+      "qp_code": null
+    }
+  ]
+}
