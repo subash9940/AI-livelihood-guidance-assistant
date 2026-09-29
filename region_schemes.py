@@ -133,6 +133,27 @@ _DISTRICT_TO_STATE = {
     "aurangabad": "maharashtra",
     "delhi": "delhi",
     "new delhi": "delhi",
+    "central delhi": "delhi",
+    "east delhi": "delhi",
+    "north delhi": "delhi",
+    "north east delhi": "delhi",
+    "north west delhi": "delhi",
+    "shahdara": "delhi",
+    "south delhi": "delhi",
+    "south east delhi": "delhi",
+    "south west delhi": "delhi",
+    "west delhi": "delhi",
+    "nct of delhi": "delhi",
+    "nct delhi": "delhi",
+    "delhi nct": "delhi",
+    "okhla": "delhi",
+    "rohini": "delhi",
+    "saket": "delhi",
+    "dwarka": "delhi",
+    "narela": "delhi",
+    "mayur vihar": "delhi",
+    "seelampur": "delhi",
+    "pusa": "delhi",
     "madurai": "tamil nadu",
     "chennai": "tamil nadu",
     "coimbatore": "tamil nadu",
@@ -181,11 +202,11 @@ def get_regional_schemes(state_or_location: Optional[str]) -> List[Dict[str, Any
     res = []
     for s in found:
         item = dict(s)
-        item["verification_status"] = "unverified"
-        item["last_verified"] = None
-        item["verified_by"] = None
+        item["verification_status"] = s.get("verification_status") or "unverified"
+        item["last_verified"] = s.get("last_verified")
+        item["verified_by"] = s.get("verified_by")
         item["source_url"] = item.get("source_url") or "https://socialjustice.gov.in"
-        item["notes"] = "Sample data - verify on official site"
+        item["notes"] = s.get("notes") or "Sample data - verify on official site"
         res.append(item)
     return res
 
@@ -198,8 +219,15 @@ def get_schemes_for_profile(profile: Optional[Dict[str, Any]]) -> List[Dict[str,
     if not profile or not isinstance(profile, dict):
         return []
 
-    # Check existing state or location field
-    location_val = profile.get("state") or profile.get("location")
+    # Check existing state, location, district, or region field
+    location_val = (
+        profile.get("state")
+        or profile.get("location")
+        or profile.get("district")
+        or profile.get("region")
+    )
+    if not location_val:
+        location_val = "Delhi"
     return get_regional_schemes(location_val)
 
 def get_canonical_state(state_or_location: Optional[str]) -> Optional[str]:
