@@ -324,6 +324,20 @@ PENDING_APPLICATIONS: List[Dict[str, Any]] = [
         "status": "Awaiting Seat Confirmation",
         "documents_status": "ITI Certificate Verified, Aptitude Test Passed (82%)",
         "recommended_action": "Confirm PM-AJAY Reserved Seat at DSEU Rajokri / Pusa"
+    },
+    {
+        "application_id": "APP-DL-2026-088",
+        "applicant_name": "Pooja Verma",
+        "gender": "Female",
+        "age": 22,
+        "district": "New Delhi",
+        "scheme_name": "PM-AJAY GIA Component (Skill Training & Toolkits)",
+        "trade": "General Duty Assistant (NSQF 4)",
+        "nsqf": "NSQF Level 4",
+        "submitted_date": "2026-09-29",
+        "status": "Documents Verified",
+        "documents_status": "Aadhaar, Caste & 12th Marks Sheet Verified via Delhi e-District",
+        "recommended_action": "Sanction PM-AJAY GIA Healthcare Stipend Batch"
     }
 ]
 
@@ -368,6 +382,16 @@ ADMIN_ALERTS = [
         "district": "South West Delhi",
         "action_label": "Send Batch Alert to Candidates",
         "timestamp": "27 Sep 2026, 02:20 PM"
+    },
+    {
+        "id": "ALT-DL-005",
+        "severity": "info",
+        "badge": "Healthcare Cohort",
+        "title": "New Delhi GDA Healthcare Skilling Hub Active",
+        "message": "25 reserved training seats under PM-AJAY opened for SC candidates in General Duty Healthcare Assistant (NSQF 4) at New Delhi training node.",
+        "district": "New Delhi",
+        "action_label": "Notify New Delhi Applicants",
+        "timestamp": "Today, 10:15 AM"
     }
 ]
 

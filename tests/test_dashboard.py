@@ -49,6 +49,13 @@ def test_dashboard_district_filtering():
     assert data["selected_district"] == "North East Delhi"
     assert data["total_beneficiaries"] >= 100
 
+    # Also test New Delhi district filtering
+    res_nd = client.get("/dashboard/summary?district=New%20Delhi")
+    assert res_nd.status_code == 200
+    data_nd = res_nd.json()
+    assert data_nd["selected_district"] == "New Delhi"
+    assert data_nd["total_beneficiaries"] >= 40
+
 def test_dashboard_application_action():
     res = client.post(
         "/dashboard/applications/APP-DL-2026-081/action",
